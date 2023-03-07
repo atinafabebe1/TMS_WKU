@@ -1,0 +1,97 @@
+//material icon import
+import EngineeringIcon from "@mui/icons-material/Engineering";
+import EvStationSharpIcon from "@mui/icons-material/EvStationSharp";
+import SummarizeSharpIcon from "@mui/icons-material/SummarizeSharp";
+import MoveDownOutlinedIcon from "@mui/icons-material/MoveDownOutlined";
+import AssignmentIndSharpIcon from "@mui/icons-material/AssignmentIndSharp";
+import AppRegistrationSharpIcon from "@mui/icons-material/AppRegistrationSharp";
+import GpsFixedSharpIcon from "@mui/icons-material/GpsFixedSharp";
+import DepartureBoardSharpIcon from "@mui/icons-material/DepartureBoardSharp";
+import FmdBadSharpIcon from "@mui/icons-material/FmdBadSharp";
+import ListGroup from "react-bootstrap/ListGroup";
+
+export const Side1 = () => {
+  return (
+    <ListGroup>
+      <ListGroup.Item action active href="/hod/registerVehicle">
+        <AppRegistrationSharpIcon color="white" />
+        <span> </span>
+        Register Vehicle
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/assignVehicle">
+        <AssignmentIndSharpIcon color="primary" />
+        <span> </span>
+        Assign Vehicle
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/approveFuelRequest">
+        <EvStationSharpIcon color="primary" />
+        <span> </span>
+        Approve Fuel Request
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/approveMaintenance">
+        <EngineeringIcon color="primary" />
+        <span> </span>
+        Approve Maintenance
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/generateReport">
+        <SummarizeSharpIcon color="primary" />
+        <span> </span>
+        Generate Report
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/complain">
+        <FmdBadSharpIcon color="primary" />
+        <span> </span>
+        Complain
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/vehicleTraking">
+        <GpsFixedSharpIcon color="primary" />
+        <span> </span>
+        Vehicle Tracking
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/transferVehicle">
+        <MoveDownOutlinedIcon color="primary" />
+        <span> </span>
+        Transfer Vehicle
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/scheduling">
+        <DepartureBoardSharpIcon color="primary" />
+        <span> </span>
+        Scheduling
+      </ListGroup.Item>
+    </ListGroup>
+  );
+};
+
+export const Side2 = () => {
+  return (
+    <ListGroup>
+      <ListGroup.Item action href="/hod/registerVehicle">
+        <AppRegistrationSharpIcon color="primary" />
+      </ListGroup.Item>
+      <ListGroup.Item action active href="/hod/assignVehicle">
+        <AssignmentIndSharpIcon color="white" />
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/approveFuelRequest">
+        <EvStationSharpIcon color="primary" />
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/approveMaintenance">
+        <EngineeringIcon color="primary" />
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/generateReport">
+        <SummarizeSharpIcon color="primary" />
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/complain">
+        <FmdBadSharpIcon color="primary" />
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/vehicleTraking">
+        <GpsFixedSharpIcon color="primary" />
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/transferVehicle">
+        <MoveDownOutlinedIcon color="primary" />
+      </ListGroup.Item>
+      <ListGroup.Item action href="/hod/scheduling">
+        <DepartureBoardSharpIcon color="primary" />
+      </ListGroup.Item>
+    </ListGroup>
+  );
+};
