@@ -103,15 +103,25 @@ const VehicleRecordSchema = new Schema(
       },
       default: null,
     },
-    unavailable: [
+    location: {
+      type: String,
+      // required: true,
+    },
+    load: { type: Number, required: true },
+    duration: {
+      type: Number,
+      default: 0,
+    },
+    assignedTrips: [
       {
-        from: {
-          type: Date,
-          default: null,
+        tripId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Trip",
+          required: true,
         },
-        to: {
-          type: Date,
-          default: null,
+        duration: {
+          type: Number,
+          required: true,
         },
       },
     ],

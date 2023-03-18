@@ -45,43 +45,45 @@ const createvehicleRequest = asyncHandler(async (req, res, next) => {
   res.status(200).json(vehicleRequest);
 });
 
-const getAvailableVehicle = asyncHandler(async (req, res, next) => {
-  const { from, to } = req.query;
+const getAvailableAndUnAvailableVehicle = asyncHandler(
+  async (req, res, next) => {
+    const { from, to } = req.query;
 
-  try {
-    const availableVehicles = await VehicleRecord.find({
-      $or: [
-        { unavailable: { $size: 0 } },
-        {
-          unavailable: {
-            $not: {
-              $elemMatch: {
-                from: { $lt: new Date(to) },
-                to: { $gt: new Date(from) },
+    try {
+      const availableVehicles = await VehicleRecord.find({
+        $or: [
+          { unavailable: { $size: 0 } },
+          {
+            unavailable: {
+              $not: {
+                $elemMatch: {
+                  from: { $lt: new Date(to) },
+                  to: { $gt: new Date(from) },
+                },
               },
             },
           },
-        },
-      ],
-    });
+        ],
+      });
 
-    const unavailableVehicles = await VehicleRecord.find({
-      unavailable: {
-        $elemMatch: {
-          from: { $lt: new Date(to) },
-          to: { $gt: new Date(from) },
+      const unavailableVehicles = await VehicleRecord.find({
+        unavailable: {
+          $elemMatch: {
+            from: { $lt: new Date(to) },
+            to: { $gt: new Date(from) },
+          },
         },
-      },
-    });
+      });
 
-    res.status(200).json({
-      success: true,
-      data: { availableVehicles, unavailableVehicles },
-    });
-  } catch (error) {
-    next(new ErrorResponse("Could not get available vehicles", 500));
+      res.status(200).json({
+        success: true,
+        data: { availableVehicles, unavailableVehicles },
+      });
+    } catch (error) {
+      next(new ErrorResponse("Could not get available vehicles", 500));
+    }
   }
-});
+);
 
 // @desc      Update a Vehicle Request
 // @route     Put /Request/Vehicle/:id

@@ -41,7 +41,7 @@ const fileFilter = (req, file, cb) => {
 
 let upload = multer({ storage, fileFilter });
 
-// router.use(Auth);
+router.use(Auth);
 
 // router.use("/:vehicleId/request/vehiclerequest", vehicleRequest);
 // router.use("/:vehicleId/request/vehicleTransfer", vehicleTransfer);

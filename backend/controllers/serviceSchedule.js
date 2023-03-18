@@ -1,36 +1,141 @@
-const mongoose = require("mongoose");
-const Driver = mongoose.model("Driver"); // access driver model from db
-const Vehicle = mongoose.model("Vehicle"); // access vehicle model from db
+const asyncHandler = require("../middleware/async");
+const Vehicle = require("../models/registerVehicle");
+const Trip = require("../models/serviceSchedule");
+const ErrorResponse = require("../utils/errorResponse");
 
-const serviceSchedule = async (req, res) => {
-  try {
-    const startAddressAndTime = req.body.startAddressAndTime;
-    const endAddressAndTime = req.body.endAddressAndTime;
+const createServiceSchedule = asyncHandler(async (req, res, next) => {
+  const { vehicles, trips } = req.body;
+  validateVehicles(vehicles);
+  validateTrips(trips);
+  const createdtrips = await assignVehiclesToTrips(vehicles, trips);
+  res
+    .status(201)
+    .json({ createdtrips, message: "Schedule is succesfully created" });
+});
 
-    // create variables to hold available vehicles and drivers after the filter is applied and default to empty arrays
-    let availableVehicles;
-    let availableDrivers;
+// One vehicle will be assigned for a trip at most once at a time.
+const assignVehiclesToTrips = async (vehicles, trips) => {
+  const createdTrips = [];
+  for (const trip of trips) {
+    const selectedVehicles = await getVehicles(vehicles, trip);
+    if (selectedVehicles < trip.numVehiclesRequired) {
+      throw new ErrorResponse(
+        `Could not find enough vehicle for trip departing addres : ${trip.departing?.address}`,
+        500
+      );
+    }
+    trip.vehicles = selectedVehicles.map((vehicle) => vehicle.id);
 
-    // retrieve all drivers before filtering by availability and skill level
-    const allDrivers = await Driver.find();
+    const createdTrip = await Trip.create(trip);
+    createdTrips.push(createdTrip);
 
-    // loop through each driver to check if they are available within the scheduled timeframe
-    allDrivers.forEach((driver) => {
-      if (
-        checkIfDriverAvailable(driver, startAddressAndTime, endAddressAndTime)
-      ) {
-        // if driver is available add them to the list of available drivers array
-        availableDrivers.push(driver);
-      }
-    });
-
-    // retrieve all vehicles before filtering by availability
-    const allVehicles = await Vehicle.find();
-
-    // loop through each vehicle to check if it is available within the scheduled timeframe          for (let i=0; i<allVehicles.length; i++){             const currentvehicle = allVehiclesi;              if(checkIfVehicleAvailable(currentvehicle,startAddressAndTime,endAddressAndTime)){                 //if vehicle is avaiable add it to the list of available vehicles               availableVehicles.push(currentvehicle);             }         }
-
-    // assign a vhile and driver for each service using an algorithm that considers location closest as an ideal match     while (availableDrivers.length && availableVehicles > 0) {          let shortestDistanceDriver;          let shortestDistanceVehicle;           let shortestDistanceValue=Infinity;              for (let i=0; i<availableDrivers.length ;i++) {               for(let j=0;j<availableVehicles .length ; j++ ){                  let currentDistanceValue=calculateDistanceBetweenLocation(availableDriver ,availablevehicl);                                                   if (currentDistanceValue <shortestDistanceValue){                       shortestDistanceValue= currentDistancevalue                    shortesdistannceDriver=availabledriversi                  shortestDistancevehilcee=availableVEhiclesss              j                                            }}                      }                     assignDriveToService()assign car takes in  a Driveer object & Vehicle Object                   removeVhilceFrromAvailbaleList==================================================// Below are helper functionsto compute distance between locations// Function encode data & send response response BodyRequire dependenciesconst geoJsonModuleRequire GeoJson module & Parse GeoJson data functioncalculateDiastanceBetweenLocations (params ) {                  return goodJASONmodule . calcualteDIsatnctEfrompoints() Require google maps module &Calculates distances betweenslocation points}functions checklfDriverAvialabe(Params)This fuction compares params parameter given withdriven records
-  } catch (err) {
-    console.log(err);
+    const departingTime = new Date(trip.departing?.time);
+    const destinationTime = new Date(trip.destination?.time);
+    if (isNaN(departingTime.getTime()) || isNaN(destinationTime.getTime())) {
+      throw new ErrorResponse("Invalid time string", 403);
+    }
+    const tripDuration = (destinationTime - departingTime) / (1000 * 60); // calculate the difference in minutes
+    for (const vehicle of selectedVehicles) {
+      await Vehicle.findByIdAndUpdate(vehicle.id, {
+        $push: {
+          assignedTrips: {
+            tripId: createdTrip._id,
+            duration: tripDuration,
+          },
+        },
+        $inc: {
+          duration: tripDuration,
+        },
+        location: trip.destination.address,
+      });
+    }
   }
+  return createdTrips;
+};
+
+// A vehicle assigned for a trip should have the same location as the departing address of that trip.
+// Vehicle assigning should be fair, each vehicle should be assigned, it shouldn't be assigned for another trip if there is a vehicle not assigned yet.
+const getVehicles = async (vehicles, trip) => {
+  const availableVehicles = [];
+
+  // Iterate over the input vehicles and create instances of the Vehicle model for each one
+  for (const vehicle of vehicles) {
+    const vehicleInstance = await Vehicle.findById(vehicle.id);
+    availableVehicles.push(vehicleInstance);
+  }
+  const filteredVehicles = await Promise.all(
+    availableVehicles.map(async (vehicle) => {
+      const assignForTrip = await Trip.find({
+        vehicles: { $in: vehicle.id },
+      }).populate("vehicles");
+
+      if (!vehicle.location) {
+        vehicle.location = trip.departing.address;
+      }
+      if (vehicle.location !== trip.departing.address) {
+        return false;
+      }
+
+      const overlap = assignForTrip.some((assignedTrip) => {
+        const tripDepartingTime = new Date(trip.departing?.time);
+        const tripDestinationTime = new Date(trip.destination?.time);
+
+        const assignedDepartingTime = new Date(assignedTrip.departing?.time);
+        const assignedDestinationTime = new Date(
+          assignedTrip.destination?.time
+        );
+
+        const tripOverlapDuration =
+          Math.min(assignedDestinationTime, tripDestinationTime) -
+          Math.max(assignedDepartingTime, tripDepartingTime);
+        console.log("trip overlaps" + tripOverlapDuration);
+        if (tripOverlapDuration > 0) {
+          return true;
+        }
+        return false;
+      });
+      if (overlap) {
+        console.log("Ovelaps");
+        return false;
+      }
+      return true;
+    })
+  );
+
+  const selectedVehicles = availableVehicles
+    .filter((vehicle, index) => filteredVehicles[index])
+    .sort((a, b) => a.duration - b.duration)
+    .slice(0, trip.numVehiclesRequired);
+  return selectedVehicles;
+};
+
+// Load should be greater than one
+const validateVehicles = (vehicles) => {
+  for (const vehicle of vehicles) {
+    if (vehicle.load <= 0) {
+      throw new ErrorResponse("Vehicle load cannot be less than 1", 403);
+    }
+  }
+};
+
+// Destination time is greater than departing time
+// If destination time and departing time difference is less than 5, it should return a warning
+const validateTrips = (trips) => {
+  for (const trip of trips) {
+    if (trip.departing.time >= trip.destination.time) {
+      throw new ErrorResponse(
+        "Departing time cannot be after or equal to destination time",
+        403
+      );
+    }
+    // else if (trip.destination.time - trip.departing.time < 5) {
+    //   console.warn(
+    //     "Warning: departing and destination time difference is less than five"
+    //   );
+    // }
+  }
+};
+
+module.exports = {
+  createServiceSchedule,
 };
