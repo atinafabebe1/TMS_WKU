@@ -66,7 +66,7 @@ const getVehicles = async (vehicles, trip) => {
   const filteredVehicles = await Promise.all(
     availableVehicles.map(async (vehicle) => {
       const assignForTrip = await Trip.find({
-        vehicles: { $in: vehicle.id },
+        vehicles: { $in: vehicle._id },
       }).populate("vehicles");
 
       if (!vehicle.location) {

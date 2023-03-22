@@ -11,11 +11,13 @@ const FuelRequestSchema = new Schema(
       ref: "User",
       immutable: true,
     },
-    reciever: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User",
-    },
+    recievers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User",
+      },
+    ],
     vehicle: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "VehicleRecord",
@@ -27,7 +29,7 @@ const FuelRequestSchema = new Schema(
           return true;
         },
         message: (props) =>
-          `Cannot set vehicle "${props.value}" when creating a new maintenance request.`,
+          `Cannot set vehicle "${props.value}" when creating a new fuel request.`,
       },
     },
     plateNumber: {
@@ -42,11 +44,6 @@ const FuelRequestSchema = new Schema(
         message: (props) => `${props.value} is not a valid plate number`,
       },
     },
-    typeOfVehicle: {
-      type: String,
-      required: true,
-      enum: ["car", "truck", "motorcycle", "bus"],
-    },
     typeOfFuel: {
       type: String,
       enum: ["diesel", "benzene", "motorOil", "frenOil", "otherOil", "grease"],
@@ -54,7 +51,6 @@ const FuelRequestSchema = new Schema(
     },
     prevRecordOnCounter: {
       type: Number,
-      required: true,
       validate: {
         validator: function (v) {
           return v >= 0;
@@ -63,18 +59,17 @@ const FuelRequestSchema = new Schema(
           `${props.value} is not a valid previous record on counter`,
       },
     },
-    // currentRecordOnCounter: {
-    //   type: Number,
-    //   required: true,
-    //   validate: {
-    //     validator: function (v) {
-    //       return v >= 0;
-    //     },
-    //     message: (props) =>
-    //       `${props.value} is not a valid current record on counter`,
-    //   },
-    // },
-    sourceLocation: {
+    currentRecordOnCounter: {
+      type: Number,
+      validate: {
+        validator: function (v) {
+          return v >= 0;
+        },
+        message: (props) =>
+          `${props.value} is not a valid current record on counter`,
+      },
+    },
+    departingAddress: {
       type: String,
       required: true,
       validate: {
@@ -84,7 +79,7 @@ const FuelRequestSchema = new Schema(
         message: (props) => `${props.value} is not a valid source location`,
       },
     },
-    destination: {
+    destinationAddress: {
       type: String,
       required: true,
       validate: {
@@ -97,7 +92,6 @@ const FuelRequestSchema = new Schema(
     },
     distanceTraveled: {
       type: Number,
-      required: true,
       validate: {
         validator: function (v) {
           return v >= 0;
@@ -107,21 +101,82 @@ const FuelRequestSchema = new Schema(
     },
     amountOfFuelUsed: {
       type: Number,
-      required: true,
+    },
+    fuelDistributorApproval: {
+      approvedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User",
+        immutable: true,
+      },
+      status: {
+        type: String,
+        enum: ["Pending", "Approved", "Rejected"],
+        default: "Pending",
+      },
+    },
+    headOfDeploymentApproval: {
+      approvedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User",
+        immutable: true,
+      },
+      status: {
+        type: String,
+        enum: ["Pending", "Approved", "Rejected"],
+        default: "Pending",
+      },
+    },
+    directorApproval: {
+      approvedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User",
+        immutable: true,
+      },
+      status: {
+        type: String,
+        enum: ["Pending", "Approved", "Rejected"],
+        default: "Pending",
+      },
+    },
+    vicePresidentApproval: {
+      approvedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User",
+        immutable: true,
+      },
+      status: {
+        type: String,
+        enum: ["Pending", "Approved", "Rejected"],
+        default: "Pending",
+      },
     },
     status: {
       type: String,
       default: "Waiting Approval",
       enum: ["Waiting Approval", "Rejected", "Approved"],
       validate: {
-        validator: function (v) {
+        validator: async function (v) {
           if (this.isNew && v !== "Waiting Approval") {
             return false;
+          }
+          if (v === "Approved") {
+            const approvals = [
+              this.fuelDistributorApproval,
+              this.headOfDeploymentApproval,
+              this.directorApproval,
+              this.vicePresidentApproval,
+            ];
+            const allApproved = approvals.every((a) => a === "Approved");
+            return allApproved;
           }
           return true;
         },
         message: (props) =>
-          `Cannot set status "${props.value}" when creating a new maintenance request.`,
+          `Cannot set status "${props.value}" when creating a new fuel request.`,
       },
     },
     isDeleted: {
@@ -151,12 +206,12 @@ FuelRequestSchema.pre("save", async function (next) {
       new ErrorResponse(`user Not Found with id of ${this.user}`, 404)
     );
   }
-  const receiver = await this.model("User").findById(this.reciever);
-  if (!receiver) {
-    return next(
-      new ErrorResponse(`reciver Not Found with id of ${this.reciever}`, 404)
-    );
-  }
+  // const receiver = await this.model("User").findById(this.reciever);
+  // if (!receiver) {
+  //   return next(
+  //     new ErrorResponse(`reciver Not Found with id of ${this.reciever}`, 404)
+  //   );
+  // }
 
   next();
 });

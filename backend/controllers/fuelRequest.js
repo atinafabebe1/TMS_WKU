@@ -1,6 +1,13 @@
 const FuelRequest = require("../models/fuelRequest");
+const UserSchema = require("../models/user");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
+const {
+  ROLE_FUELDISTRUBTOR,
+  ROLE_HEADOFDEPLOYMENT,
+  ROLE_DIRECTOR,
+  ROLE_VICEPRESIDENT,
+} = require("../../frontend/src/constants");
 
 //@desc      to get all created fuel requests
 //@route     GET request/fuel/all
@@ -15,32 +22,21 @@ const getfuelRequests = asyncHandler(async (req, res) => {
 const createFuelRequest = asyncHandler(async (req, res, next) => {
   req.body.user = req.user.id;
   const {
-    user,
-    reciever,
     plateNumber,
     typeOfVehicle,
     typeOfFuel,
-    prevRecordOnCounter,
-    currentRecordOnCounter,
-    sourceLocation,
+    departingAddress,
     destination,
-    distanceTraveled,
-    amountOfFuelUsed,
   } = req.body;
   const createdFiled = {
-    user,
-    reciever,
     plateNumber,
     typeOfVehicle,
     typeOfFuel,
-    prevRecordOnCounter,
-    currentRecordOnCounter,
-    sourceLocation,
+    departingAddress,
     destination,
-    distanceTraveled,
-    amountOfFuelUsed,
   };
 
+  const recievers = await User.find(); //find a user with role headofdeployment,director,vicepresident and fueldistrubtor
   const vehicle = await FuelRequest.getVehicleByPlateNumber(
     req.body.plateNumber
   );
@@ -62,8 +58,17 @@ const createFuelRequest = asyncHandler(async (req, res, next) => {
 //@routee     PUT/FuelRequest
 //@access     DRIVER/EMPLOYEE
 const updateFuelRequest = asyncHandler(async (req, res, next) => {
-  delete req.body.status;
-  delete req.body.vehicle;
+  const {
+    plateNumber,
+    prevRecordOnCounter,
+    typeOfFuel,
+    currentRecordOnCounter,
+    departingAddress,
+    destinationAddress,
+    distanceTraveled,
+    amountOfFuelUsed,
+    isDeleted,
+  } = req.body;
 
   let fuelRequest = await FuelRequest.findById(req.params.id);
 
@@ -76,18 +81,24 @@ const updateFuelRequest = asyncHandler(async (req, res, next) => {
     );
   }
   //Make sure user is vehicle owner
-  if (fuelRequest.user.toString() !== req.user.id) {
-    return next(
-      new ErrorResponse(
-        `User ${req.params.id} is not authorized to update this fuel Request`,
-        404
-      )
-    );
+  if (
+    isDeleted ||
+    plateNumber ||
+    typeOfFuel ||
+    departingAddress ||
+    destinationAddress
+  ) {
+    if (fuelRequest.user.toString() !== req.user.id) {
+      return next(
+        new ErrorResponse(
+          `Your are not authorized to update this fuel request`,
+          404
+        )
+      );
+    }
   }
-  if (req.body.plateNumber) {
-    const vehicle = await FuelRequest.getVehicleByPlateNumber(
-      req.body.plateNumber
-    );
+  if (plateNumber) {
+    const vehicle = await FuelRequest.getVehicleByPlateNumber(plateNumber);
     if (!vehicle) {
       return next(
         new ErrorResponse(
@@ -145,76 +156,114 @@ const deleteFuelRequest = asyncHandler(async (req, res, next) => {
 // @desc      Approve a Vehicle Request
 // @route     Patch /Request/request/fuel/:id
 // @access    Private/HeadofDeployemnt/Director
-const updateFuelRequestStatus = asyncHandler(async (req, res, next) => {
+const updateFuelRequestStatus = async (req, res, next) => {
   try {
-    // Validate input data
     const { id } = req.params;
     const { status } = req.body;
+
+    // Validate input data
     if (!id || !status) {
       return res.status(400).json({ message: "Missing required fields" });
     }
-    if (
-      status !== "Approved" &&
-      status !== "Waiting Approval" &&
-      status !== "Rejected"
-    ) {
+
+    const allowedStatuses = ["Approved", "Waiting Approval", "Rejected"];
+    if (!allowedStatuses.includes(status)) {
       return next(new ErrorResponse(`Invalid status: ${status}`, 400));
     }
 
-    // Check if fuel request exists and if user is authorized to update it
     const fuelRequest = await FuelRequest.findOne({
       _id: id,
       isDeleted: false,
-      receiver: req.user.id,
+      receiver: { $in: req.user.id },
     });
+
     if (!fuelRequest) {
-      return next(
-        new ErrorResponse(`Maintenance request not found with id of ${id}`, 404)
-      );
+      return next(new ErrorResponse(`Fuel request not found`, 404));
     }
-    // check if the user who created the maintenance request is updating the status
+
     if (fuelRequest.user.toString() === req.user.id) {
       return next(
-        new ErrorResponse(
-          `You are not authorized to update this fuel request`,
-          401
-        )
+        new ErrorResponse(`Unauthorized to update this fuel request`, 401)
       );
     }
 
-    if (
-      fuelRequest.status === "Approved" ||
-      fuelRequest.status === "Rejected"
-    ) {
-      return next(
-        new ErrorResponse(
-          `Fuel Request with id of ${requestId} is not pending`,
-          400
-        )
-      );
+    const role = req.user.role;
+    let update = {};
+
+    if (role === ROLE_FUELDISTRUBTOR) {
+      update = {
+        fuelDistributorApproval: {
+          approvedBy: req.user.id,
+          status,
+        },
+      };
     }
-    // Get vehicle ID if status is approved
-    let vehicleId;
-    if (status !== "Waiting Approval") {
-      const vehicle = await FuelRequest.getVehicleByPlateNumber(
-        fuelRequest.plateNumber
-      );
-      vehicleId = vehicle.id;
+
+    if (role === ROLE_HEADOFDEPLOYMENT) {
+      if (fuelRequest.fuelDistributorApproval === "Approved") {
+        update = {
+          headOfDeploymentApproval: {
+            approvedBy: req.user.id,
+            status,
+          },
+        };
+      } else if (fuelRequest.fuelDistributorApproval === "Pending") {
+        return next(
+          new ErrorResponse(`Cannot approve the fuel request now`, 401)
+        );
+      } else {
+        return next(new ErrorResponse(`Cannot approve the fuel request`, 401));
+      }
+    }
+
+    if (role === ROLE_DIRECTOR) {
+      if (fuelRequest.headOfDeploymentApproval === "Approved") {
+        update = {
+          directorApproval: {
+            approvedBy: req.user.id,
+            status,
+          },
+        };
+      } else if (fuelRequest.headOfDeploymentApproval === "Pending") {
+        return next(
+          new ErrorResponse(`Cannot approve the fuel request now`, 401)
+        );
+      } else {
+        return next(new ErrorResponse(`Cannot approve the fuel request`, 401));
+      }
+    }
+
+    if (role === ROLE_VICEPRESIDENT) {
+      if (fuelRequest.directorApproval === "Approved") {
+        const vehicle = await FuelRequest.getVehicleByPlateNumber(
+          fuelRequest.plateNumber
+        );
+        update = {
+          vicePresidentApproval: {
+            approvedBy: req.user.id,
+            status,
+          },
+          status,
+          vehicle: vehicle?.id,
+        };
+      } else if (fuelRequest.directorApproval === "Pending") {
+        return next(
+          new ErrorResponse(`Cannot approve the fuel request now`, 401)
+        );
+      } else {
+        return next(new ErrorResponse(`Cannot approve the fuel request`, 401));
+      }
     }
 
     // Update fuel request
-    await FuelRequest.findOneAndUpdate(
-      { _id: id },
-      { status, ...(vehicleId && { vehicle: vehicleId }) },
-      { new: true }
-    );
+    await FuelRequest.findOneAndUpdate({ _id: id }, update);
 
     // Return updated fuel request
-    res.status(200).json({ message: `Fuel Request ${status} Successfully` });
+    res.status(200).json({ message: `Fuel Request ${status}` });
   } catch (error) {
     next(error);
   }
-});
+};
 
 module.exports = {
   createFuelRequest,

@@ -131,7 +131,7 @@ UserSchema.methods.getSignedJwtAccessToken = function () {
 //Sign JWT and return
 UserSchema.methods.getSignedJwtRefreshToken = function () {
   return jwt.sign(
-    { Username: this.Username, id: this._id },
+    { Username: this.userName, id: this._id },
     process.env.REFERESH_JWT_SECRET,
     {
       expiresIn: process.env.REFRESH_JWT_EXPIRE,

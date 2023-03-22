@@ -154,6 +154,9 @@ const updateVehicleRequeststatus = asyncHandler(async (req, res, next) => {
 
   const vehicleRequest = await VehicleRequestSchema.findById(id);
   // Check if current user is receiver of the fuel request
+  if (!vehicleRequest) {
+    return next(new ErrorResponse(`Request not found with id of ${id}`, 404));
+  }
   if (req.user.id !== sparePartRequest.reciever.toString()) {
     return next(
       new ErrorResponse(
@@ -161,9 +164,6 @@ const updateVehicleRequeststatus = asyncHandler(async (req, res, next) => {
         403
       )
     );
-  }
-  if (!vehicleRequest) {
-    return next(new ErrorResponse(`Request not found with id of ${id}`, 404));
   }
 
   if (vehicleRequest.isDeleted) {

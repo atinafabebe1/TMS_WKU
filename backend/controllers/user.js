@@ -66,7 +66,7 @@ const LoginUser = asyncHandler(async (req, res, next) => {
     });
 
     // Send authorization roles and access token to user
-    res.json({ accessToken });
+    res.json({ message: "Successfully Logged In", accessToken });
   } else {
     return next(new ErrorResponse("Invalid Credentials", 401));
   }
@@ -86,7 +86,7 @@ const logoutUser = async (req, res, next) => {
   if (!user) {
     res.clearCookie("token", {
       httpOnly: true,
-      sameSite: "None",
+      sameSite: "lax",
       secure: false,
     });
     return res.sendStatus(204);
@@ -96,7 +96,7 @@ const logoutUser = async (req, res, next) => {
   user.refreshToken = user.refreshToken.filter((rt) => rt !== refreshToken);
   await user.save();
 
-  res.clearCookie("token", { httpOnly: true, sameSite: "None", secure: true });
+  res.clearCookie("token", { httpOnly: true, sameSite: "lax", secure: false });
   res.sendStatus(204);
 };
 
@@ -215,13 +215,14 @@ const loginStatus = asyncHandler(async (req, res) => {
   return res.json(false);
 });
 
-const refereshToken = asyncHandler(async (req, res, next) => {
+const referesh = asyncHandler(async (req, res, next) => {
   const cookies = req.cookies;
   if (!cookies?.token) return res.sendStatus(401);
   const refreshToken = cookies.token;
-  res.clearCookie("token", { httpOnly: true, sameSite: "None", secure: false });
-
-  const foundUser = await User.findOne({ refreshToken }).exec();
+  console.log(refreshToken);
+  res.clearCookie("token", { httpOnly: true, sameSite: "lax", secure: false });
+  console.log("after cookie cleared " + req.cookie?.token);
+  const foundUser = await User.findOne({ refreshToken });
 
   // Detected refresh token reuse!
   if (!foundUser) {
@@ -229,16 +230,17 @@ const refereshToken = asyncHandler(async (req, res, next) => {
       refreshToken,
       process.env.REFERESH_JWT_SECRET,
       async (err, decoded) => {
-        if (err) return res.sendStatus(403); //Forbidden
+        if (err) return res.status(403).json({ error: "Forbidden" });
         console.log("attempted refresh token reuse!");
         const hackedUser = await User.findOne({
-          username: decoded.Username,
+          userName: decoded.Username,
         }).exec();
         hackedUser.refreshToken = [];
         await hackedUser.save();
+        console.log(hackedUser);
       }
     );
-    return res.sendStatus(403); //Forbidden
+    return res.status(403);
   }
 
   const newRefreshTokenArray = foundUser.refreshToken.filter(
@@ -255,11 +257,13 @@ const refereshToken = asyncHandler(async (req, res, next) => {
         foundUser.refreshToken = [...newRefreshTokenArray];
         await foundUser.save();
       }
+      console.log(foundUser);
+      console.log(decoded);
+
       if (err || foundUser.userName !== decoded.Username) {
         return res.sendStatus(403);
       }
       // Refresh token was still valid
-      const roles = foundUser.role;
       const accessToken = foundUser.getSignedJwtAccessToken();
 
       const newRefreshToken = foundUser.getSignedJwtRefreshToken();
@@ -271,11 +275,11 @@ const refereshToken = asyncHandler(async (req, res, next) => {
       res.cookie("token", newRefreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "None",
+        sameSite: "lax",
         maxAge: 24 * 60 * 60 * 1000,
       });
 
-      res.json({ roles, accessToken });
+      res.json({ accessToken });
     }
   );
 });
@@ -292,7 +296,7 @@ const sendTokenResponse = async (user, statusCode, res) => {
       Date.now() + process.env.JWT_COOKIE_EXPIRE * 1 * 60 * 60 * 1000
     ),
     httpOnly: true,
-    sameSite: "none",
+    sameSite: "lax",
     secure: false,
   };
 
@@ -310,5 +314,5 @@ module.exports = {
   loginStatus,
   forgotPassword,
   resetPassword,
-  refereshToken,
+  referesh,
 };

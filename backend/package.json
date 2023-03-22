@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mui/material": "^5.11.13",
     "assert": "^2.0.0",
     "axios": "^1.2.2",
     "bcrypt": "^5.0.1",
@@ -45,6 +46,7 @@
     "node-cron": "^3.0.2",
     "node-fetch": "^3.2.10",
     "nodemailer": "^6.8.0",
+    "prop-types": "^15.8.1",
     "redis": "^4.6.5",
     "socket.io": "^4.5.3",
     "supertest": "^6.3.3",
