@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth } from "../../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 function LogoutButton() {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ function LogoutButton() {
     navigate("/login");
   };
 
-  return <button onClick={handleLogout}>Logout</button>;
+  return <Link onClick={handleLogout}>Logout</Link>;
 }
 
 export default LogoutButton;

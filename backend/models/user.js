@@ -13,6 +13,7 @@ const {
   ROLE_HEADOFDEPLOYMENT,
   ROLE_MECHANIC,
   ROLE_VICEPRESIDENT,
+  ROLE_ADMIN,
 } = require("../constants/index");
 
 const Schema = mongoose.Schema;
@@ -32,12 +33,16 @@ const UserSchema = new Schema(
   {
     userName: {
       type: String,
-      required: [true, "Please add Username"],
+      required: [true, "Please provide a username."],
       unique: true,
-      match:
-        /^([A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){3,28}(?:[A-Za-z0-9_]))?)$/,
-      minlength: 3,
-      maxlength: 28,
+      match: [
+        /^(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
+        "Username must contain only alphanumeric characters, dots and underscores, and cannot have two consecutive dots or underscores or start or end with a dot or underscore.",
+      ],
+      minlength: [3, "Username must be at least 3 characters long."],
+      maxlength: [28, "Username cannot exceed 28 characters."],
+      trim: true,
+      lowercase: true,
     },
     firstName: {
       type: String,
@@ -71,8 +76,14 @@ const UserSchema = new Schema(
     },
     resetPasswordToken: String,
     resetPassowrdExpire: Date,
-    photo: {
-      type: String,
+    image: {
+      photo: {
+        type: String,
+        default: "no-photo.jpg",
+      },
+      description: {
+        type: String,
+      },
     },
     twoFactorCode: {
       type: String,
@@ -95,7 +106,7 @@ const UserSchema = new Schema(
         ROLE_HEADOFDEPLOYMENT,
         ROLE_MECHANIC,
         ROLE_VICEPRESIDENT,
-        "ROLE_ADMIN",
+        ROLE_ADMIN,
       ],
       default: ROLE_EMPLOYEE,
     },
@@ -104,6 +115,10 @@ const UserSchema = new Schema(
       required: function () {
         return this.role === ROLE_DRIVER;
       },
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
     refreshToken: [String],
   },

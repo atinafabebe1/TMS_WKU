@@ -7,6 +7,7 @@ const validator = require("validator");
 //@route Post /user/register
 //@access private/Admin
 const registerUser = asyncHanlder(async (req, res, next) => {
+  console.log(req.body);
   if (!validator.isStrongPassword(req.body.password)) {
     return next(new ErrorResponse("Weak Password", 400));
   }
@@ -15,6 +16,7 @@ const registerUser = asyncHanlder(async (req, res, next) => {
   if (dupicate) {
     return next(new ErrorResponse("Duplicate User", 409));
   }
+
   //deletes the unwanted subfield document if the role is not match
   if (req.body.role !== "ROLE_DRIVER") {
     req.body.driverinfo = undefined;
@@ -37,22 +39,55 @@ const getUsers = asyncHanlder(async (req, res, next) => {
 //@route Patch /user/getusers/:id
 //@access private/Admin
 const updateUser = asyncHanlder(async (req, res, next) => {
-  if (req.body.role) {
-    return next(new ErrorResponse("Role cannot be changed", 401));
-  }
+  console.log(req.body);
+  console.log(req.params);
+
   let user = await User.findById(req.params.id);
   if (!user) {
     return next(new ErrorResponse(`User not found with ${req.params.id}`, 404));
   }
-  user = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  if (user.role !== req.body.role) {
+    return next(new ErrorResponse("Role cannot be changed", 401));
+  }
+  try {
+    user = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+  } catch (error) {
+    res.status(401).json(error);
+  }
   res.status(200).json(user);
+});
+
+const removeUser = asyncHanlder(async (req, res, next) => {
+  const { password } = req.body;
+  if (!password) {
+    return next(new ErrorResponse("Please provide password", 400));
+  }
+
+  const user = await User.findOne({ _id: req.user.id }).select("+password");
+
+  if (!user) {
+    return next(new ErrorResponse("Invalid Credentials", 401));
+  }
+
+  //check if password matches
+  const match = await user.matchPassword(password);
+
+  if (!match) {
+    return next(new ErrorResponse("Invalid Credentials", 401));
+  }
+
+  await User.findByIdAndUpdate(req.params.id, {
+    isActive: req.body.isActive,
+  });
+  res.status(200).json({ message: "user removed" });
 });
 
 module.exports = {
   registerUser,
   updateUser,
   getUsers,
+  removeUser,
 };

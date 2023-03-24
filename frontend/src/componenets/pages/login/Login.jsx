@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import { FaEnvelope, FaLock } from "react-icons/fa";
 import {
   ROLE_ADMIN,
   ROLE_DIRECTOR,
@@ -76,12 +77,12 @@ const LoginPage = () => {
         }
         const decodedToken = jwt_decode(response.data.accessToken);
         const role = decodedToken.role;
-        login(response.data.accessToken)
+        login(response.data.accessToken);
         if (role === ROLE_ADMIN) {
           navigate("/admin");
         } else if (role === ROLE_EMPLOYEE) {
           navigate("/employee");
-        }else if (role === ROLE_HEADOFDEPLOYMENT) {
+        } else if (role === ROLE_HEADOFDEPLOYMENT) {
           navigate("/hd");
         } else if (role === ROLE_DIRECTOR) {
           navigate("/director");
@@ -95,13 +96,11 @@ const LoginPage = () => {
           navigate("/mechanic");
         } else if (role === ROLE_VICEPRESIDENT) {
           navigate("/vp");
-        }
-        else{
+        } else {
           navigate("/login");
         }
       }
     } catch (error) {
-      console.log(err)
       setErrorMessage("Error while loading your process");
       setSuccessMessage("");
     }
@@ -119,18 +118,18 @@ const LoginPage = () => {
   };
 
   return (
-    <Container className="bg-light-gray py-5">
+    <Container className="py-5">
       <Row className="justify-content-center">
         <Col xs={12} md={6} lg={4}>
-          <Form
-            onSubmit={handleSubmit}
-            className="p-4 rounded shadow-sm bg-white"
-          >
-            <h2 className="text-center mb-4">Login</h2>
+          <div className="text-center mb-4">
+            <h2>Login</h2>
+          </div>
+          <Form onSubmit={handleSubmit} className="p-4 rounded shadow-sm">
             <Form.Group controlId="formEmail">
-              <Form.Label className="font-weight-bold">
-                Email address <span className="text-danger">*</span>
-              </Form.Label>
+              <div className="d-flex align-items-center mb-3">
+                <FaEnvelope className="mr-3" />
+                <Form.Label>Email Address</Form.Label>
+              </div>
               <Form.Control
                 type="email"
                 placeholder="Enter email"
@@ -143,9 +142,10 @@ const LoginPage = () => {
             </Form.Group>
 
             <Form.Group controlId="formPassword">
-              <Form.Label className="font-weight-bold">
-                Password <span className="text-danger">*</span>
-              </Form.Label>
+              <div className="d-flex align-items-center mb-3">
+                <FaLock className="mr-3" />
+                <Form.Label>Password</Form.Label>
+              </div>
               <Form.Control
                 type="password"
                 placeholder="Password"
@@ -163,11 +163,12 @@ const LoginPage = () => {
                 <p className="text-success my-2">{successMessage}</p>
               )}
               <Form.Text className="text-muted">
-                <a href="/forget" className="text-decoration-none">
+                <a href="/forgot" className="text-decoration-none">
                   Forgot password?
                 </a>
               </Form.Text>
             </Form.Group>
+
             <Form.Group controlId="formRememberMe" className="my-3">
               <Form.Check
                 type="checkbox"
@@ -181,7 +182,7 @@ const LoginPage = () => {
             <Button
               variant="primary"
               type="submit"
-              className="mt-4 w-100"
+              className="w-100"
               title="Login"
             >
               Login

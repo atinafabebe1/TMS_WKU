@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "../../common/header/Navbar";
 import WeeklyReport from "../../common/report/weeklyReport";
-import VehicleInfromation from "../../common/vehicle/VehicleInformation";
+import VehicleInfromation from "../../common/vehicle/DisplayVehicle";
 import ServiceScheduleForm from "./ServiceScheduleForm";
 const links = [
   {

@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("../middleware/async");
 const sendEmail = require("../utils/sendEmail");
 const ErrorResponse = require("../utils/errorResponse");
+const path = require("path");
+const fs = require("fs");
 
 //@desc  Login
 //@route Post /user/login
@@ -181,6 +183,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
 //@access Private
 const updatePassword = asyncHandler(async (req, res, next) => {
   let user = await User.findById(req.user.id).select("+password");
+  console.log(req.body);
   //Check current password
   const match = await user.matchPassword(req.body.currentPassword);
 
@@ -306,6 +309,58 @@ const sendTokenResponse = async (user, statusCode, res) => {
     .json({ data: accesstoken });
 };
 
+const uploadUserPhoto = async (req, res, next) => {
+  try {
+    console.log(req.params.id);
+    console.log(req.file);
+    const id = req.params.id;
+    const { description } = req.body;
+    console.log(req.file);
+    const photo = req.file;
+    const sizeLimit = 10 * 1024 * 1024; // 10 MB
+
+    // Check if file is too large
+    if (photo.length > sizeLimit) {
+      throw new Error("File size too large");
+    }
+    console.log(photo.filename);
+    const user = await User.findByIdAndUpdate(id, {
+      image: {
+        photo: photo?.filename,
+        description,
+      },
+    });
+    if (!user) {
+      console.log("user not found");
+    } else {
+      console.log(user);
+    }
+    console.log("sdjkfsdfsdfkksdjf");
+    console.log(user.image); // Return success response
+    res.status(201).json({
+      message: "Image uploaded successfully",
+    });
+  } catch (error) {
+    // Log error and return error response
+    console.error(`Error uploading image: ${error.message}`);
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const getUserPhoto = async (req, res, next) => {
+  const imagePath = path.join(__dirname, "../images", req.params.id);
+
+  fs.readFile(imagePath, (err, data) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to read image file" });
+    }
+
+    res.setHeader("Content-Type", "image/jpeg"); // set the response content type
+    res.status(200).send(data); // send the image data in the response
+  });
+};
+
 module.exports = {
   LoginUser,
   logoutUser,
@@ -313,6 +368,8 @@ module.exports = {
   updatePassword,
   loginStatus,
   forgotPassword,
+  uploadUserPhoto,
+  getUserPhoto,
   resetPassword,
   referesh,
 };

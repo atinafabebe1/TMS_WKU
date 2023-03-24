@@ -1,27 +1,35 @@
-import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { FaTimes } from 'react-icons/fa';
-import React, { useState } from 'react';
-import LogoutButton from '../../pages/logout/Logout';
+import React, { useState } from "react";
+import { FaBars, FaUser } from "react-icons/fa";
+import { Navbar, Nav, NavDropdown } from "react-bootstrap";
+import LogoutLink from "../../pages/logout/Logout";
 
-function MyNavbar({ links, title }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+function MyNavbar({ links, title, role }) {
+  const [navbarOpen, setNavbarOpen] = useState(false);
 
   return (
-    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-      <Navbar.Brand href="/" style={{ fontWeight: 'bold', color: '#fff' }}>
-        <span style={{ marginLeft: '2rem', fontSize: '1.5rem' }}>{title}</span>
-      </Navbar.Brand>
-      <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setMenuOpen(!menuOpen)}>
-        {menuOpen ? <FaTimes /> : <span className="navbar-toggler-icon" />}
+    <Navbar
+      bg="dark"
+      variant="dark"
+      expand="md"
+      className="d-flex justify-content-between"
+    >
+      <Navbar.Brand className="ms-2">{title}</Navbar.Brand>
+      <Navbar.Toggle onClick={() => setNavbarOpen(!navbarOpen)}>
+        <FaBars />
       </Navbar.Toggle>
-      <Navbar.Collapse id="responsive-navbar-nav" className={menuOpen ? 'show' : ''}>
-        <Nav className="ms-auto" style={{ marginRight: '2rem',}} >
+      <Navbar.Collapse className="justify-content-end">
+        <Nav className="d-flex align-items-center ml-auto">
           {links.map((link, index) => {
             if (link.children) {
               return (
-                <NavDropdown key={index} title={link.name} style={{ fontWeight: 'bold', color: '#fff' }} className="my-dropdown" >
+                <NavDropdown
+                  key={index}
+                  title={link.name}
+                  id="basic-nav-dropdown"
+                  className="dropdown-menu-right bg-dark text-light"
+                >
                   {link.children.map((child, index) => (
-                    <NavDropdown.Item key={index} href={child.url} style={{ fontWeight: 'bold', color: '#212529' }}>
+                    <NavDropdown.Item key={index} href={child.url}>
                       {child.name}
                     </NavDropdown.Item>
                   ))}
@@ -29,14 +37,26 @@ function MyNavbar({ links, title }) {
               );
             } else {
               return (
-                <Nav.Link key={index} href={link.url} style={{ fontWeight: 'bold', color: '#fff' }}>
+                <Nav.Link key={index} href={link.url}>
                   {link.name}
                 </Nav.Link>
               );
             }
           })}
-            <Nav.Link style={{ fontWeight: 'bold', color: '#fff' }}><LogoutButton/></Nav.Link>
-
+          <div className="ms-3">
+            <NavDropdown
+              title={<FaUser />}
+              id="basic-nav-dropdown"
+              className="dropdown-menu-right bg-dark text-light"
+              align="end"
+            >
+              <NavDropdown.Item href={role}>My Profile</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item>
+                <LogoutLink />
+              </NavDropdown.Item>
+            </NavDropdown>
+          </div>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
