@@ -14,11 +14,15 @@ import api from "../../../api/api";
 function Servicescheduleform() {
   const [vehicles, setVehicles] = useState([]);
   const [trips, setTrips] = useState({
-    departingAddress: "",
-    departingTime: "",
-    destinationAddress: "",
-    destinationTime: "",
-    numberOfVehicles: 1,
+    departing: {
+      address: "",
+      time: "",
+    },
+    destination: {
+      address: "",
+      time: "",
+    },
+    numVehiclesRequired: 1,
   });
   const [selectedVehicles, setSelectedVehicles] = useState([]);
   const [schedule, setSchedule] = useState([]);
@@ -36,63 +40,84 @@ function Servicescheduleform() {
     const vehicleId = event.target.name;
     const isChecked = event.target.checked;
     if (isChecked) {
-      setSelectedVehicles([...selectedVehicles, vehicleId]);
+      setSelectedVehicles([...selectedVehicles, { _id: vehicleId }]);
     } else {
       setSelectedVehicles(selectedVehicles.filter((id) => id !== vehicleId));
     }
   };
 
   const handleTripChange = (event, field) => {
+    const { name, value } = event.target;
     const updatedTrip = { ...trips };
-    updatedTrip[field] = event.target.value;
-    setTrips(updatedTrip);
+    if (field === "numVehiclesRequired") {
+      updatedTrip[field] = event.target.value;
+      setTrips(updatedTrip);
+    } else {
+      updatedTrip[field][name] = value;
+      setTrips(updatedTrip);
+    }
   };
 
   const handleAddTrip = () => {
     setSchedule([
       ...schedule,
       {
-        departingAddress: trips.departingAddress,
-        departingTime: trips.departingTime,
-        destinationAddress: trips.destinationAddress,
-        destinationTime: trips.destinationTime,
-        numberOfVehicles: trips.numberOfVehicles,
+        departing: {
+          address: trips.departing?.address,
+          time: trips.departing?.time,
+        },
+        destination: {
+          address: trips.destination?.address,
+          time: trips.destination?.time,
+        },
+        numVehiclesRequired: trips.numVehiclesRequired,
       },
     ]);
     setTrips({
-      departingAddress: "",
-      departingTime: "",
-      destinationAddress: "",
-      destinationTime: "",
-      numberOfVehicles: 1,
+      departing: {
+        address: "",
+        time: "",
+      },
+      destination: {
+        address: "",
+        time: "",
+      },
+      numVehiclesRequired: 1,
     });
     setShowModal(false);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log(selectedVehicles);
     const response = await api
       .post("/Schedule/work-day", {
         vehicles: selectedVehicles,
         trips: schedule,
       })
       .then((response) => {
-        console.log(response);
-        setSchedule(response.data);
+        console.log(response.data.createdTrips);
+        setSchedule(response.data?.createdTrips || []);
       });
   };
 
   return (
-    <Container>
+    <Container className="my-3">
       <Row>
         <Col>
           <Card>
-            <Card.Header>Service Schedule Form</Card.Header>
+            <Card.Header className="bg-primary text-light">
+              Service Schedule Form
+            </Card.Header>
             <Card.Body>
               <Form onSubmit={handleSubmit}>
                 <Form.Group>
                   <Form.Label>Select Vehicles:</Form.Label>
-                  <Button onClick={() => setShowVehicleModal(true)}>
+                  <Button
+                    variant="info"
+                    className="mx-2"
+                    onClick={() => setShowVehicleModal(true)}
+                  >
                     Choose Vehicles
                   </Button>
                   <Modal
@@ -132,7 +157,13 @@ function Servicescheduleform() {
                 </Form.Group>
                 <Form.Group>
                   <Form.Label>Add Trips:</Form.Label>
-                  <Button onClick={() => setShowModal(true)}>Add Trip</Button>
+                  <Button
+                    variant="info"
+                    className="mx-2"
+                    onClick={() => setShowModal(true)}
+                  >
+                    Add Trip
+                  </Button>
                   <Modal show={showModal} onHide={() => setShowModal(false)}>
                     <Modal.Header closeButton>
                       <Modal.Title>Add Trip</Modal.Title>
@@ -143,9 +174,10 @@ function Servicescheduleform() {
                         <Form.Control
                           type="text"
                           placeholder="Enter departing address"
-                          value={trips.departingAddress}
+                          name="address"
+                          value={trips.departing?.address}
                           onChange={(event) =>
-                            handleTripChange(event, "departingAddress")
+                            handleTripChange(event, "departing")
                           }
                         />
                       </Form.Group>
@@ -154,9 +186,10 @@ function Servicescheduleform() {
                         <Form.Control
                           type="time"
                           placeholder="Enter departing time"
-                          value={trips.departingTime}
+                          name="time"
+                          value={trips.departing?.time}
                           onChange={(event) =>
-                            handleTripChange(event, "departingTime")
+                            handleTripChange(event, "departing")
                           }
                         />
                       </Form.Group>
@@ -165,9 +198,10 @@ function Servicescheduleform() {
                         <Form.Control
                           type="text"
                           placeholder="Enter destination address"
-                          value={trips.destinationAddress}
+                          name="address"
+                          value={trips.destination?.address}
                           onChange={(event) =>
-                            handleTripChange(event, "destinationAddress")
+                            handleTripChange(event, "destination")
                           }
                         />
                       </Form.Group>
@@ -176,9 +210,10 @@ function Servicescheduleform() {
                         <Form.Control
                           type="time"
                           placeholder="Enter destination time"
-                          value={trips.destinationTime}
+                          name="time"
+                          value={trips.destination?.time}
                           onChange={(event) =>
-                            handleTripChange(event, "destinationTime")
+                            handleTripChange(event, "destination")
                           }
                         />
                       </Form.Group>
@@ -187,9 +222,10 @@ function Servicescheduleform() {
                         <Form.Control
                           type="number"
                           placeholder="Enter number of vehicles"
-                          value={trips.numberOfVehicles}
+                          value={trips.numVehiclesRequired}
+                          min="1"
                           onChange={(event) =>
-                            handleTripChange(event, "numberOfVehicles")
+                            handleTripChange(event, "numVehiclesRequired")
                           }
                         />
                       </Form.Group>
@@ -219,18 +255,18 @@ function Servicescheduleform() {
                     <tbody>
                       {schedule.map((trip, index) => (
                         <tr key={index}>
-                          <td>{trip.departingAddress}</td>
-                          <td>{trip.departingTime}</td>
-                          <td>{trip.destinationAddress}</td>
-                          <td>{trip.destinationTime}</td>
-                          <td>{trip.numberOfVehicles}</td>
+                          <td>{trip.departing?.address}</td>
+                          <td>{trip.departing?.time}</td>
+                          <td>{trip.destination?.address}</td>
+                          <td>{trip.destination?.time}</td>
+                          <td>{trip.numVehiclesRequired}</td>
                         </tr>
                       ))}
                     </tbody>
                   </Table>
                 </Form.Group>
                 <Button variant="primary" type="submit">
-                  Save
+                  Generate
                 </Button>
               </Form>
             </Card.Body>

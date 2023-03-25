@@ -9,6 +9,7 @@ import VehicleInfromation from "../../common/vehicle/DisplayVehicle";
 import RegisterVehicle from "../../common/vehicle/RegisterVehicle";
 import ServiceScheduleForm from "./ServiceScheduleForm";
 import TransferVehicle from "../../common/vehicle/TransferVehicle";
+import WorkdaySchedule from "../../common/schedule/Workday";
 
 const links = [
   {
@@ -107,7 +108,8 @@ const HeadOfDeploymentPage = () => {
         <Navbar links={links} title="TMS" />
       </div>
       <Routes>
-        <Route path="schedule/workday" element={<ServiceScheduleForm />} />
+        <Route path="schedule/workday" element={<WorkdaySchedule />} />
+        <Route path="schedule/workday-new" element={<ServiceScheduleForm />} />
         <Route path="report/weekly" element={<WeeklyReport />} />
         <Route path="report/daily" element={<DailyReport />} />
         <Route path="report/monthly" element={<MonthlyReport />} />
@@ -115,7 +117,6 @@ const HeadOfDeploymentPage = () => {
         <Route path="vehicles" element={<VehicleInfromation />} />
         <Route path="vehicles/Receive" element={<RegisterVehicle />} />
         <Route path="vehicles/Transfer" element={<TransferVehicle />} />
-
       </Routes>
     </div>
   );
