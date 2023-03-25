@@ -2,7 +2,7 @@ import React from "react";
 const WeeklyReport=()=>{
     return(
         <div>
-            Hello
+           <h2>Weekly Report</h2>
         </div>
     )
        
