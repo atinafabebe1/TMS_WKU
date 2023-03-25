@@ -9,6 +9,7 @@ import VehicleInfromation from "../../common/vehicle/DisplayVehicle";
 import RegisterVehicle from "../../common/vehicle/RegisterVehicle";
 import ServiceScheduleForm from "./ServiceScheduleForm";
 import TransferVehicle from "../../common/vehicle/TransferVehicle";
+import TrackVehicle from "../../common/vehicle/TrackVehicle";
 
 const links = [
   {
@@ -115,6 +116,7 @@ const HeadOfDeploymentPage = () => {
         <Route path="vehicles" element={<VehicleInfromation />} />
         <Route path="vehicles/Receive" element={<RegisterVehicle />} />
         <Route path="vehicles/Transfer" element={<TransferVehicle />} />
+        <Route path="vehicles/Track" element={<TrackVehicle />} />
 
       </Routes>
     </div>
