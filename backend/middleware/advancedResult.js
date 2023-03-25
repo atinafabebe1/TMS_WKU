@@ -11,7 +11,7 @@ const advancedResults = (model, populate, cacheDuration = 30 * 60) =>
     // Get the cache key from the request URL
     const cacheKey = `${
       req.originalUrl || req.url
-    }-${lastUpdated.updatedAt.getTime()}`;
+    }-${lastUpdated.updatedAt?.getTime()}`;
 
     // Check if the data is already cached
     const cachedData = cache.get(cacheKey);

@@ -1,57 +1,126 @@
+const { default: mongoose } = require("mongoose");
 const asyncHandler = require("../middleware/async");
 const Vehicle = require("../models/registerVehicle");
 const Trip = require("../models/serviceSchedule");
 const ErrorResponse = require("../utils/errorResponse");
 
+const getServiceSchedule = async (req, res, next) => {
+  res.status(200).json(res.advancedResults);
+};
+
 const createServiceSchedule = asyncHandler(async (req, res, next) => {
   const { vehicles, trips } = req.body;
   validateVehicles(vehicles);
   validateTrips(trips);
-  const createdtrips = await assignVehiclesToTrips(vehicles, trips);
-  res
-    .status(201)
-    .json({ createdtrips, message: "Schedule is succesfully created" });
+
+  const createdTrips = await assignVehiclesToTrips(vehicles, trips);
+  console.log(createdTrips);
+  res.status(201).json({
+    createdTrips,
+    message: "Schedule is succesfully created",
+  });
 });
 
+const dateString = "1997-03-25";
+let session;
 // One vehicle will be assigned for a trip at most once at a time.
-const assignVehiclesToTrips = async (vehicles, trips) => {
+const assignVehiclesToTrips = asyncHandler(async (vehicles, trips) => {
   const createdTrips = [];
-  for (const trip of trips) {
-    const selectedVehicles = await getVehicles(vehicles, trip);
-    if (selectedVehicles < trip.numVehiclesRequired) {
-      throw new ErrorResponse(
-        `Could not find enough vehicle for trip departing addres : ${trip.departing?.address}`,
-        500
+
+  try {
+    session = await mongoose.startSession();
+    session.startTransaction();
+
+    for (let trip of trips) {
+      const selectedVehicles = await getVehicles(vehicles, trip);
+
+      if (selectedVehicles.length < trip.numVehiclesRequired) {
+        await session.abortTransaction();
+        session.endSession();
+        throw new ErrorResponse(
+          `Could not find enough vehicles for trip departing address: ${trip.departing?.address}`,
+          500
+        );
+      }
+
+      trip.vehicles = selectedVehicles.map((vehicle) => vehicle.id);
+
+      const destinationTime = new Date(
+        `${dateString}T${trip.destination?.time ?? "00:00"}:00`
       );
-    }
-    trip.vehicles = selectedVehicles.map((vehicle) => vehicle.id);
+      const departingTime = new Date(
+        `${dateString}T${trip.departing?.time ?? "00:00"}:00`
+      );
 
-    const createdTrip = await Trip.create(trip);
-    createdTrips.push(createdTrip);
+      if (isNaN(departingTime.getTime()) || isNaN(destinationTime.getTime())) {
+        await session.abortTransaction();
+        session.endSession();
+        throw new ErrorResponse("Invalid time string", 403);
+      }
 
-    const departingTime = new Date(trip.departing?.time);
-    const destinationTime = new Date(trip.destination?.time);
-    if (isNaN(departingTime.getTime()) || isNaN(destinationTime.getTime())) {
-      throw new ErrorResponse("Invalid time string", 403);
-    }
-    const tripDuration = (destinationTime - departingTime) / (1000 * 60); // calculate the difference in minutes
-    for (const vehicle of selectedVehicles) {
-      await Vehicle.findByIdAndUpdate(vehicle.id, {
-        $push: {
-          assignedTrips: {
-            tripId: createdTrip._id,
-            duration: tripDuration,
+      const tripDuration = (destinationTime - departingTime) / (1000 * 60); // calculate the difference in minutes
+
+      const createdTrip = await Trip.create([trip], { session });
+      createdTrips.push(createdTrip);
+      for (let vehicle of selectedVehicles) {
+        const updatedVehicle = await Vehicle.findByIdAndUpdate(
+          vehicle.id,
+          {
+            $push: {
+              assignedTrips: {
+                tripId: createdTrip._id,
+                duration: tripDuration,
+              },
+            },
+            $inc: {
+              duration: tripDuration,
+            },
+            $set: {
+              location: trip.destination.address,
+            },
           },
-        },
-        $inc: {
-          duration: tripDuration,
-        },
-        location: trip.destination.address,
-      });
+          { session, new: true }
+        );
+
+        vehicle.duration += tripDuration; // update the duration field
+      }
     }
+
+    await session.commitTransaction();
+    session.endSession();
+    return createdTrips;
+  } catch (error) {
+    // if (session) {
+    //   await session.abortTransaction();
+    //   session.endSession();
+    // }
+
+    // Remove saved trips and updated vehicle information here
+    await Promise.all(
+      createdTrips.map(async (trip) => {
+        await Trip.findByIdAndDelete(trip._id);
+
+        const vehiclesToUpdate = await Vehicle.find({
+          _id: { $in: trip.vehicles },
+        });
+        await Promise.all(
+          vehiclesToUpdate.map(async (vehicle) => {
+            await Vehicle.findByIdAndUpdate(
+              vehicle.id,
+              {
+                $pull: { assignedTrips: { tripId: trip._id } },
+                $set: { location: vehicle.location, duration: 0 },
+              },
+              { session }
+            );
+          })
+        );
+      })
+    );
+
+    throw error;
   }
-  return createdTrips;
-};
+});
 
 // A vehicle assigned for a trip should have the same location as the departing address of that trip.
 // Vehicle assigning should be fair, each vehicle should be assigned, it shouldn't be assigned for another trip if there is a vehicle not assigned yet.
@@ -60,9 +129,12 @@ const getVehicles = async (vehicles, trip) => {
 
   // Iterate over the input vehicles and create instances of the Vehicle model for each one
   for (const vehicle of vehicles) {
-    const vehicleInstance = await Vehicle.findById(vehicle.id);
+    const vehicleInstance = await Vehicle.findById(vehicle._id).session(
+      session
+    );
     availableVehicles.push(vehicleInstance);
   }
+
   const filteredVehicles = await Promise.all(
     availableVehicles.map(async (vehicle) => {
       const assignForTrip = await Trip.find({
@@ -77,12 +149,17 @@ const getVehicles = async (vehicles, trip) => {
       }
 
       const overlap = assignForTrip.some((assignedTrip) => {
-        const tripDepartingTime = new Date(trip.departing?.time);
-        const tripDestinationTime = new Date(trip.destination?.time);
-
-        const assignedDepartingTime = new Date(assignedTrip.departing?.time);
+        const tripDepartingTime = new Date(
+          `${dateString}T${trip.departing?.time ?? "00:00"}:00`
+        );
+        const tripDestinationTime = new Date(
+          `${dateString}T${trip.destination?.time ?? "00:00"}:00`
+        );
+        const assignedDepartingTime = new Date(
+          `${dateString}T${assignedTrip.departing?.time ?? "00:00"}:00`
+        );
         const assignedDestinationTime = new Date(
-          assignedTrip.destination?.time
+          `${dateString}T${assignedTrip.destination?.time ?? "00:00"}:00`
         );
 
         const tripOverlapDuration =
@@ -101,11 +178,11 @@ const getVehicles = async (vehicles, trip) => {
       return true;
     })
   );
-
   const selectedVehicles = availableVehicles
     .filter((vehicle, index) => filteredVehicles[index])
     .sort((a, b) => a.duration - b.duration)
     .slice(0, trip.numVehiclesRequired);
+
   return selectedVehicles;
 };
 
@@ -138,4 +215,5 @@ const validateTrips = (trips) => {
 
 module.exports = {
   createServiceSchedule,
+  getServiceSchedule,
 };
