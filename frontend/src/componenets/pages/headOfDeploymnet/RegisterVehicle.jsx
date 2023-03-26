@@ -47,7 +47,7 @@ const RegisterVehicle = () => {
       assignedTo,
     };
     try {
-      const response = await api.post("/VehicleRecord", formData);
+      const response = await api.post("VehicleRecord", formData);
       if (response.data.success) {
         setSuccess(response.data.message);
         setError(null);
@@ -122,7 +122,7 @@ const RegisterVehicle = () => {
             <span> </span>
             <Form.Label>CC</Form.Label>
             <Form.Control
-              type="text"
+              type="number"
               required
               minLength={3}
               maxLength={25}
@@ -150,7 +150,7 @@ const RegisterVehicle = () => {
               <Form.Label className="font-weight-bold">Type Of Fuel</Form.Label>
               <Form.Control
                 as="select"
-                type="name"
+                type="text"
                 placeholder="Choose"
                 required
                 value={typeOfFuel}
