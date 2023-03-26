@@ -32,6 +32,7 @@ const VehicleList = () => {
     setShowModal(false);
     setSelectedVehicle(null);
   };
+  
 
   const handleSave = (vehicle) => {
     const updatedVehicles = vehicles.map((v) =>

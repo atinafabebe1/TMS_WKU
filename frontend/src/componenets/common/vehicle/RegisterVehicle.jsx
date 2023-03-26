@@ -5,7 +5,7 @@ import api from "../../../api/api";
 const RegisterVehicle = () => {
 
   const [modelNo, setModelNo] = useState("");
-  const [chassisNo, setCHassisNo] = useState("");
+  const [chassisNo, setChassisNo] = useState("");
   const [motorNo, setMotorNo] = useState("");
   const [cC, setCC] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
@@ -61,7 +61,6 @@ const RegisterVehicle = () => {
       setSuccess(null);
     }
   };
-
   return (
     <Container breakpoint="lg">
       <Form
@@ -85,8 +84,8 @@ const RegisterVehicle = () => {
             <Form.Control
               type="number"
               required
-              minLength={3}
-              maxLength={25}
+              min={1000}
+              max={9999}
               value={modelNo}
               onChange={(e) => setModelNo(e.target.value)}
             />
@@ -98,11 +97,10 @@ const RegisterVehicle = () => {
             <Form.Control
               type="number"
               required
-              minLength={3}
-              maxLength={25}
+              min={100000}
+              max={999999}
               value={chassisNo}
-              onChange={(e) => setCHassisNo(e.target.value)}
-
+              onChange={(e) => setChassisNo(e.target.value)}
             />
           </Form.Group>
           <Form.Group as={Col} controlId="motornumber">
@@ -137,7 +135,7 @@ const RegisterVehicle = () => {
             <span> </span>
             <Form.Label>plate Number</Form.Label>
             <Form.Control
-              type="number"
+              type="string"
               required
               min={0}
               minLength={3}
@@ -147,19 +145,29 @@ const RegisterVehicle = () => {
 
             />
           </Form.Group>
-          <Form.Group as={Col} controlId="typeoffuel">
-            <span> </span>
-            <Form.Label>Type Of Fuel</Form.Label>
-            <Form.Control
-              type="name"
-              required
-              minLength={3}
-              maxLength={25}
-              value={typeOfFuel}
-              onChange={(e) => setTypeOfFuel(e.target.value)}
-
-            />
-          </Form.Group>
+    
+          <Form.Group as={Col} controlId="role">
+              <Form.Label className="font-weight-bold">Type Of Fuel</Form.Label>
+              <Form.Control
+                as="select"
+                type="name"
+                placeholder="Choose"
+                required
+                value={typeOfFuel}
+                onChange={(e) => setTypeOfFuel(e.target.value)}
+              >
+                
+                <option value="diesel">Diesel</option>
+                <option value="benzene">Benzene</option>
+                <option value="motorOil">Motor Oil</option>
+                <option value="frenOil">Fren Oil</option>
+                <option value="grease">Grease</option>
+                <option value="otherOil">
+                Other Oil
+                </option>
+                
+              </Form.Control>
+            </Form.Group>
         </Row>
         <br></br>
         <h5>Purchasing Information</h5>
@@ -246,7 +254,8 @@ const RegisterVehicle = () => {
 
         <h5>Proprietary Information</h5>
         <hr></hr>
-        <Form.Group className="mb-3" controlId="proprietaryIdNumber">
+        <Row className="mb-3">
+        <Form.Group as={Col} controlId="proprietaryIdNumber">
           <span> </span>
           <Form.Label>Proprietary Id Number</Form.Label>
           <Form.Control
@@ -258,21 +267,20 @@ const RegisterVehicle = () => {
 
           />
         </Form.Group>
-        <Row>
+       
         <Form.Group as={Col} controlId="assignedTo">
             <span> </span>
             <Form.Label>Assigned to</Form.Label>
             <Form.Control
-              type="number"
+              type="text"
               required
               minLength={3}
-              maxLength={25}
+              maxLength={100}
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
-
             />
           </Form.Group>
-        <Form.Group className="mb-3" controlId="vehicleimage">
+        <Form.Group as={Col} controlId="vehicleimage">
           <span> </span>
           <Form.Label>Vehicle Image</Form.Label>
           <Form.Control
@@ -285,6 +293,8 @@ const RegisterVehicle = () => {
           />
         </Form.Group>
         </Row>
+        {error && <p className="text-danger my-2">{error}</p>}
+            {success && <p className="text-success my-2">{success}</p>}
         <Button variant="primary" type="submit">
           Register
         </Button>
