@@ -6,9 +6,9 @@ import DailyReport from "../../common/report/dailyReport";
 import MonthlyReport from "../../common/report/monthlyReport";
 import EmmergencyReport from "../../common/report/emmergencyReport";
 import VehicleInfromation from "../../common/vehicle/DisplayVehicle";
-import RegisterVehicle from "../../common/vehicle/RegisterVehicle";
+import RegisterVehicle from "./RegisterVehicle";
 import ServiceScheduleForm from "./ServiceScheduleForm";
-import TransferVehicle from "../../common/vehicle/TransferVehicle";
+import TransferVehicle from "./TransferVehicle";
 import TrackVehicle from "../../common/vehicle/TrackVehicle";
 import Complain from "./Complain";
 const links = [
@@ -30,15 +30,15 @@ const links = [
       },
       {
         name: "Track Vehicle",
-        url: "hd/vehicles/Track",
+        url: "/hd/vehicles/Track",
       },
       {
         name: "Assign Vehicle",
-        url: "hd/vehicles/Assign",
+        url: "/hd/vehicles/Assign",
       },
       {
         name: "Transfer Vehicle",
-        url: "hd/vehicles/Transfer",
+        url: "/hd/vehicles/Transfer",
       },
     ],
   },
@@ -80,19 +80,19 @@ const links = [
     children: [
       {
         name: "Monthly",
-        url: "hd/report/monthly",
+        url: "/hd/report/monthly",
       },
       {
         name: "Daily",
-        url: "hd/report/daily",
+        url: "/hd/report/daily",
       },
       {
         name: "Weekly",
-        url: "hd/report/weekly",
+        url: "/hd/report/weekly",
       },
       {
         name: "Emergency",
-        url: "hd/report/emmergency",
+        url: "/hd/report/emmergency",
       },
     ],
   },

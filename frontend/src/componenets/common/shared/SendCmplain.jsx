@@ -9,8 +9,6 @@ const SendComplain = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
  
-
-
   const handleSubmit = async (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
