@@ -9,6 +9,8 @@ import VehicleInfromation from "../../common/vehicle/DisplayVehicle";
 import RegisterVehicle from "../../common/vehicle/RegisterVehicle";
 import ServiceScheduleForm from "./ServiceScheduleForm";
 import TransferVehicle from "../../common/vehicle/TransferVehicle";
+import TrackVehicle from "../../common/vehicle/TrackVehicle";
+import Complain from "./Complain";
 import WorkdaySchedule from "../../common/schedule/Workday";
 
 const links = [
@@ -98,7 +100,7 @@ const links = [
   },
   {
     name: "Complain",
-    url: "/complain",
+    url: "/hd/complain",
   },
 ];
 const HeadOfDeploymentPage = () => {
@@ -117,6 +119,8 @@ const HeadOfDeploymentPage = () => {
         <Route path="vehicles" element={<VehicleInfromation />} />
         <Route path="vehicles/Receive" element={<RegisterVehicle />} />
         <Route path="vehicles/Transfer" element={<TransferVehicle />} />
+        <Route path="vehicles/Track" element={<TrackVehicle />} />
+        <Route path="complain" element={<Complain />} />
       </Routes>
     </div>
   );

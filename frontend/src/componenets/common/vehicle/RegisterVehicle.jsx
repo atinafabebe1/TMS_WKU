@@ -3,34 +3,24 @@ import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import api from "../../../api/api";
 
 const RegisterVehicle = () => {
-  const [vehicle, setVehicle] = useState({
-    modelNo: "",
-    chassisNo: "",
-    motorNo: "",
-    cC: "",
-    purchasePrice: "",
-    plateNumber: "",
-    typeOfFuel: "",
-    purchasedDate: "",
-    maxPerson: "",
-    maxLoad: "",
-    maxLitres: "",
-    proprietaryIdNumber: "",
-    vehicleImage: "",
-    assignedTo: "",
-  });
 
-  const [succes, setSucces] = useState(null);
+  const [modelNo, setModelNo] = useState("");
+  const [chassisNo, setChassisNo] = useState("");
+  const [motorNo, setMotorNo] = useState("");
+  const [cC, setCC] = useState("");
+  const [purchasePrice, setPurchasePrice] = useState("");
+  const [plateNumber, setPlateNumber] = useState("");
+  const [typeOfFuel, setTypeOfFuel] = useState("");
+  const [purchasedDate, setPurchasedDate] = useState("");
+  const [maxPerson, setMaxPerson] = useState("");
+  const [maxLoad, setMaxLoad] = useState("");
+  const [maxLitres, setMaxLitres] = useState("");
+  const [proprietaryIdNumber, setProprietaryIdNumber] = useState("");
+  const [vehicleImage, setVehicleImage] = useState("");
+  const [assignedTo, setAssignedTo] = useState("");
+  const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const [validated, setValidated] = useState(false);
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setVehicle((prevVehicle) => ({
-      ...prevVehicle,
-      [name]: value,
-    }));
-  };
 
   const handleSubmit = async (event) => {
     const form = event.currentTarget;
@@ -40,23 +30,37 @@ const RegisterVehicle = () => {
     }
     setValidated(true);
     event.preventDefault();
-    const vehicleInfo = { ...vehicle };
-    await api
-      .post("/VehicleRecord", { ...vehicleInfo })
-      .then((response) => {
-        if (response.success) {
-          setSucces(response.data?.message);
-          setError(null);
-        } else {
-        }
-      })
-      .catch((err) => {
-        console.log(err.response);
-        setError(err.response.data?.error);
-        setSucces(null);
-      });
+    const formData = {
+      modelNo,
+      chassisNo,
+      motorNo,
+      cC,
+      purchasePrice,
+      plateNumber,
+      typeOfFuel,
+      purchasedDate,
+      maxPerson,
+      maxLoad,
+      maxLitres,
+      proprietaryIdNumber,
+      vehicleImage,
+      assignedTo,
+    };
+    try {
+      const response = await api.post("/VehicleRecord", formData);
+      if (response.data.success) {
+        setSuccess(response.data.message);
+        setError(null);
+      } else {
+        setError(response.data.error);
+        setSuccess(null);
+      }
+    } catch (err) {
+      console.log(err.response);
+      setError(err.response.data.error);
+      setSuccess(null);
+    }
   };
-
   return (
     <Container breakpoint="lg">
       <Form
@@ -65,6 +69,7 @@ const RegisterVehicle = () => {
         validated={validated}
         checkValidity
         onSubmit={handleSubmit}
+        
       >
         <Row className="mb-3">
           <h3>Vehicle Registration Form</h3>
@@ -79,10 +84,10 @@ const RegisterVehicle = () => {
             <Form.Control
               type="number"
               required
-              minLength={3}
-              maxLength={25}
-              value={vehicle.modelNo}
-              onChange={handleChange}
+              min={1000}
+              max={9999}
+              value={modelNo}
+              onChange={(e) => setModelNo(e.target.value)}
             />
           </Form.Group>
           <Form.Group as={Col} controlId="chassisnumber">
@@ -92,10 +97,10 @@ const RegisterVehicle = () => {
             <Form.Control
               type="number"
               required
-              minLength={3}
-              maxLength={25}
-              value={vehicle.chassisNo}
-              onChange={handleChange}
+              min={100000}
+              max={999999}
+              value={chassisNo}
+              onChange={(e) => setChassisNo(e.target.value)}
             />
           </Form.Group>
           <Form.Group as={Col} controlId="motornumber">
@@ -106,8 +111,9 @@ const RegisterVehicle = () => {
               required
               minLength={3}
               maxLength={25}
-              value={vehicle.motorNo}
-              onChange={handleChange}
+              value={motorNo}
+              onChange={(e) => setMotorNo(e.target.value)}
+
             />
           </Form.Group>
         </Row>
@@ -120,35 +126,48 @@ const RegisterVehicle = () => {
               required
               minLength={3}
               maxLength={25}
-              value={vehicle.cC}
-              onChange={handleChange}
+              value={cC}
+              onChange={(e) => setCC(e.target.value)}
+
             />
           </Form.Group>
           <Form.Group as={Col} controlId="platenumber">
             <span> </span>
             <Form.Label>plate Number</Form.Label>
             <Form.Control
-              type="number"
+              type="string"
               required
               min={0}
               minLength={3}
               maxLength={25}
-              value={vehicle.plateNumber}
-              onChange={handleChange}
+              value={plateNumber}
+              onChange={(e) => setPlateNumber(e.target.value)}
+
             />
           </Form.Group>
-          <Form.Group as={Col} controlId="typeoffuel">
-            <span> </span>
-            <Form.Label>Type Of Fuel</Form.Label>
-            <Form.Control
-              type="name"
-              required
-              minLength={3}
-              maxLength={25}
-              value={vehicle.typeOfFuel}
-              onChange={handleChange}
-            />
-          </Form.Group>
+    
+          <Form.Group as={Col} controlId="role">
+              <Form.Label className="font-weight-bold">Type Of Fuel</Form.Label>
+              <Form.Control
+                as="select"
+                type="name"
+                placeholder="Choose"
+                required
+                value={typeOfFuel}
+                onChange={(e) => setTypeOfFuel(e.target.value)}
+              >
+                
+                <option value="diesel">Diesel</option>
+                <option value="benzene">Benzene</option>
+                <option value="motorOil">Motor Oil</option>
+                <option value="frenOil">Fren Oil</option>
+                <option value="grease">Grease</option>
+                <option value="otherOil">
+                Other Oil
+                </option>
+                
+              </Form.Control>
+            </Form.Group>
         </Row>
         <br></br>
         <h5>Purchasing Information</h5>
@@ -163,8 +182,9 @@ const RegisterVehicle = () => {
               required
               min={1}
               maxLength={10}
-              value={vehicle.purchasePrice}
-              onChange={handleChange}
+              value={purchasePrice}
+              onChange={(e) => setPurchasePrice(e.target.value)}
+
             />
           </Form.Group>
           <Form.Group as={Col} controlId="duedate">
@@ -175,8 +195,9 @@ const RegisterVehicle = () => {
               type="date"
               name="purchaseddates"
               required
-              value={vehicle.purchasedDate}
-              onChange={handleChange}
+              value={purchasedDate}
+              onChange={(e) => setPurchasedDate(e.target.value)}
+
             />
           </Form.Group>
         </Row>
@@ -194,8 +215,9 @@ const RegisterVehicle = () => {
               required
               min={0}
               max={80}
-              value={vehicle.maxPerson}
-              onChange={handleChange}
+              value={maxPerson}
+              onChange={(e) => setMaxPerson(e.target.value)}
+
             />
           </Form.Group>
           <Form.Group as={Col} controlId="person">
@@ -207,8 +229,9 @@ const RegisterVehicle = () => {
               required
               min={0}
               max={5000}
-              value={vehicle.maxLoad}
-              onChange={handleChange}
+              value={maxLoad}
+              onChange={(e) => setMaxLoad(e.target.value)}
+
             />
           </Form.Group>
           <Form.Group as={Col} controlId="Adress">
@@ -220,8 +243,9 @@ const RegisterVehicle = () => {
               required
               min={0}
               max={5000}
-              value={vehicle.maxLitres}
-              onChange={handleChange}
+              value={maxLitres}
+              onChange={(e) => setMaxLitres(e.target.value)}
+
             />
           </Form.Group>
         </Row>
@@ -230,29 +254,47 @@ const RegisterVehicle = () => {
 
         <h5>Proprietary Information</h5>
         <hr></hr>
-        <Form.Group className="mb-3" controlId="proprietaryIdNumber">
+        <Row className="mb-3">
+        <Form.Group as={Col} controlId="proprietaryIdNumber">
           <span> </span>
           <Form.Label>Proprietary Id Number</Form.Label>
           <Form.Control
             type="number"
             name="proprietaryIdNumber"
             required
-            value={vehicle.proprietaryIdNumber}
-            onChange={handleChange}
+            value={proprietaryIdNumber}
+            onChange={(e) => setProprietaryIdNumber(e.target.value)}
+
           />
         </Form.Group>
-
-        <Form.Group className="mb-3" controlId="vehicleimage">
+       
+        <Form.Group as={Col} controlId="assignedTo">
+            <span> </span>
+            <Form.Label>Assigned to</Form.Label>
+            <Form.Control
+              type="text"
+              required
+              minLength={3}
+              maxLength={100}
+              value={assignedTo}
+              onChange={(e) => setAssignedTo(e.target.value)}
+            />
+          </Form.Group>
+        <Form.Group as={Col} controlId="vehicleimage">
           <span> </span>
           <Form.Label>Vehicle Image</Form.Label>
           <Form.Control
             type="file"
             accept="image/*"
             name="vehicleimage"
-            value={vehicle.vehicleImage}
-            onChange={handleChange}
+            value={vehicleImage}
+            onChange={(e) => setVehicleImage(e.target.value)}
+
           />
         </Form.Group>
+        </Row>
+        {error && <p className="text-danger my-2">{error}</p>}
+            {success && <p className="text-success my-2">{success}</p>}
         <Button variant="primary" type="submit">
           Register
         </Button>
