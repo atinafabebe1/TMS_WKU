@@ -8,20 +8,23 @@ const VehicleList = () => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [confirmPlateNumber, setConfirmPlateNumber] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [error, setError]= useState(null);
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        api.get("VehicleRecord").then((response) => {
-          console.log(response);
-          setVehicles(response.data?.data);
-        });
+        const response = await api.get("VehicleRecord");
+        console.log(response);
+        setVehicles(response.data?.data);
+        setIsLoading(false);
       } catch (error) {
-        console.error(error);
+        setError(error);
       }
     };
     fetchData();
   }, []);
+
 
   const handleEdit = (vehicle) => {
     setSelectedVehicle(vehicle);
@@ -32,6 +35,7 @@ const VehicleList = () => {
     setShowModal(false);
     setSelectedVehicle(null);
   };
+  
 
   const handleSave = (vehicle) => {
     const updatedVehicles = vehicles.map((v) =>
@@ -72,7 +76,10 @@ const VehicleList = () => {
 
   return (
     <>
+    {error && <p style={{color: "red"}}>{error}</p>}
+    
       <Table striped bordered hover>
+      {isLoading && <p><strong>Loading...</strong></p>}
         <thead>
           <tr>
             <th>Plate Number</th>
@@ -85,7 +92,7 @@ const VehicleList = () => {
           {vehicles.map((vehicle) => (
             <tr key={vehicle._id}>
               <td>{vehicle.plateNumber}</td>
-              <td>{vehicle.chassisNo}</td>
+              <td>{vehicle.modelNo}</td>
               <td>{vehicle.typeOfFuel}</td>
               <td>
                 <Button
