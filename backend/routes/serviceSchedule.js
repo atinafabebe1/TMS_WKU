@@ -19,7 +19,7 @@ router.post(
 
 router.get(
   "/work-day",
-  advancedResult(ServiceSchedule, ""),
+  advancedResult(ServiceSchedule, "vehicles"),
   getServiceSchedule
 );
 

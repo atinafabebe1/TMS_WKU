@@ -1,6 +1,7 @@
 const { ROLE_HEADOFDEPLOYMENT, ROLE_DIRECTOR } = require("../constants");
 const asyncHandler = require("./async");
 const NodeCache = require("node-cache");
+const queryString = require("querystring");
 
 // Create a new cache instance
 const cache = new NodeCache();
@@ -9,6 +10,7 @@ const advancedResults = (model, populate, cacheDuration = 30 * 60) =>
   asyncHandler(async (req, res, next) => {
     const lastUpdated = await model.findOne().sort("-updatedAt");
     // Get the cache key from the request URL
+    console.log(req.url);
     const cacheKey = `${
       req.originalUrl || req.url
     }-${lastUpdated.updatedAt?.getTime()}`;
@@ -32,12 +34,16 @@ const advancedResults = (model, populate, cacheDuration = 30 * 60) =>
 
     // Create query string
     let queryStr = JSON.stringify(reqQuery);
-
-    // Create operators ($gt, $gte, etc)
+    console.log("queryStr:", queryStr);
     queryStr = queryStr.replace(
       /\b(gt|gte|lt|lte|in)\b/g,
       (match) => `$${match}`
     );
+    // // Create operators ($gt, $gte, etc)
+    // queryStr = queryStr.replace(
+    //   /\b(gt|gte|lt|lte|in)\b/g,
+    //   (match) => `$${match}`
+    // );
 
     // Finding resource
     query = model.find(JSON.parse(queryStr));

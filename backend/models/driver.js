@@ -20,6 +20,10 @@ const DriverInfoSchema = new Schema({
       },
     },
   ],
+  timesAssigned: {
+    type: Number,
+    default: 0,
+  },
 });
 
 module.exports = DriverInfoSchema;

@@ -1,5 +1,8 @@
 import React from "react";
 import Navbar from "../../common/header/Navbar";
+import { Routes, Route } from "react-router-dom";
+import VehiclesRequests from "../../common/vehicle/vehiclerequest";
+import { useAuth } from "../../../context/AuthContext";
 
 const links = [
   {
@@ -7,16 +10,12 @@ const links = [
     url: "/director",
   },
   {
-    name: "Vehicles",
-    url: "/vehicles",
-  },
-  {
     name: "Requests",
-    url: "/request",
+    url: "/requests",
     children: [
       {
         name: "Vehicle",
-        url: "/request/vehicle",
+        url: "/vp/request/vehicle",
       },
       {
         name: "Fuel",
@@ -46,15 +45,20 @@ const links = [
       },
     ],
   },
-  {
-    name: "Logout",
-    url: "/logout",
-  },
 ];
+
 const VicePresidentPage = () => {
+  const { user } = useAuth();
+  console.log(user);
   return (
     <div>
       <Navbar links={links} title="TMS" />
+      <Routes>
+        <Route
+          path="request/vehicle"
+          element={<VehiclesRequests link={`/Request/vehicle`} />}
+        />
+      </Routes>
     </div>
   );
 };

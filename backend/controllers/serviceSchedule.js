@@ -61,6 +61,7 @@ const assignVehiclesToTrips = asyncHandler(async (vehicles, trips) => {
       const tripDuration = (destinationTime - departingTime) / (1000 * 60); // calculate the difference in minutes
 
       const createdTrip = await Trip.create([trip], { session });
+      console.log(createdTrip);
       createdTrips.push(createdTrip);
       for (let vehicle of selectedVehicles) {
         const updatedVehicle = await Vehicle.findByIdAndUpdate(
@@ -182,7 +183,7 @@ const getVehicles = async (vehicles, trip) => {
     .filter((vehicle, index) => filteredVehicles[index])
     .sort((a, b) => a.duration - b.duration)
     .slice(0, trip.numVehiclesRequired);
-
+  console.log(selectedVehicles);
   return selectedVehicles;
 };
 

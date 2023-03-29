@@ -11,14 +11,14 @@ const VehicleRequestSchema = new Schema(
       required: true,
       immutable: true,
     },
-    recieverId: {
+    driver: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      // required: true,
     },
     vehicle: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "RegisterVehicle",
+      ref: "VehicleRecord",
       required: true,
     },
     plateNumber: {
@@ -33,11 +33,12 @@ const VehicleRequestSchema = new Schema(
         message: (props) => `${props.value} is not a valid plate number`,
       },
     },
+    passengers: [{ name: { type: String } }],
     destination: {
       type: String,
       required: true,
     },
-    purpose: {
+    reason: {
       type: String,
       required: true,
     },
@@ -49,6 +50,28 @@ const VehicleRequestSchema = new Schema(
       to: {
         type: Date,
         required: true,
+      },
+    },
+    firstApproval: {
+      approver: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      status: {
+        type: String,
+        enum: ["pending", "approved", "rejected"],
+        default: "pending",
+      },
+    },
+    secondApproval: {
+      approver: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      status: {
+        type: String,
+        enum: ["pending", "approved", "rejected"],
+        default: "pending",
       },
     },
     status: {
@@ -73,6 +96,22 @@ const VehicleRequestSchema = new Schema(
   },
   { timestamps: true }
 );
+
+VehicleRequestSchema.pre("save", async function (next) {
+  // Check if both firstApproval and secondApproval are approved
+  if (
+    this.firstApproval.status === "approved" &&
+    this.secondApproval.status === "approved"
+  ) {
+    this.status = "approved";
+  } else if (
+    this.firstApproval.status === "rejected" ||
+    this.secondApproval.status === "rejected"
+  ) {
+    this.status = "rejected";
+  }
+  next();
+});
 
 VehicleRequestSchema.pre("save", async function (next) {
   const vehicle = await this.model("VehicleRecord").findOne({

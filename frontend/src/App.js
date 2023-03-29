@@ -61,7 +61,7 @@ function App() {
             element={<PrivateRoute role={ROLE_DRIVER} element={DriverPage} />}
           />
           <Route
-            path="/employee"
+            path="/employee/*"
             element={
               <PrivateRoute role={ROLE_EMPLOYEE} element={EmployeePage} />
             }
@@ -88,7 +88,7 @@ function App() {
             }
           />
           <Route
-            path="/vp"
+            path="/vp/*"
             element={
               <PrivateRoute
                 role={ROLE_VICEPRESIDENT}

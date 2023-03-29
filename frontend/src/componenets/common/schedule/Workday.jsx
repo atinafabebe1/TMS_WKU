@@ -8,14 +8,16 @@ const ScheduleTable = () => {
   const [schedules, setSchedules] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  let count = 1;
 
   useEffect(() => {
     // Fetch schedules from the server and update state
     const fetch = async () => {
-      await api.get("/schedule/work-day").then((res) => {
+      const response = await api.get("/schedule/work-day").then((res) => {
         console.log(res);
         setSchedules(res.data?.data);
       });
+      console.log(response.data?.data?.vehicles);
     };
     fetch();
   }, []);
@@ -52,21 +54,27 @@ const ScheduleTable = () => {
       >
         <thead>
           <tr>
-            <th>Trip ID</th>
-            <th>Departure</th>
-            <th>Destination</th>
-            <th>Number of Vehicles Required</th>
+            <th>#</th>
+            <th>Departure Address</th>
+            <th>Departure Time</th>
+            <th>Destination Address</th>
+            <th>Destination Time</th>
             <th>Vehicles Assigned</th>
           </tr>
         </thead>
         <tbody>
           {schedules.map((schedule) => (
             <tr key={schedule._id}>
-              <td>{schedule._id}</td>
+              <td>{count++}</td>
               <td>{schedule.departing?.address}</td>
+              <td>{schedule.departing?.time}</td>
               <td>{schedule.destination?.address}</td>
-              <td>{schedule.numVehiclesRequired}</td>
-              <td>{schedule.vehicles.join(", ")}</td>
+              <td>{schedule.destination?.time}</td>
+              <td>
+                {schedule.vehicles
+                  .map((vehicle) => vehicle.plateNumber)
+                  .join(", ")}
+              </td>
             </tr>
           ))}
         </tbody>

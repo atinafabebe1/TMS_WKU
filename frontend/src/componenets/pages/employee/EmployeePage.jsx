@@ -1,60 +1,30 @@
 import React from "react";
 import Navbar from "../../common/header/Navbar";
-
+import VehicleRequestForm from "../../common/vehicle/requestform";
+import { Routes, Route } from "react-router-dom";
 const links = [
   {
     name: "Home",
-    url: "/director",
+    url: "/employee",
   },
   {
-    name: "Vehicles",
-    url: "/vehicles",
-  },
-  {
-    name: "Requests",
+    name: "Request",
     url: "/request",
     children: [
       {
         name: "Vehicle",
-        url: "/request/vehicle",
-      },
-      {
-        name: "Fuel",
-        url: "/request/fuel",
-      },
-      {
-        name: "Maintenance",
-        url: "/request/maintenance",
+        url: "/employee/request/vehicle",
       },
     ],
-  },
-  {
-    name: "Report",
-    url: "/report",
-    children: [
-      {
-        name: "Monthly",
-        url: "/report/monthly",
-      },
-      {
-        name: "Weekly",
-        url: "/report/weekly",
-      },
-      {
-        name: "Emergency",
-        url: "/report/weekly",
-      },
-    ],
-  },
-  {
-    name: "Logout",
-    url: "/logout",
   },
 ];
 const EmployeePage = () => {
   return (
     <div>
       <Navbar links={links} title="TMS" />
+      <Routes>
+        <Route path="request/vehicle" element={<VehicleRequestForm />} />
+      </Routes>
     </div>
   );
 };

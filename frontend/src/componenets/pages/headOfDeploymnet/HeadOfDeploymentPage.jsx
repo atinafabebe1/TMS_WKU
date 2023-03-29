@@ -10,6 +10,8 @@ import RegisterVehicle from "../../common/vehicle/RegisterVehicle";
 import ServiceScheduleForm from "./ServiceScheduleForm";
 import TransferVehicle from "../../common/vehicle/TransferVehicle";
 import WorkdaySchedule from "../../common/schedule/Workday";
+import VehiclesRequests from "../../common/vehicle/vehiclerequest";
+import { useAuth } from "../../../context/AuthContext";
 
 const links = [
   {
@@ -43,12 +45,12 @@ const links = [
     ],
   },
   {
-    name: "Approve",
-    url: "/approve",
+    name: "Requests",
+    url: "/requests",
     children: [
       {
         name: "Vehicle",
-        url: "/request/vehicle",
+        url: "/hd/request/vehicle",
       },
       {
         name: "Fuel",
@@ -96,12 +98,9 @@ const links = [
       },
     ],
   },
-  {
-    name: "Complain",
-    url: "/complain",
-  },
 ];
 const HeadOfDeploymentPage = () => {
+  const { user } = useAuth();
   return (
     <div>
       <div className="mb-3">
@@ -117,6 +116,10 @@ const HeadOfDeploymentPage = () => {
         <Route path="vehicles" element={<VehicleInfromation />} />
         <Route path="vehicles/Receive" element={<RegisterVehicle />} />
         <Route path="vehicles/Transfer" element={<TransferVehicle />} />
+        <Route
+          path="request/vehicle"
+          element={<VehiclesRequests link={`/Request/vehicle`} />}
+        />{" "}
       </Routes>
     </div>
   );

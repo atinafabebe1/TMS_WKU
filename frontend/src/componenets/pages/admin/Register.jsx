@@ -260,7 +260,6 @@ const RegisterForm = () => {
               <Form.Label className="font-weight-bold">Photo</Form.Label>
               <Form.Control
                 type="file"
-                required
                 accept="image/*"
                 name="photo"
                 onChange={handleChange}

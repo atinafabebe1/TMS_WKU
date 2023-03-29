@@ -3,6 +3,12 @@ const VehicleRecord = require("../models/registerVehicle");
 const mongoose = require("mongoose");
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
+const {
+  ROLE_HEADOFDEPLOYMENT,
+  ROLE_VICEPRESIDENT,
+  ROLE_DRIVER,
+} = require("../constants");
+const User = require("../models/user");
 
 // @desc      Get all Vehicle Request
 // @route     GET /Request/Vehicle
@@ -15,13 +21,72 @@ const getvehicleRequests = asyncHandler(async (req, res) => {
 // @route     Post /Request/Vehicle/:recieverID
 // @access    Private/Employee/Driver
 const createvehicleRequest = asyncHandler(async (req, res, next) => {
-  // req.body.user = req.user.id;
-  req.body.user = "63fa0c555c27f376fef9a0fe";
+  delete req.body.firstApproval;
+  delete req.body.secondApproval;
+
+  req.body.user = req.user.id;
 
   let vehicle = await VehicleRequestSchema.getVehicleByPlateNumber(
     req.body.plateNumber
   );
 
+  let receivers = await User.find({
+    role: { $in: [ROLE_HEADOFDEPLOYMENT, ROLE_VICEPRESIDENT] },
+    isActive: true,
+  });
+  let driver;
+  if (req.body.driver === "selectDriver") {
+    // If the user wants a driver assigned, find an available driver
+    const fromDate = new Date(req.body.date.from).toISOString();
+    const toDate = new Date(req.body.date.to).toISOString();
+    console.log(fromDate);
+    console.log(toDate);
+    const availableDrivers = await User.find({
+      role: ROLE_DRIVER,
+      "driverinfo.unavailable": {
+        $not: {
+          $elemMatch: {
+            $or: [{ from: { $lte: toDate } }, { to: { $gte: fromDate } }],
+          },
+        },
+      },
+    }).populate("driverinfo");
+
+    if (availableDrivers.length === 0) {
+      return next(new ErrorResponse("Driver not found", 404));
+    }
+
+    // Sort the available drivers by the number of times they have been assigned a vehicle
+    availableDrivers.sort((a, b) => {
+      const timesAssignedA = a.driverinfo.timesAssigned || 0;
+      const timesAssignedB = b.driverinfo.timesAssigned || 0;
+      return timesAssignedA - timesAssignedB;
+    });
+
+    // Assign the vehicle to the driver who has been assigned the least number of times
+    driver = availableDrivers[0]?._id;
+  } else {
+    // If the user will drive themselves, set the driver to the current user
+    driver = req.user.id;
+  }
+  req.body.driver = driver;
+
+  const headOfDeployment = receivers.find(
+    (receiver) => receiver.role === ROLE_HEADOFDEPLOYMENT
+  );
+  if (headOfDeployment == undefined) {
+    return next(new ErrorResponse("first approver not found", 404));
+  }
+
+  req.body.firstApproval = { approver: headOfDeployment._id };
+
+  const vicePresident = receivers.find(
+    (receiver) => receiver.role === ROLE_VICEPRESIDENT
+  );
+  if (vicePresident == undefined) {
+    return next(new ErrorResponse("second approver not found", 404));
+  }
+  req.body.secondApproval = { approver: vicePresident._id };
   if (!vehicle) {
     return next(
       new ErrorResponse(
@@ -30,16 +95,8 @@ const createvehicleRequest = asyncHandler(async (req, res, next) => {
       )
     );
   }
+
   req.body.vehicle = vehicle._id;
-
-  vehicle = await VehicleRecord.find();
-
-  // const availableVehicles = await VehicleRecord.find({
-  //   available: true,
-  //   unavailableFrom: { $lt: date },
-  //   unavailableTo: { $gte: date },
-  // });
-  console.log(req.body);
 
   const vehicleRequest = await VehicleRequestSchema.create(req.body);
   res.status(200).json(vehicleRequest);
@@ -145,19 +202,28 @@ const deleteVehicleRequest = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Removed Successfully" });
 });
 
-// @desc      Update a Vehicle Request Status
+// @desc      approve vehicle request
 // @route     Patch /Request/Vehicle/:id
-// @access    Private/HeadofDeployemnt/Director
-const updateVehicleRequeststatus = asyncHandler(async (req, res, next) => {
+// @access    Private/HeadofDeployemnt/VicePresident
+const approveVehicleRequeststatus = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { isApproved, plateNumber } = req.body;
 
-  const vehicleRequest = await VehicleRequestSchema.findById(id);
-  // Check if current user is receiver of the fuel request
+  const vehicleRequest = await VehicleRequestSchema.findOne({
+    _id: id,
+    isDeleted: false,
+    status: "pending",
+  });
   if (!vehicleRequest) {
     return next(new ErrorResponse(`Request not found with id of ${id}`, 404));
   }
-  if (req.user.id !== sparePartRequest.reciever.toString()) {
+  const { firstApproval, secondApproval } = vehicleRequest;
+  // Check if current user is authroized to approve the fuel request
+  let authorizationCheck = [
+    firstApproval.approver.toString(),
+    secondApproval.approver.toString(),
+  ];
+
+  if (!authorizationCheck.includes(req.user.id)) {
     return next(
       new ErrorResponse(
         `"You are not authorized to update this fuel request`,
@@ -166,33 +232,70 @@ const updateVehicleRequeststatus = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (vehicleRequest.isDeleted) {
+  if (req.user.id === secondApproval.approver.toString()) {
+    if (firstApproval.status === "pending") {
+      return next(
+        new ErrorResponse(
+          `You are not authorized to update this fuel request`,
+          403
+        )
+      );
+    } else {
+      vehicleRequest.secondApproval.status = "approved";
+    }
+  } else {
+    vehicleRequest.firstApproval.status = "approved";
+  }
+
+  await vehicleRequest.save();
+
+  res.status(200).json({ message: "Approved" });
+});
+
+// @desc      reject vehicle request
+// @route     Patch /Request/Vehicle/:id
+// @access    Private/HeadofDeployemnt/VicePresident
+const rejectVehicleRequeststatus = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  const vehicleRequest = await VehicleRequestSchema.findOne({
+    _id: id,
+    isDeleted: false,
+    status: "pending",
+  });
+  // Check if current user is receiver of the fuel request
+  if (!vehicleRequest) {
+    return next(new ErrorResponse(`Request not found with id of ${id}`, 404));
+  }
+  const { firstApproval, secondApproval } = vehicleRequest;
+  // Check if current user is authroized to approve the fuel request
+  let authorizationCheck = [
+    vehicleRequest.firstApproval.approver.toString(),
+    vehicleRequest.secondApproval.approver.toString(),
+  ];
+  if (!authorizationCheck.includes(req.user.id)) {
     return next(
       new ErrorResponse(
-        "Cannot approve because the associated vehicle is deleted",
-        404
+        `"You are not authorized to update this fuel request`,
+        403
       )
     );
   }
-
-  if (isApproved === "Approved") {
-    const vehicle = await SparePart.getVehicleByPlateNumber(plateNumber);
-
-    if (!vehicle) {
+  if (req.user.id === secondApproval.approver.toString()) {
+    if (firstApproval.status === "pending") {
       return next(
         new ErrorResponse(
-          `Vehicle not found with plate number of ${plateNumber}`,
-          404
+          `You are not authorized to update this fuel request`,
+          403
         )
       );
     }
-    vehicleRequest.vehicle = vehicle._id;
   }
-
-  vehicleRequest.isApproved = isApproved;
+  vehicleRequest.firstApproval.status = "rejected";
+  vehicleRequest.secondApproval.status = "rejected";
   await vehicleRequest.save();
 
-  res.status(200).json({ success: true });
+  res.status(200).json({ message: "Rejected" });
 });
 
 module.exports = {
@@ -200,5 +303,6 @@ module.exports = {
   createvehicleRequest,
   updatevehicleRequest,
   deleteVehicleRequest,
-  updateVehicleRequeststatus,
+  approveVehicleRequeststatus,
+  rejectVehicleRequeststatus,
 };

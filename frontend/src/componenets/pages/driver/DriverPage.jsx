@@ -46,10 +46,6 @@ const links = [
       },
     ],
   },
-  {
-    name: "Logout",
-    url: "/logout",
-  },
 ];
 const DriverPage = () => {
   return (
