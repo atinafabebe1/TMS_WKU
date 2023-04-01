@@ -18,7 +18,6 @@ import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import jwt_decode from "jwt-decode";
 import Joi from "joi";
-import Cookies from "js-cookie";
 
 const LoginPage = () => {
   const navigate = useNavigate();

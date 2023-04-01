@@ -5,6 +5,9 @@ const RequestTable = ({
   handleRejectClick,
   handleRequestClick,
 }) => {
+  if (!requests) {
+    return <p>No requests found.</p>;
+  }
   return (
     <Table striped bordered hover responsive>
       <thead>

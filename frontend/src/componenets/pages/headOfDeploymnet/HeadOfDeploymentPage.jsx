@@ -100,13 +100,10 @@ const links = [
       },
     ],
   },
-<<<<<<< HEAD
-=======
   {
     name: "Complain",
     url: "/hd/complain",
   },
->>>>>>> 286040b266744a483afc9f233bb74d82ebe94f4a
 ];
 const HeadOfDeploymentPage = () => {
   const { user } = useAuth();
@@ -125,15 +122,12 @@ const HeadOfDeploymentPage = () => {
         <Route path="vehicles" element={<VehicleInfromation />} />
         <Route path="vehicles/Receive" element={<RegisterVehicle />} />
         <Route path="vehicles/Transfer" element={<TransferVehicle />} />
-<<<<<<< HEAD
         <Route
           path="request/vehicle"
           element={<VehiclesRequests link={`/Request/vehicle`} />}
         />{" "}
-=======
         <Route path="vehicles/Track" element={<TrackVehicle />} />
         <Route path="complain" element={<Complain />} />
->>>>>>> 286040b266744a483afc9f233bb74d82ebe94f4a
       </Routes>
     </div>
   );

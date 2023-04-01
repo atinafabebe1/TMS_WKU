@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./context/AuthContext";
 import PrivateRoute from "./componenets/common/privateRoute/PrivateRoute";
 import LoginPage from "./componenets/pages/login/Login";
 import LogoutButton from "./componenets/pages/logout/Logout";
@@ -24,13 +23,14 @@ import {
   ROLE_MECHANIC,
   ROLE_VICEPRESIDENT,
 } from "./constants";
-import UserProfile from "./componenets/common/profile/profile";
+import LandingPage from "./componenets/pages/home/Home";
 
 function App() {
   return (
     <BrowserRouter>
       <>
         <Routes>
+          <Route exact path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/logout" element={<LogoutButton />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
@@ -48,7 +48,7 @@ function App() {
             }
           />
           <Route
-            path="/fd"
+            path="/fd/*"
             element={
               <PrivateRoute
                 role={ROLE_FUELDISTRUBTOR}
@@ -57,7 +57,7 @@ function App() {
             }
           />
           <Route
-            path="/driver"
+            path="/driver/*"
             element={<PrivateRoute role={ROLE_DRIVER} element={DriverPage} />}
           />
           <Route
@@ -67,13 +67,13 @@ function App() {
             }
           />
           <Route
-            path="/director"
+            path="/director/*"
             element={
               <PrivateRoute role={ROLE_DIRECTOR} element={DirectorPage} />
             }
           />
           <Route
-            path="/gd"
+            path="/gd/*"
             element={
               <PrivateRoute
                 role={ROLE_GARAGEDIRECTOR}
@@ -82,7 +82,7 @@ function App() {
             }
           />
           <Route
-            path="/mechanic"
+            path="/mechanic/*"
             element={
               <PrivateRoute role={ROLE_MECHANIC} element={MechanicPage} />
             }

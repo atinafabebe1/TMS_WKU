@@ -35,40 +35,10 @@ const createvehicleRequest = asyncHandler(async (req, res, next) => {
     isActive: true,
   });
   let driver;
-  if (req.body.driver === "selectDriver") {
-    // If the user wants a driver assigned, find an available driver
-    const fromDate = new Date(req.body.date.from).toISOString();
-    const toDate = new Date(req.body.date.to).toISOString();
-    console.log(fromDate);
-    console.log(toDate);
-    const availableDrivers = await User.find({
-      role: ROLE_DRIVER,
-      "driverinfo.unavailable": {
-        $not: {
-          $elemMatch: {
-            $or: [{ from: { $lte: toDate } }, { to: { $gte: fromDate } }],
-          },
-        },
-      },
-    }).populate("driverinfo");
-
-    if (availableDrivers.length === 0) {
-      return next(new ErrorResponse("Driver not found", 404));
-    }
-
-    // Sort the available drivers by the number of times they have been assigned a vehicle
-    availableDrivers.sort((a, b) => {
-      const timesAssignedA = a.driverinfo.timesAssigned || 0;
-      const timesAssignedB = b.driverinfo.timesAssigned || 0;
-      return timesAssignedA - timesAssignedB;
-    });
-
-    // Assign the vehicle to the driver who has been assigned the least number of times
-    driver = availableDrivers[0]?._id;
-  } else {
-    // If the user will drive themselves, set the driver to the current user
+  if (req.body.driver === "drive") {
     driver = req.user.id;
   }
+
   req.body.driver = driver;
 
   const headOfDeployment = receivers.find(

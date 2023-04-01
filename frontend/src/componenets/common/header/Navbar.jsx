@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { FaBars, FaUser } from "react-icons/fa";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import LogoutLink from "../../pages/logout/Logout";
+import { useAuth } from "../../../context/AuthContext";
 
 function MyNavbar({ links, title, role }) {
   const [navbarOpen, setNavbarOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <Navbar
@@ -44,18 +46,20 @@ function MyNavbar({ links, title, role }) {
             }
           })}
           <div className="ms-3">
-            <NavDropdown
-              title={<FaUser />}
-              id="basic-nav-dropdown"
-              className="dropdown-menu-right bg-dark text-light"
-              align="end"
-            >
-              <NavDropdown.Item href={role}>My Profile</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item>
-                <LogoutLink />
-              </NavDropdown.Item>
-            </NavDropdown>
+            {user && (
+              <NavDropdown
+                title={<FaUser />}
+                id="basic-nav-dropdown"
+                className="dropdown-menu-right bg-dark text-light"
+                align="end"
+              >
+                <NavDropdown.Item href={role}>My Profile</NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item>
+                  <LogoutLink />
+                </NavDropdown.Item>
+              </NavDropdown>
+            )}
           </div>
         </Nav>
       </Navbar.Collapse>

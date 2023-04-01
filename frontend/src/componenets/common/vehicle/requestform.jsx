@@ -19,7 +19,7 @@ const VehicleRequestForm = () => {
   const [plateNumber, setPlateNumber] = useState("");
   const [vehicles, setVehicles] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [driver, setDriver] = useState("drive");
+  const [driver, setDriver] = useState("");
   const [error, setError] = useState("");
   const [success, setSucces] = useState("");
   const fetch = async () => {
@@ -128,21 +128,23 @@ const VehicleRequestForm = () => {
             <FormGroup className="mb-3">
               <FormLabel>Driver Selection: </FormLabel>
               <div>
-                <FormCheck
+                {/* <FormCheck
                   type="radio"
                   id="selectDriver"
                   label="Select Driver"
                   value="selectDriver"
                   checked={driver === "selectDriver"}
                   onChange={(e) => setDriver(e.target.value)}
-                />
+                /> */}
                 <FormCheck
-                  type="radio"
+                  type="checkbox"
                   id="drive"
                   label="I will be the driver"
                   value="drive"
                   checked={driver === "drive"}
-                  onChange={(e) => setDriver(e.target.value)}
+                  onChange={(e) =>
+                    setDriver(e.target.checked ? e.target.value : "")
+                  }
                 />
               </div>
             </FormGroup>
