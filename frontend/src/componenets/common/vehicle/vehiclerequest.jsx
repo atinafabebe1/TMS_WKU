@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Modal, Table, Button, Tabs, Tab } from "react-bootstrap";
+import { Modal, Tabs, Tab } from "react-bootstrap";
 import Avatar from "react-avatar";
 import api from "../../../api/api";
 import RequestTable from "./vehicleRequestTable";
@@ -12,6 +12,7 @@ const VehiclesRequest = ({ link }) => {
   const [requests, setRequest] = useState([]);
   const [photo, setPhoto] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showRejectModal, setShowRejectModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [activeTab, setActiveTab] = useState("pending");
 
@@ -21,7 +22,6 @@ const VehiclesRequest = ({ link }) => {
         console.log(link);
         const response = await api.get(link);
         setRequest(response.data.data);
-        console.log(response.data.data);
       } catch (error) {
         console.log(error);
       }
