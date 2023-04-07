@@ -8,8 +8,8 @@ const VehicleList = () => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [confirmPlateNumber, setConfirmPlateNumber] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [error, setError]= useState(null);
-  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,7 +25,6 @@ const VehicleList = () => {
     fetchData();
   }, []);
 
-
   const handleEdit = (vehicle) => {
     setSelectedVehicle(vehicle);
     setShowModal(true);
@@ -35,7 +34,6 @@ const VehicleList = () => {
     setShowModal(false);
     setSelectedVehicle(null);
   };
-  
 
   const handleSave = (vehicle) => {
     const updatedVehicles = vehicles.map((v) =>
@@ -45,16 +43,40 @@ const VehicleList = () => {
     handleModalClose();
   };
 
+  // const handleDelete = async (vehicle) => {
+  //   setConfirmPlateNumber("");
+  //   setConfirmDelete(false);
+  //   const confirmDeleteModal = window.confirm(
+  //     `Are you sure you want to delete the vehicle with plate number ${vehicle.plateNumber}?`
+  //   );
+  //   if (confirmDeleteModal) {
+  //     setSelectedVehicle(vehicle);
+  //     setConfirmDelete(true);
+  //     setShowModal(true);
+  //   }
+  // };
+
   const handleDelete = async (vehicle) => {
     setConfirmPlateNumber("");
     setConfirmDelete(false);
     const confirmDeleteModal = window.confirm(
       `Are you sure you want to delete the vehicle with plate number ${vehicle.plateNumber}?`
     );
+    setSelectedVehicle(vehicle);
+    setConfirmDelete(true);
     if (confirmDeleteModal) {
-      setSelectedVehicle(vehicle);
-      setConfirmDelete(true);
-      setShowModal(true);
+      try {
+        const response = await api.delete(
+          `/VehicleRecord/${vehicle.plateNumber}`
+        );
+        if (response.ok) {
+          alert("Vehicle record successfully deleted.");
+        } else {
+          alert("Failed to delete vehicle record.");
+        }
+      } catch (error) {
+        alert(`An error occurred while deleting the vehicle record: ${error}`);
+      }
     }
   };
 
@@ -76,10 +98,14 @@ const VehicleList = () => {
 
   return (
     <>
-    {error && <p style={{color: "red"}}>{error}</p>}
-    
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
       <Table striped bordered hover>
-      {isLoading && <p><strong>Loading...</strong></p>}
+        {isLoading && (
+          <p>
+            <strong>Loading...</strong>
+          </p>
+        )}
         <thead>
           <tr>
             <th>Plate Number</th>
@@ -114,9 +140,15 @@ const VehicleList = () => {
           ))}
         </tbody>
       </Table>
-      <Modal show={showModal} onHide={handleModalClose}>
+      <Modal
+        show={showModal}
+        onHide={handleModalClose}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
         <Modal.Header closeButton>
-          <Modal.Title>
+          <Modal.Title id="contained-modal-title-vcenter">
             {confirmDelete ? "Confirm Delete" : "Vehicle Details"}
           </Modal.Title>
         </Modal.Header>
@@ -136,9 +168,59 @@ const VehicleList = () => {
             </div>
           ) : (
             <div>
-              <p>Plate Number: {selectedVehicle?.plateNumber}</p>
-              <p>Chassis No: {selectedVehicle?.chassisNo}</p>
-              <p>Type of Fuel: {selectedVehicle?.typeOfFuel}</p>
+              <table class="table table-striped">
+                <tbody>
+                  <tr>
+                    <th scope="col">Plate Number:</th>
+                    <th scope="col"> {selectedVehicle?.plateNumber}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Chassis No:</th>
+                    <th scope="col"> {selectedVehicle?.chassisNo}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Type of Fuel: </th>
+                    <th scope="col"> {selectedVehicle?.typeOfFuel}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Model Number: </th>
+                    <th scope="col"> {selectedVehicle?.modelNo}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Motor Number: </th>
+                    <th scope="col"> {selectedVehicle?.motorNo}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">CC: </th>
+                    <th scope="col"> {selectedVehicle?.cC}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Purchase Price: </th>
+                    <th scope="col"> {selectedVehicle?.purchasePrice}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Purchase Date: </th>
+                    <th scope="col"> {selectedVehicle?.purchasedDate}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Maximum load of person: </th>
+                    <th scope="col"> {selectedVehicle?.maxPerson}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Maximum load of Litres: </th>
+                    <th scope="col"> {selectedVehicle?.maxLitres}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Maximum load: </th>
+                    <th scope="col"> {selectedVehicle?.maxLoad}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Proprietary Id Number: </th>
+                    <th scope="col"> {selectedVehicle?.proprietaryIdNumber}</th>
+                  </tr>
+                  <tr></tr>
+                </tbody>
+              </table>
             </div>
           )}
         </Modal.Body>
@@ -155,7 +237,7 @@ const VehicleList = () => {
               variant="primary"
               onClick={() => handleSave(selectedVehicle)}
             >
-              Save Changes
+              Edit
             </Button>
           )}
         </Modal.Footer>
