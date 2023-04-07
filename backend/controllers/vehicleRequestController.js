@@ -137,20 +137,12 @@ const updatevehicleRequest = asyncHandler(async (req, res, next) => {
     );
   }
   req.body.status = "pending";
-  req.body.firstApproval = {
-    status: "pending",
-  };
-  req.body.secondApproval = {
-    status: "pending",
-  };
-  vehicleRequest = await VehicleRequestSchema.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
+
+  vehicleRequest = await VehicleRequestSchema.findByIdAndUpdate(req.params.id, {
+    "firstApproval.status": "pending",
+    "secondApproval.status": "pending",
+    ...req.body,
+  });
   res.status(200).json(vehicleRequest);
 });
 
