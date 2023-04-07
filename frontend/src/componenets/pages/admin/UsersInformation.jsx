@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Table, Button, Modal, Form, Badge } from "react-bootstrap";
 import api from "../../../api/api";
 import Search from "../../common/search/search";
-import DeleteConfirmationModal from "../../common/confirmDelete/confirmDeleteModal";
+import DeleteConfirmationModal from "../../common/confirmDelete/confirmModal";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserPlus } from "react-icons/fa";
+import RejectModal from "./RejectModal";
 
 const UsersInformation = () => {
   const [users, setUsers] = useState([]);
@@ -132,6 +133,9 @@ const UsersInformation = () => {
         </Table>
         {showPasswordModal && (
           <DeleteConfirmationModal
+            text={
+              "Are you sure you want to delete this user? This action cannot be undone."
+            }
             url="/user/remove"
             id={currentUserId}
             show={setShowPasswordModal}

@@ -19,7 +19,7 @@ router.use(Auth);
 router.post("/vehicle", createvehicleRequest);
 router.get(
   "/vehicle",
-  advancedResult(VehicleRequest, "vehicle user"),
+  advancedResult(VehicleRequest, "vehicle user driver"),
   getvehicleRequests
 );
 router.put("/vehicle/:id", updatevehicleRequest);

@@ -97,7 +97,7 @@ const links = [
       },
       {
         name: "Emergency",
-        url: "/hd/report/emmergency",
+        url: "/hd/report/emergence",
       },
     ],
   },
@@ -119,7 +119,7 @@ const HeadOfDeploymentPage = () => {
         <Route path="report/weekly" element={<WeeklyReport />} />
         <Route path="report/daily" element={<DailyReport />} />
         <Route path="report/monthly" element={<MonthlyReport />} />
-        <Route path="report/emmergency" element={<EmmergencyReport />} />
+        <Route path="report/emergence" element={<EmmergencyReport />} />
         <Route path="vehicles" element={<VehicleInfromation />} />
         <Route path="vehicles/Receive" element={<RegisterVehicle />} />
         <Route path="vehicles/Transfer" element={<TransferVehicle />} />

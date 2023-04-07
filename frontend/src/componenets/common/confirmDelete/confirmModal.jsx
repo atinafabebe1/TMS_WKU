@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 import api from "../../../api/api";
 
-const DeleteConfirmationModal = ({
+const ConfirmationModal = ({
+  text,
   url,
   id,
   show,
@@ -11,7 +12,7 @@ const DeleteConfirmationModal = ({
 }) => {
   const [password, setPassword] = useState("");
 
-  const handleDeleteConfirmed = () => {
+  const handleSubmit = () => {
     api
       .put(`${url}/${id}`, { password: password, isActive: false })
       .then(() => {
@@ -23,13 +24,10 @@ const DeleteConfirmationModal = ({
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Confirm deletion</Modal.Title>
+        <Modal.Title>Confirm</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>
-          Are you sure you want to delete this user? This action cannot be
-          undone.
-        </p>
+        <p>{text}</p>
         <Form>
           <Form.Group controlId="password">
             <Form.Label>Password</Form.Label>
@@ -46,12 +44,12 @@ const DeleteConfirmationModal = ({
         <Button variant="secondary" onClick={onHide}>
           Cancel
         </Button>
-        <Button variant="danger" onClick={handleDeleteConfirmed}>
-          Delete
+        <Button variant="danger" onClick={handleSubmit}>
+          Submit
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default DeleteConfirmationModal;
+export default ConfirmationModal;
