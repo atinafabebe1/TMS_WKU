@@ -52,15 +52,6 @@ const UsersInformation = () => {
     setShowPasswordModal(true);
     setCurrentUserId(id);
   };
-  const handleDeleteConfirmed = () => {
-    api
-      .delete(`/user/delete/${currentUserId}`, { password: password })
-      .then(() => {
-        // Refresh the user list
-        fetchUsersInformation(currentPage);
-        setShowPasswordModal(false);
-      });
-  };
 
   return (
     <div>
