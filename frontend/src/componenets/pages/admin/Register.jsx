@@ -215,6 +215,15 @@ const RegisterForm = () => {
             </Form.Group>
             {user.role === "ROLE_DRIVER" && (
               <div>
+                 <Form.Group className="mb-3" controlId="yearsOfExperience">
+                  <Form.Label className="font-weight-bold">
+                    Assigned Vehicle <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    min="0"
+                  />
+                </Form.Group>
                 <Form.Group className="mb-3" controlId="yearsOfExperience">
                   <Form.Label className="font-weight-bold">
                     Years of Experience <span className="text-danger">*</span>

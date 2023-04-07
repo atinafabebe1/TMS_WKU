@@ -1,56 +1,63 @@
 import React from "react";
 import Navbar from "../../common/header/Navbar";
+import { Routes } from "react-router-dom";
 
 const links = [
   {
     name: "Home",
-    url: "/director",
+    url: "/driver",
   },
   {
     name: "Vehicles",
-    url: "/vehicles",
+    url: "/driver/vehicles",
+    children: [
+      {
+        name: "Vehicle Transfer",
+        url: "/driver/vehicles/transfer",
+      },
+      {
+        name: "Receive Vehicle",
+        url: "/driver/vehicles/receive",
+      },
+    ],
   },
   {
     name: "Requests",
-    url: "/request",
+    url: "/driver/request",
     children: [
       {
-        name: "Vehicle",
-        url: "/request/vehicle",
-      },
-      {
         name: "Fuel",
-        url: "/request/fuel",
+        url: "/driver/request/vehicle",
       },
       {
         name: "Maintenance",
-        url: "/request/maintenance",
-      },
+        url: "/driver/request/maintenance",
+      }
     ],
   },
   {
     name: "Report",
-    url: "/report",
+    url: "/driver/report",
     children: [
       {
-        name: "Monthly",
-        url: "/report/monthly",
-      },
-      {
-        name: "Weekly",
-        url: "/report/weekly",
-      },
-      {
-        name: "Emergency",
-        url: "/report/weekly",
-      },
+        name: "Emmergency Report",
+        url: "/driver/report/emmergency",
+      }
     ],
   },
+  {
+    name: "Complain",
+    url: "/driver/complain",
+  }
 ];
 const DriverPage = () => {
   return (
     <div>
-      <Navbar links={links} title="TMS" />
+      <div className="mb-3">
+        <Navbar links={links} title="TMS" />
+      </div>
+      <Routes>
+      </Routes>
     </div>
   );
 };

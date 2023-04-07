@@ -14,7 +14,8 @@ import Complain from "./Complain";
 import WorkdaySchedule from "../../common/schedule/Workday";
 import VehiclesRequests from "../../common/vehicle/vehiclerequest";
 import { useAuth } from "../../../context/AuthContext";
-
+import UnAssignedVehicleList from "./AssignVehicleForDriver";
+import AssignVehicle from "./AssignVehicle";
 const links = [
   {
     name: "Home",
@@ -125,8 +126,9 @@ const HeadOfDeploymentPage = () => {
         <Route
           path="request/vehicle"
           element={<VehiclesRequests link={`/Request/vehicle`} />}
-        />{" "}
+        />
         <Route path="vehicles/Track" element={<TrackVehicle />} />
+        <Route path="vehicles/Assign" element={<AssignVehicle />} />
         <Route path="complain" element={<Complain />} />
       </Routes>
     </div>
