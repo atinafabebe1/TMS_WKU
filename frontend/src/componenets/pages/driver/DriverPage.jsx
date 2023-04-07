@@ -1,30 +1,33 @@
 import React from "react";
 import Navbar from "../../common/header/Navbar";
+import MaintenanceRequestPage from "./MaintenanceRequests";
+import MaintenanceRequestForm from "./maintenance-request-form";
+import { Routes,Route } from "react-router-dom";
 
 const links = [
   {
     name: "Home",
-    url: "/director",
+    url: "/driver",
   },
   {
     name: "Vehicles",
-    url: "/vehicles",
+    url: "/driver/vehicles",
   },
   {
     name: "Requests",
-    url: "/request",
+    url: "/driver/request",
     children: [
       {
         name: "Vehicle",
-        url: "/request/vehicle",
+        url: "/driver/request/vehicle",
       },
       {
         name: "Fuel",
-        url: "/request/fuel",
+        url: "/driver/request/fuel",
       },
       {
         name: "Maintenance",
-        url: "/request/maintenance",
+        url: "/driver/request/maintenance",
       },
     ],
   },
@@ -51,6 +54,11 @@ const DriverPage = () => {
   return (
     <div>
       <Navbar links={links} title="TMS" />
+      <Routes>
+        <Route     path="request/maintenance"
+          element={<MaintenanceRequestPage link={`/Request/maintenance`} />}></Route>
+             <Route path="maintenance-request-form" element={<MaintenanceRequestForm />} />
+      </Routes>
     </div>
   );
 };
