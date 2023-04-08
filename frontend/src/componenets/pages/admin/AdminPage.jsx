@@ -7,10 +7,15 @@ import UsersInformation from "./UsersInformation";
 import EditUserForm from "./EditUser";
 import { useAuth } from "../../../context/AuthContext";
 import UserProfile from "../../common/profile/profile";
+import AdminHome from "./AdminHome";
 const links = [
   {
-    name: "Users",
+    name: "Home",
     url: "/admin",
+  },
+  {
+    name: "Users",
+    url: "/admin/user",
   },
 ];
 const AdminPage = () => {
@@ -22,9 +27,9 @@ const AdminPage = () => {
       <Routes>
         <Route path="profile" element={<UserProfile />} />
         <Route path="register" element={<RegisterForm />} />
-        <Route exact path="" element={<UsersInformation />} />
+        <Route exact path="user" element={<UsersInformation />} />
         <Route exact path=":id" element={<EditUserForm />} />
-        {/* <Route path="" element={<VehicleInfromation />} /> */}
+        <Route path="" element={<AdminHome />} />
       </Routes>
     </div>
   );
