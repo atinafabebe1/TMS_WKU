@@ -2,8 +2,7 @@ import React from "react";
 import Navbar from "../../common/header/Navbar";
 import MaintenanceRequestPage from "./MaintenanceRequests";
 import MaintenanceRequestForm from "./maintenance-request-form";
-import { Routes,Route } from "react-router-dom";
-import { Routes } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 const links = [
   {
     name: "Home",
@@ -41,7 +40,6 @@ const links = [
         name: "Maintenance",
         url: "/driver/request/maintenance",
       },
-      }
     ],
   },
   {
@@ -51,26 +49,27 @@ const links = [
       {
         name: "Emmergency Report",
         url: "/driver/report/emmergency",
-      }
+      },
     ],
   },
   {
     name: "Complain",
     url: "/driver/complain",
-  }
+  },
 ];
 const DriverPage = () => {
   return (
     <div>
       <Navbar links={links} title="TMS" />
       <Routes>
-        <Route     path="request/maintenance"
-          element={<MaintenanceRequestPage link={`/Request/maintenance`} />}></Route>
-             <Route path="maintenance-request-form" element={<MaintenanceRequestForm />} />
-      <div className="mb-3">
-        <Navbar links={links} title="TMS" />
-      </div>
-      <Routes>
+        <Route
+          path="request/maintenance"
+          element={<MaintenanceRequestPage link={`/Request/maintenance`} />}
+        ></Route>
+        <Route
+          path="maintenance-request-form"
+          element={<MaintenanceRequestForm />}
+        />
       </Routes>
     </div>
   );
