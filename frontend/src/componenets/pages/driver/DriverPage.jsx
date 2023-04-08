@@ -3,7 +3,7 @@ import Navbar from "../../common/header/Navbar";
 import MaintenanceRequestPage from "./MaintenanceRequests";
 import MaintenanceRequestForm from "./maintenance-request-form";
 import { Routes,Route } from "react-router-dom";
-
+import { Routes } from "react-router-dom";
 const links = [
   {
     name: "Home",
@@ -12,6 +12,16 @@ const links = [
   {
     name: "Vehicles",
     url: "/driver/vehicles",
+    children: [
+      {
+        name: "Vehicle Transfer",
+        url: "/driver/vehicles/transfer",
+      },
+      {
+        name: "Receive Vehicle",
+        url: "/driver/vehicles/receive",
+      },
+    ],
   },
   {
     name: "Requests",
@@ -24,31 +34,30 @@ const links = [
       {
         name: "Fuel",
         url: "/driver/request/fuel",
+        name: "Fuel",
+        url: "/driver/request/vehicle",
       },
       {
         name: "Maintenance",
         url: "/driver/request/maintenance",
       },
+      }
     ],
   },
   {
     name: "Report",
-    url: "/report",
+    url: "/driver/report",
     children: [
       {
-        name: "Monthly",
-        url: "/report/monthly",
-      },
-      {
-        name: "Weekly",
-        url: "/report/weekly",
-      },
-      {
-        name: "Emergency",
-        url: "/report/weekly",
-      },
+        name: "Emmergency Report",
+        url: "/driver/report/emmergency",
+      }
     ],
   },
+  {
+    name: "Complain",
+    url: "/driver/complain",
+  }
 ];
 const DriverPage = () => {
   return (
@@ -58,6 +67,10 @@ const DriverPage = () => {
         <Route     path="request/maintenance"
           element={<MaintenanceRequestPage link={`/Request/maintenance`} />}></Route>
              <Route path="maintenance-request-form" element={<MaintenanceRequestForm />} />
+      <div className="mb-3">
+        <Navbar links={links} title="TMS" />
+      </div>
+      <Routes>
       </Routes>
     </div>
   );

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Table, Button, Row, Col } from "react-bootstrap";
 import api from "../../../api/api";
 
 const VehicleRequestListPage = () => {
   const [requests, setRequests] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch the user's vehicle requests from your server API
@@ -39,7 +40,7 @@ const VehicleRequestListPage = () => {
           <h1>My Vehicle Requests</h1>
         </Col>
         <Col className="text-end">
-          <Link to="/employee/vehicle-request-form">
+          <Link to="/employee/vehicle-request">
             <Button variant="primary">New Request</Button>
           </Link>
         </Col>
@@ -73,9 +74,7 @@ const VehicleRequestListPage = () => {
                     className="btn btn-sm"
                     variant="secondary"
                     onClick={() =>
-                      window.location.replace(
-                        `/employee/vehicle-request-form?_id=${request._id}`
-                      )
+                      navigate(`/employee/edit-vehicle-request/${request._id}`)
                     }
                   >
                     Resubmit
@@ -92,8 +91,8 @@ const VehicleRequestListPage = () => {
                       className="btn btn-sm"
                       variant="primary"
                       onClick={() =>
-                        window.location.replace(
-                          `/employee/vehicle-request-form?_id=${request._id}`
+                        navigate(
+                          `/employee/edit-vehicle-request/${request._id}`
                         )
                       }
                     >

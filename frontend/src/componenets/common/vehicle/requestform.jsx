@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 import api from "../../../api/api";
 
-const VehicleRequestForm = () => {
+const VehicleRequestForm = ({ title, request, onSubmit }) => {
   const [passengers, setPassengers] = useState([{ name: "" }]);
   const [destination, setDestination] = useState("");
   const [reason, setReason] = useState("");
@@ -36,6 +36,26 @@ const VehicleRequestForm = () => {
   useEffect(() => {
     fetch();
   }, []);
+
+  useEffect(() => {
+    if (request) {
+      console.log(request.date);
+      setPassengers(request.passengers);
+      setDestination(request.destination);
+      setReason(request.reason);
+
+      if (request.date && request.date.from) {
+        setFromDate(new Date(request.date.from).toISOString().substring(0, 10));
+      }
+      if (request.date && request.date.to) {
+        setToDate(new Date(request.date.to).toISOString().substring(0, 10));
+      }
+
+      setPlateNumber(request.plateNumber);
+      setDriver(request.driver);
+    }
+  }, [request]);
+
   const handlePassengerNameChange = (index, event) => {
     const newPassengers = [...passengers];
     newPassengers[index].name = event.target.value;
@@ -66,27 +86,44 @@ const VehicleRequestForm = () => {
       date: { from: fromDate, to: toDate },
       driver,
     };
-    api
-      .post(`/Request/vehicle?isDeleted=false`, result)
-      .then((response) => {
-        if (response.statusText === "OK") {
-          setSucces(response.data?.message);
-          setError(null);
-        }
-        setPassengers([{ name: "" }]);
-        setDestination("");
-        setReason("");
-        setFromDate("");
-        setToDate("");
-        setPlateNumber("");
-        setShowModal();
-        setDriver("");
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-        setError(err.response.data?.error);
-        setSucces(null);
-      });
+    if (request) {
+      api
+        .put(`/Request/vehicle/${request._id}?isDeleted=false`, result)
+        .then((response) => {
+          if (response.statusText === "OK") {
+            setSucces(response.data?.message);
+            setError(null);
+          }
+          onSubmit();
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+          setError(err.response.data?.error);
+          setSucces(null);
+        });
+    } else {
+      api
+        .post(`/Request/vehicle?isDeleted=false`, result)
+        .then((response) => {
+          if (response.statusText === "OK") {
+            setSucces(response.data?.message);
+            setError(null);
+          }
+          setPassengers([{ name: "" }]);
+          setDestination("");
+          setReason("");
+          setFromDate("");
+          setToDate("");
+          setPlateNumber("");
+          setShowModal();
+          setDriver("");
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+          setError(err.response.data?.error);
+          setSucces(null);
+        });
+    }
   };
   const handleClear = () => {
     setPlateNumber("");
@@ -98,11 +135,10 @@ const VehicleRequestForm = () => {
   };
 
   return (
-    <div className="container my-5">
+    <div className="container my-3">
       <div className="row justify-content-center">
         <div className="col-lg-8">
-          <h1 className="mb-5 text-center">Vehicle Requesting Form</h1>
-
+          <h1 className="mb-3 text-center">{title}</h1>
           <Form onSubmit={handleConfirmation}>
             <FormGroup>
               <FormLabel>Vehicle</FormLabel>
@@ -114,7 +150,7 @@ const VehicleRequestForm = () => {
                 className="mb-3"
               >
                 <option value="">Select a Vehicle</option>
-                {vehicles.map((vehicle) => (
+                {vehicles?.map((vehicle) => (
                   <option
                     key={vehicle.plateNumber}
                     value={vehicle.plateNumber}
@@ -149,7 +185,7 @@ const VehicleRequestForm = () => {
               </div>
             </FormGroup>
 
-            {passengers.map((passenger, index) => (
+            {passengers?.map((passenger, index) => (
               <FormGroup key={index}>
                 <FormLabel>Passenger #{index + 1}</FormLabel>
                 <FormControl

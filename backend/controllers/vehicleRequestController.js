@@ -123,8 +123,12 @@ const updatevehicleRequest = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Request not found with id of ${req.params.id}`, 404)
     );
   }
-  //Make sure user is vehicle owner
+  console.log(vehicleRequest);
+  if (vehicleRequest.status === "approved") {
+    return next(new ErrorResponse(`you can't update approved request`, 401));
+  }
   if (vehicleRequest.user.toString() !== req.user.id) {
+    //Make sure user is vehicle owner
     return next(
       new ErrorResponse(
         `User ${req.params.id} is not authorized to update this vehicle`,
@@ -132,6 +136,13 @@ const updatevehicleRequest = asyncHandler(async (req, res, next) => {
       )
     );
   }
+  req.body.status = "pending";
+  req.body.firstApproval = {
+    status: "pending",
+  };
+  req.body.secondApproval = {
+    status: "pending",
+  };
   vehicleRequest = await VehicleRequestSchema.findByIdAndUpdate(
     req.params.id,
     req.body,
