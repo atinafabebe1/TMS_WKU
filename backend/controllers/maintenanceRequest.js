@@ -8,6 +8,9 @@ const { ROLE_DRIVER, ROLE_HEADOFDEPLOYMENT } = require("../constants");
 //@route Post /Request/maintenance
 //@access Private/Driver
 const createMaintenanceRequest = asyncHandler(async (req, res, next) => {
+  let vehicle=await MaintenanceRequest.getVehicleByPlateNumber(req.body.plateNumber)
+  console.log(vehicle);
+  req.body.vehicle=vehicle._id
   req.body.user = req.user.id;
   await MaintenanceRequest.create(req.body);
   res.status(200).json({ message: "Your Request is successfully sent" });

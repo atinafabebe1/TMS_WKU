@@ -16,6 +16,7 @@ import VehiclesRequests from "../../common/vehicle/vehiclerequest";
 import { useAuth } from "../../../context/AuthContext";
 import UnAssignedVehicleList from "./AssignVehicleForDriver";
 import AssignVehicle from "./AssignVehicle";
+import MaintenanceRequestTables from "../../common/maintenance/maintenancerequesttable";
 const links = [
   {
     name: "Home",
@@ -61,7 +62,7 @@ const links = [
       },
       {
         name: "Maintenance",
-        url: "/request/maintenance",
+        url: "hd/request/maintenance",
       },
     ],
   },
@@ -130,6 +131,7 @@ const HeadOfDeploymentPage = () => {
         <Route path="vehicles/Track" element={<TrackVehicle />} />
         <Route path="vehicles/Assign" element={<AssignVehicle />} />
         <Route path="complain" element={<Complain />} />
+        <Route path="request/maintenance" element={<MaintenanceRequestTables link={`/Request/maintenance`}/>}/>
       </Routes>
     </div>
   );

@@ -8,6 +8,12 @@ const DriverInfoSchema = new Schema({
     id: { type: Number, required: true },
     stateIssued: { type: String, required: true },
   },
+  vehicle: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "VehicleRecord",
+    },
+  ],
   unavailable: [
     {
       from: {
