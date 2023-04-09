@@ -139,6 +139,15 @@ const VehicleRequestForm = ({ title, request, onSubmit }) => {
       <div className="row justify-content-center">
         <div className="col-lg-8">
           <h1 className="mb-3 text-center">{title}</h1>
+          {request?.rejectReason && (
+            <p className="text-danger">
+              Kindly be informed that your request has been rejected due to the
+              reason of "{request.rejectReason}". We advise that upon
+              resubmission of your request, you consider modifying the reason to
+              improve your chances of approval. Thank you for your understanding
+              and cooperation.
+            </p>
+          )}
           <Form onSubmit={handleConfirmation}>
             <FormGroup>
               <FormLabel>Vehicle</FormLabel>

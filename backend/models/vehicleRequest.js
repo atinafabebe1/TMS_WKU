@@ -89,6 +89,9 @@ const VehicleRequestSchema = new Schema(
           `Cannot set status "${props.value}" when creating a new maintenance request.`,
       },
     },
+    rejectReason: {
+      type: String,
+    },
     isDeleted: {
       type: Boolean,
       default: false,

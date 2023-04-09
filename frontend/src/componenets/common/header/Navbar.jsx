@@ -53,7 +53,7 @@ function MyNavbar({ links, title, role }) {
                 className="dropdown-menu-right bg-dark text-light"
                 align="end"
               >
-                <NavDropdown.Item href={role}>My Profile</NavDropdown.Item>
+                <NavDropdown.Item>My Profile</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item>
                   <LogoutLink />

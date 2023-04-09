@@ -13,6 +13,7 @@ const EditVehicleRequest = () => {
     api
       .get(`/Request/vehicle?_id=${id}`)
       .then((response) => {
+        console.log(response.data.data[0].rejectReason);
         setRequest(response.data.data);
       })
       .catch((error) => {
@@ -23,7 +24,8 @@ const EditVehicleRequest = () => {
   return (
     <div>
       {request ? (
-        <VehicleRequestForm title={"Edit Request"} request={request[0]} />
+        ((<p> {request[0].rejectReason}</p>),
+        (<VehicleRequestForm title={"Edit Request"} request={request[0]} />))
       ) : (
         <p>Loading...</p>
       )}

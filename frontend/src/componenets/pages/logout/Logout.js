@@ -1,7 +1,8 @@
 import React from "react";
 import { useAuth } from "../../../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 function LogoutButton() {
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -12,7 +13,25 @@ function LogoutButton() {
     navigate("/login");
   };
 
-  return <Link onClick={handleLogout}>Logout</Link>;
+  return (
+    <button
+      style={{
+        backgroundColor: "transparent",
+        color: "#000",
+        border: "none",
+        cursor: "pointer",
+        margin: 0,
+        padding: 0,
+        fontSize: "inherit",
+        fontFamily: "inherit",
+        textDecoration: "none",
+        outline: "none",
+      }}
+      onClick={handleLogout}
+    >
+      Logout
+    </button>
+  );
 }
 
 export default LogoutButton;

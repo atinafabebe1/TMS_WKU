@@ -69,7 +69,7 @@ const UsersInformation = () => {
         <div className="d-flex justify-content-end my-1">
           <Search onSearch={handleSearch} />
         </div>
-        <Table striped bordered hover responsive>
+        <Table striped bordered hover responsive className="table-sm">
           <thead>
             <tr>
               <th>Username</th>

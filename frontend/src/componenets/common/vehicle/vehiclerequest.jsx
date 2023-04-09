@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Modal, Tabs, Tab } from "react-bootstrap";
 import Avatar from "react-avatar";
 import api from "../../../api/api";
@@ -90,9 +89,9 @@ const VehiclesRequest = ({ link }) => {
     }
   };
 
-  const handleRejectClick = async (request) => {
+  const handleRejectClick = async (request, rejectReason) => {
     try {
-      await api.put(`/Request/vehicle/${request._id}/reject`);
+      await api.put(`/Request/vehicle/${request._id}/reject`, { rejectReason });
       const response = await api.get("/Request/vehicle");
       setRequest(response.data.data);
     } catch (error) {
