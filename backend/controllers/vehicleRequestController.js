@@ -123,6 +123,7 @@ const updatevehicleRequest = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Request not found with id of ${req.params.id}`, 404)
     );
   }
+  console.log(req.body);
   console.log(vehicleRequest);
   if (vehicleRequest.status === "approved") {
     return next(new ErrorResponse(`you can't update approved request`, 401));
@@ -240,6 +241,7 @@ const rejectVehicleRequeststatus = asyncHandler(async (req, res, next) => {
   if (!vehicleRequest) {
     return next(new ErrorResponse(`Request not found with id of ${id}`, 404));
   }
+  console.log(req.body);
   const { firstApproval, secondApproval } = vehicleRequest;
   // Check if current user is authroized to approve the fuel request
   let authorizationCheck = [
@@ -266,7 +268,9 @@ const rejectVehicleRequeststatus = asyncHandler(async (req, res, next) => {
   }
   vehicleRequest.firstApproval.status = "rejected";
   vehicleRequest.secondApproval.status = "rejected";
+  vehicleRequest.rejectReason = req.body.rejectReason;
   await vehicleRequest.save();
+  console.log(vehicleRequest);
 
   res.status(200).json({ message: "Rejected" });
 });

@@ -1,6 +1,7 @@
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHanlder = require("../middleware/async");
 const User = require("../models/user");
+const VehicleRecord = require("../models/registerVehicle");
 const validator = require("validator");
 
 //@desc  Register User
@@ -20,6 +21,14 @@ const registerUser = asyncHanlder(async (req, res, next) => {
   //deletes the unwanted subfield document if the role is not match
   if (req.body.role !== "ROLE_DRIVER") {
     req.body.driverinfo = undefined;
+  } else {
+    console.log(req.body.driverinfo);
+    const vehicle = await VehicleRecord.findOne({
+      plateNumber: req.body.driverinfo.plateNumber,
+    });
+    console.log(vehicle);
+
+    req.body.vehicle = vehicle._id;
   }
 
   const user = await User.create(req.body);
