@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Table, Button, Row, Col } from "react-bootstrap";
+import { Table, Button, Row, Col, Form } from "react-bootstrap";
 import api from "../../../api/api";
 
 const MaintenanceRequestTables = () => {
   const [requests, setRequests] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     // Fetch the user's vehicle requests from your server API
@@ -32,6 +33,17 @@ const MaintenanceRequestTables = () => {
       );
   };
 
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredRequests = requests.filter((request) => {
+    return (
+      request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.status.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   return (
     <div className="p-4">
       <Row className="mb-4">
@@ -39,24 +51,33 @@ const MaintenanceRequestTables = () => {
           <h1 align='center'>Maintenance Requests</h1>
         </Col>
       </Row>
+      <Form>
+        <Row className="mb-3">
+          <Col>
+            <Form.Control
+              type="text"
+              placeholder="Search by plate number or status"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </Col>
+        </Row>
+      </Form>
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
-            
-          <th>Plate Number</th>
+            <th>Plate Number</th>
             <th>Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {requests?.map((request) => (
+          {filteredRequests.map((request) => (
             <tr key={request._id}>
-             
               <td>{request.plateNumber}</td>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
-              
               <td>
                 {request.status === "rejected" && (
                   <Button
