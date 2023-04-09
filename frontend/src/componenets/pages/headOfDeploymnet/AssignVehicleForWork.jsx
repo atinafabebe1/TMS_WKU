@@ -32,7 +32,10 @@ function AssignVehicleForWork() {
       .catch(error => console.error(error));
   }, []);
 
+const HandleAssign=async ()=>{
+  
 
+}
 
 
   const handleModalClose = () => {
@@ -88,7 +91,7 @@ function AssignVehicleForWork() {
           <Button variant="secondary" onClick={handleModalClose}>
             Close
           </Button>
-          <Button variant="success">
+          <Button variant="success" onClick={HandleAssign}>
             Assign
           </Button>
         </Modal.Footer>
