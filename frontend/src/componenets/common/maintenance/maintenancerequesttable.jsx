@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Table, Button, Row, Col, Form } from "react-bootstrap";
+import { Table, Button, Row, Col, Form,Modal } from "react-bootstrap";
 import api from "../../../api/api";
 
 const MaintenanceRequestTables = () => {
   const [requests, setRequests] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); 
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
   useEffect(() => {
     // Fetch the user's vehicle requests from your server API
@@ -32,7 +34,15 @@ const MaintenanceRequestTables = () => {
         console.error(`Error deleting vehicle request with ID ${id}:`, error)
       );
   };
-
+  const handleMore = (request) => {
+    console.log(request)
+    setSelectedRequest(request);
+    setShowModal(true);
+  };
+  const handleModalClose = () => {
+    setShowModal(false);
+    setSelectedRequest(null);
+  };
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -79,19 +89,6 @@ const MaintenanceRequestTables = () => {
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
               <td>
-                {request.status === "rejected" && (
-                  <Button
-                    className="btn btn-sm"
-                    variant="secondary"
-                    onClick={() =>
-                      window.location.replace(
-                        `/hd/maintenance-request-form?_id=${request._id}`
-                      )
-                    }
-                  >
-                    Resubmit
-                  </Button>
-                )}
                 {request.status === "approved" && (
                   <Button className="btn btn-sm" variant="success" disabled>
                     Approved
@@ -99,23 +96,13 @@ const MaintenanceRequestTables = () => {
                 )}
                 {request.status === "pending" && (
                   <div>
-                    <Button
-                      className="btn btn-sm"
-                      variant="primary"
-                      onClick={() =>
-                        window.location.replace(
-                          `/hd/maintenance-request-form?_id=${request._id}`
-                        )
-                      }
-                    >
-                      Edit
-                    </Button>{" "}
+                  
                     <Button
                       className="btn btn-sm"
                       variant="success"
                       onClick={() =>
                         window.location.replace(
-                          `/hd/maintenance-request-form?_id=${request._id}`
+                          `/hd/maintenance-order-form?_id=${request._id}`
                         )
                       }
                     >
@@ -127,6 +114,13 @@ const MaintenanceRequestTables = () => {
                       onClick={() => handleDeleteRequest(request._id)}
                     >
                       Delete
+                    </Button>{" "}
+                    <Button
+                      className="btn btn-sm"
+                      variant="primary"
+                      onClick={() => handleMore(request)}
+                    >
+                      More
                     </Button>
                   </div>
                 )}
@@ -135,6 +129,71 @@ const MaintenanceRequestTables = () => {
           ))}
         </tbody>
       </Table>
+      <Modal
+        show={showModal}
+        onHide={handleModalClose}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          { (
+            <div>
+              <table class="table table-striped">
+                <tbody>
+                  <tr>
+                    <th scope="col">Plate Number:</th>
+                    <th scope="col"> {selectedRequest?.plateNumber}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Chassis No:</th>
+                    <th scope="col"> {selectedRequest?.chassisNo}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Type of Fuel: </th>
+                    <th scope="col"> {selectedRequest?.typeOfFuel}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Model Number: </th>
+                    <th scope="col"> {selectedRequest?.modelNo}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Motor Number: </th>
+                    <th scope="col"> {selectedRequest?.motorNo}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">CC: </th>
+                    <th scope="col"> {selectedRequest?.cC}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Purchase Date: </th>
+                    <th scope="col"> {selectedRequest?.purchasedDate}</th>
+                  </tr>
+                  
+                  <tr>
+                    <th scope="col">Proprietary Id Number: </th>
+                    <th scope="col"> {selectedRequest?.proprietaryIdNumber}</th>
+                  </tr>
+                  <tr>
+                    <th scope="col">Reason: </th>
+                    <th scope="col"> {selectedRequest?.description}</th>
+                  </tr>
+                  <tr></tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleModalClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

@@ -21,7 +21,7 @@ router.post("/maintenance", Authorize("ROLE_DRIVER"), createMaintenanceRequest);
 router.get("/maintenance/:id", getMaintenanceRequest);
 router.get(
   "/maintenance",
-  advancedResult(MaintenanceRequest, ""),
+  advancedResult(MaintenanceRequest, "vehicle"),
   getMaintenanceRequests
 );
 router.get(
