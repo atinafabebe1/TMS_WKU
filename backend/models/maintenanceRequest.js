@@ -32,14 +32,7 @@ const MaintenanceRequestSchema = new Schema(
         message: (props) => `${props.value} is not a valid plate number`,
       },
     },
-    vehicleType: {
-      type: String,
-      required: true,
-      enum: {
-        values: ["car", "truck", "motorcycle", "bus"],
-        message: "Please select a valid vehicle type.",
-      },
-    },
+
     description: {
       type: String,
       required: [

@@ -62,7 +62,7 @@ const links = [
       },
       {
         name: "Maintenance",
-        url: "hd/request/maintenance",
+        url: "/hd/request/maintenance",
       },
     ],
   },
@@ -131,7 +131,10 @@ const HeadOfDeploymentPage = () => {
         <Route path="vehicles/Track" element={<TrackVehicle />} />
         <Route path="vehicles/Assign" element={<AssignVehicle />} />
         <Route path="complain" element={<Complain />} />
-        <Route path="request/maintenance" element={<MaintenanceRequestTables link={`/Request/maintenance`}/>}/>
+        <Route
+          path="request/maintenance"
+          element={<MaintenanceRequestTables link={`/Request/maintenance`} />}
+        />
       </Routes>
     </div>
   );

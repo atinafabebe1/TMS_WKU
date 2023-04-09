@@ -10,15 +10,11 @@ import {
 import api from "../../../api/api";
 
 const MaintenanceRequestForm = () => {
-  const [Description, setDescription] = useState("");
-  const [Date, setDate] = useState("");
-  const [receiver, SetReceiver] = useState("");
+  const [description, setDescription] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSucces] = useState("");
-  const fetch = async () => {
-  
-  };
+  const fetch = async () => {};
 
   useEffect(() => {
     fetch();
@@ -32,9 +28,7 @@ const MaintenanceRequestForm = () => {
 
   const handleSubmit = () => {
     const result = {
-      receiver,
-      Date,
-      Description,
+      description,
     };
     api
       .post(`/Request/maintenance?isDeleted=false`, result)
@@ -43,11 +37,8 @@ const MaintenanceRequestForm = () => {
           setSucces(response.data?.message);
           setError(null);
         }
-    
+
         setDescription("");
-        setDate("");
-       
-        SetReceiver("");
         setShowModal();
       })
       .catch((err) => {
@@ -57,9 +48,7 @@ const MaintenanceRequestForm = () => {
       });
   };
   const handleClear = () => {
-    SetReceiver("");
     setDescription("");
-    setDate("");
   };
 
   return (
@@ -70,48 +59,16 @@ const MaintenanceRequestForm = () => {
 
           <Form onSubmit={handleConfirmation}>
             <FormGroup>
-              <FormLabel>To</FormLabel>
-              <FormControl
-                type="text"
-                value={receiver}
-                onChange={(event) => SetReceiver(event.target.value)}
-                required
-                className="mb-3"
-              >
-                {/* <option value="">Select a Vehicle</option>
-                {vehicles.map((vehicle) => (
-                  <option
-                    key={vehicle.plateNumber}
-                    value={vehicle.plateNumber}
-                    title={`Max person load: ${vehicle.maxPerson}\nFuel type: ${vehicle.typeOfFuel}`}
-                  >
-                    {vehicle.plateNumber}
-                  </option>
-                ))} */}
-              </FormControl>
-            </FormGroup>
-        
-            <FormGroup>
               <FormLabel>Description</FormLabel>
               <FormControl
                 type="text"
-                value={Description}
+                value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 required
                 className="mb-3"
               />
             </FormGroup>
-            <FormGroup>
-              <FormLabel>Date </FormLabel>
-              <FormControl
-                type="date"
-                value={Date}
-                onChange={(event) => setDate(event.target.value)}
-                required
-                className="mb-3"
-              />
-            </FormGroup>
-           
+
             {error && <p className="text-danger">{error}</p>}
             {success && <p className="text-success">{success}</p>}
 

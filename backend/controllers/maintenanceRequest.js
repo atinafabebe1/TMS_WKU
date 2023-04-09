@@ -1,4 +1,5 @@
 const MaintenanceRequest = require("../models/maintenanceRequest");
+const UserSchema = require("../models/user");
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
 const mongoose = require("mongoose");
@@ -8,9 +9,24 @@ const { ROLE_DRIVER, ROLE_HEADOFDEPLOYMENT } = require("../constants");
 //@route Post /Request/maintenance
 //@access Private/Driver
 const createMaintenanceRequest = asyncHandler(async (req, res, next) => {
-  let vehicle=await MaintenanceRequest.getVehicleByPlateNumber(req.body.plateNumber)
-  console.log(vehicle);
-  req.body.vehicle=vehicle._id
+  req.body.plateNumber = "3A8888888";
+  let headofDeployemnt = await UserSchema.findOne({
+    role: ROLE_HEADOFDEPLOYMENT,
+    isActive: true,
+  });
+  console.log(headofDeployemnt);
+  if (headofDeployemnt) {
+    req.body.reciever = headofDeployemnt._id;
+  }
+  let vehicle = await MaintenanceRequest.getVehicleByPlateNumber(
+    req.body.plateNumber
+  );
+  if (vehicle) {
+    console.log(vehicle);
+    req.body.vehicle = vehicle._id;
+  } else {
+    return next(new ErrorResponse("vehicle not found", 404));
+  }
   req.body.user = req.user.id;
   await MaintenanceRequest.create(req.body);
   res.status(200).json({ message: "Your Request is successfully sent" });

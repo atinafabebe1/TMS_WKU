@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Table, Button, Row, Col, Form,Modal } from "react-bootstrap";
+import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import api from "../../../api/api";
 
 const MaintenanceRequestTables = () => {
   const [requests, setRequests] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(""); 
+  const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
 
@@ -35,7 +35,7 @@ const MaintenanceRequestTables = () => {
       );
   };
   const handleMore = (request) => {
-    console.log(request)
+    console.log(request);
     setSelectedRequest(request);
     setShowModal(true);
   };
@@ -58,7 +58,7 @@ const MaintenanceRequestTables = () => {
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h1 align='center'>Maintenance Requests</h1>
+          <h1 align="center">Maintenance Requests</h1>
         </Col>
       </Row>
       <Form>
@@ -96,7 +96,6 @@ const MaintenanceRequestTables = () => {
                 )}
                 {request.status === "pending" && (
                   <div>
-                  
                     <Button
                       className="btn btn-sm"
                       variant="success"
@@ -137,46 +136,51 @@ const MaintenanceRequestTables = () => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-          </Modal.Title>
+          <Modal.Title id="contained-modal-title-vcenter"></Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          { (
+          {
             <div>
-              <table class="table table-striped">
+              <table class="table table-striped table-sm">
                 <tbody>
                   <tr>
                     <th scope="col">Plate Number:</th>
-                    <th scope="col"> {selectedRequest?.plateNumber}</th>
+                    <th scope="col"> {selectedRequest?.vehicle.plateNumber}</th>
                   </tr>
                   <tr>
                     <th scope="col">Chassis No:</th>
-                    <th scope="col"> {selectedRequest?.chassisNo}</th>
+                    <th scope="col"> {selectedRequest?.vehicle.chassisNo}</th>
                   </tr>
                   <tr>
                     <th scope="col">Type of Fuel: </th>
-                    <th scope="col"> {selectedRequest?.typeOfFuel}</th>
+                    <th scope="col"> {selectedRequest?.vehicle.typeOfFuel}</th>
                   </tr>
                   <tr>
                     <th scope="col">Model Number: </th>
-                    <th scope="col"> {selectedRequest?.modelNo}</th>
+                    <th scope="col"> {selectedRequest?.vehicle.modelNo}</th>
                   </tr>
                   <tr>
                     <th scope="col">Motor Number: </th>
-                    <th scope="col"> {selectedRequest?.motorNo}</th>
+                    <th scope="col"> {selectedRequest?.vehicle.motorNo}</th>
                   </tr>
                   <tr>
                     <th scope="col">CC: </th>
-                    <th scope="col"> {selectedRequest?.cC}</th>
+                    <th scope="col"> {selectedRequest?.vehicle.cC}</th>
                   </tr>
                   <tr>
                     <th scope="col">Purchase Date: </th>
-                    <th scope="col"> {selectedRequest?.purchasedDate}</th>
+                    <th scope="col">
+                      {" "}
+                      {selectedRequest?.vehicle.purchasedDate}
+                    </th>
                   </tr>
-                  
+
                   <tr>
                     <th scope="col">Proprietary Id Number: </th>
-                    <th scope="col"> {selectedRequest?.proprietaryIdNumber}</th>
+                    <th scope="col">
+                      {" "}
+                      {selectedRequest?.vehicle.proprietaryIdNumber}
+                    </th>
                   </tr>
                   <tr>
                     <th scope="col">Reason: </th>
@@ -186,10 +190,14 @@ const MaintenanceRequestTables = () => {
                 </tbody>
               </table>
             </div>
-          )}
+          }
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalClose}>
+          <Button
+            className="btn btn-sm"
+            variant="secondary"
+            onClick={handleModalClose}
+          >
             Close
           </Button>
         </Modal.Footer>
