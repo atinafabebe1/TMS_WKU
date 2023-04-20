@@ -1,48 +1,38 @@
 import React from "react";
 import Navbar from "../../common/header/Navbar";
+import AccessoryRequest from "./AccessoryRequest";
+import { Routes, Route } from "react-router-dom";
 
 const links = [
   {
     name: "Home",
-    url: "/director",
+    url: "/mechanic",
   },
   {
-    name: "Vehicles",
-    url: "/vehicles",
-  },
-  {
-    name: "Requests",
-    url: "/request",
+    name: "Maintenance",
+    url: "/mechanic/maintenance",
     children: [
       {
-        name: "Vehicle",
-        url: "/request/vehicle",
+        name: "Maintenance Order",
+        url: "/mechanic/maintenance/receive-maintenance-order",
       },
       {
-        name: "Fuel",
-        url: "/request/fuel",
+        name: "Approve Maintenance",
+        url: "/mechanic/maintenance/approve-maintenance",
       },
       {
-        name: "Maintenance",
-        url: "/request/maintenance",
+        name: "Maintenance Report",
+        url: "/mechanic/maintenance/send-maintenance-report",
       },
     ],
   },
   {
-    name: "Report",
-    url: "/report",
+    name: "Requests",
+    url: "/mechanic/request",
     children: [
       {
-        name: "Monthly",
-        url: "/report/monthly",
-      },
-      {
-        name: "Weekly",
-        url: "/report/weekly",
-      },
-      {
-        name: "Emergency",
-        url: "/report/weekly",
+        name: "Accessory Request",
+        url: "/mechanic/request/accessory",
       },
     ],
   },
@@ -50,7 +40,12 @@ const links = [
 const MechanicPage = () => {
   return (
     <div>
-      <Navbar links={links} title="TMS" />
+      <div className="mb-3">
+        <Navbar links={links} title="TMS" />
+      </div>
+      <Routes>
+        <Route path="request/accessory" element={<AccessoryRequest />} />
+      </Routes>
     </div>
   );
 };
