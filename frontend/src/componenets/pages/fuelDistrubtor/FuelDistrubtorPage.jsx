@@ -4,47 +4,15 @@ import Navbar from "../../common/header/Navbar";
 const links = [
   {
     name: "Home",
-    url: "/director",
+    url: "/fd",
   },
   {
-    name: "Vehicles",
-    url: "/vehicles",
+    name: "Request",
+    url: "/fd/approve-fuel-request",
   },
   {
-    name: "Requests",
-    url: "/request",
-    children: [
-      {
-        name: "Vehicle",
-        url: "/request/vehicle",
-      },
-      {
-        name: "Fuel",
-        url: "/request/fuel",
-      },
-      {
-        name: "Maintenance",
-        url: "/request/maintenance",
-      },
-    ],
-  },
-  {
-    name: "Report",
-    url: "/report",
-    children: [
-      {
-        name: "Monthly",
-        url: "/report/monthly",
-      },
-      {
-        name: "Weekly",
-        url: "/report/weekly",
-      },
-      {
-        name: "Emergency",
-        url: "/report/weekly",
-      },
-    ],
+    name: "Register",
+    url: "/fd/register-daily-fuel",
   },
 ];
 const FuelDistrubtorPage = () => {
