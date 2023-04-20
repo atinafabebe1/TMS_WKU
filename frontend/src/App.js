@@ -9,7 +9,7 @@ import EmployeePage from "./componenets/pages/employee/EmployeePage";
 import DriverPage from "./componenets/pages/driver/DriverPage";
 import MechanicPage from "./componenets/pages/mechanic/MechanicPage";
 import FuelDistrubtorPage from "./componenets/pages/fuelDistrubtor/FuelDistrubtorPage";
-import GarageDirectorPage from "./componenets/pages/garageDirector/GarageDirectorPage";
+import GarageDirectorPag from "./componenets/pages/garageDirector/GarageDirectorPage"
 import VicePresidentPage from "./componenets/pages/vicePresident/VicePresidentPage";
 import HeadOfDeploymentPage from "./componenets/pages/headOfDeploymnet/HeadOfDeploymentPage";
 import {
@@ -72,19 +72,17 @@ function App() {
               <PrivateRoute role={ROLE_DIRECTOR} element={DirectorPage} />
             }
           />
-          <Route
-            path="/gd/*"
-            element={
-              <PrivateRoute
-                role={ROLE_GARAGEDIRECTOR}
-                element={<GarageDirectorPage />}
-              />
-            }
-          />
+
           <Route
             path="/mechanic/*"
             element={
               <PrivateRoute role={ROLE_MECHANIC} element={MechanicPage} />
+            }
+          />
+            <Route
+            path="/gd/*"
+            element={
+              <PrivateRoute role={ROLE_GARAGEDIRECTOR} element={GarageDirectorPag} />
             }
           />
           <Route

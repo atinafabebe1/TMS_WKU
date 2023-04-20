@@ -4,7 +4,7 @@ import Navbar from "../../common/header/Navbar";
 const links = [
   {
     name: "Home",
-    url: "/director",
+    url: "/gd",
   },
   {
     name: "Vehicles",
@@ -47,7 +47,7 @@ const links = [
     ],
   },
 ];
-const GarageDirectorPage = () => {
+const GarageDirectorPag = () => {
   return (
     <div>
       <Navbar links={links} title="TMS" />
@@ -55,4 +55,4 @@ const GarageDirectorPage = () => {
   );
 };
 
-export default GarageDirectorPage;
+export default GarageDirectorPag;
