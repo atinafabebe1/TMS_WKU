@@ -8,7 +8,6 @@
     margin-top: 50px;
     margin-bottom: 50px;
 }
-
 .services h2 {
     font-size: 36px;
 }
@@ -30,28 +29,44 @@
 }
 
 @media (min-width: 992px) {
+    /* Increase the padding on larger screens */
     .landing-page {
         padding-top: 120px;
         padding-bottom: 120px;
     }
 
+    /* Decrease the font size of the headings on larger screens */
     .services h2 {
         font-size: 35px;
     }
 
+    /* Decrease the font size of the text on larger screens */
     .services p {
         font-size: 18px;
     }
 
+    /* Remove the bottom margin from columns on larger screens */
     .services .col {
         margin-bottom: 0;
     }
 
+    /* Adjust the margins of the columns on larger screens */
     .services .col:first-child {
         margin-right: 25px;
     }
 
     .services .col:last-child {
         margin-left: 25px;
+    }
+    
+    /* Add styles for the Login button */
+    .landing-page .login-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+    
+    .landing-page .login-btn button {
+        background-color: rgb(31, 31, 206);
     }
 }
