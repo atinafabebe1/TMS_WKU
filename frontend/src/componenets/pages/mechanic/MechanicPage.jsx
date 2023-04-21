@@ -1,5 +1,8 @@
 import React from "react";
 import Navbar from "../../common/header/Navbar";
+import SparePartRequest from "./CreateAccessoryRequest";
+import SparePartRequestListPage from "./SparePartRequestList";
+import EditSparePartRequest from "./EditAccessoryRequest";
 import AccessoryRequest from "./AccessoryRequest";
 import { Routes, Route } from "react-router-dom";
 
@@ -44,7 +47,15 @@ const MechanicPage = () => {
         <Navbar links={links} title="TMS" />
       </div>
       <Routes>
-        <Route path="request/accessory" element={<AccessoryRequest />} />
+        <Route
+          path="request/accessory"
+          element={<SparePartRequestListPage />}
+        />
+        <Route path="request/create-accessory" element={<AccessoryRequest />} />
+        <Route
+          path="request/edit-vehicle-request/"
+          element={<EditSparePartRequest />}
+        />
       </Routes>
     </div>
   );

@@ -10,8 +10,8 @@ const AccessoryRequest = () => {
     quantity: "",
   });
 
-  const [succes, setSucces] = useState(null);
-  const [error, setError] = useState(null);
+  const [succes, setSucces] = useState("");
+  const [error, setError] = useState("");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -29,14 +29,14 @@ const AccessoryRequest = () => {
       .then((response) => {
         if (response.success) {
           setSucces(response.data?.message);
-          setError(null);
+          setError("unable to send accessory Request");
         } else {
         }
       })
       .catch((err) => {
         console.log(err.response);
         setError(err.response.data?.error);
-        setSucces(null);
+        setSucces("Successfuly Sent");
       });
   };
 
