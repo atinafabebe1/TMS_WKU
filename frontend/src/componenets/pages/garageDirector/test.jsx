@@ -8,9 +8,7 @@ import { ROLE_GARAGEDIRECTOR } from "../../../constants/index";
 
 const AccessoryRequest = ({ link }) => {
   const { user } = useAuth();
-
   const [requests, setRequest] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -74,9 +72,7 @@ const AccessoryRequest = ({ link }) => {
 
   const handleApproveClick = async (request) => {
     try {
-      await api.put(`/Request/sparePart/${request._id}`, {
-        status: "completed",
-      });
+      await api.put(`/Request/sparePart/${request._id}/approve`);
       const response = await api.get("/Request/sparePart");
       setRequest(response.data.data);
     } catch (error) {
@@ -86,40 +82,15 @@ const AccessoryRequest = ({ link }) => {
 
   const handleRejectClick = async (request, rejectReason) => {
     try {
-      await api.put(
-        `/Request/sparePart/${request._id}`,
-        {
-          status: "canceled",
-        },
-        {
-          rejectReason,
-        }
-      );
+      await api.put(`/Request/sparePart/${request._id}/reject`, {
+        rejectReason,
+      });
       const response = await api.get("/Request/sparePart");
       setRequest(response.data.data);
     } catch (error) {
       console.log(error);
     }
   };
-
-  const handleSendToStore = async (request, rejectReason) => {
-    try {
-      await api.put(
-        `/Request/sparePart/${request._id}`,
-        {
-          status: "in_progress",
-        },
-        {
-          rejectReason,
-        }
-      );
-      const response = await api.get("/Request/sparePart");
-      setRequest(response.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleRequestClick = (request) => {
     setSelectedRequest(request);
     setShowUserModal(true);
@@ -139,7 +110,6 @@ const AccessoryRequest = ({ link }) => {
             handleApproveClick={handleApproveClick}
             handleRejectClick={handleRejectClick}
             handleRequestClick={handleRequestClick}
-            handleSendToStore={handleSendToStore}
           />
         </Tab>
         <Tab eventKey="rejected" title="In Progress Requests">

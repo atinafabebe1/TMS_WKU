@@ -6,6 +6,7 @@ const SparePartRequestTable = ({
   handleApproveClick,
   handleRejectClick,
   handleRequestClick,
+  handleSendToStore,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
@@ -31,6 +32,7 @@ const SparePartRequestTable = ({
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
+            <th>User</th>
             <th>Plate Number</th>
             <th>ID </th>
             <th>Type</th>
@@ -64,6 +66,13 @@ const SparePartRequestTable = ({
                       onClick={() => handleApproveClick(request)}
                     >
                       Approve
+                    </Button>{" "}
+                    <Button
+                      className="btn btn-sm"
+                      variant="warning"
+                      onClick={() => handleSendToStore(request)}
+                    >
+                      Send To Store
                     </Button>{" "}
                     <Button
                       className="btn btn-sm"
