@@ -40,21 +40,19 @@ const updateSparePart = asyncHandler(async (req, res, next) => {
 
   if (!sparePartRequest) {
     return next(
-      new ErrorResponse(
-        `Maintenance Report not found with id of ${req.params.id}`,
-        404
-      )
+      new ErrorResponse(`Spare Part not found with id of ${req.params.id}`, 404)
     );
   }
+
   //Make sure user is vehicle owner
-  if (sparePartRequest.user.toString() !== req.user.id) {
-    return next(
-      new ErrorResponse(
-        `User ${req.params.id} is not authorized to update this maintenance Order`,
-        404
-      )
-    );
-  }
+  // if (sparePartRequest.user.toString() !== req.user.id) {
+  //   return next(
+  //     new ErrorResponse(
+  //       `User ${req.params.id} is not authorized to update this maintenance Order`,
+  //       404
+  //     )
+  //   );
+  // }
   sparePartRequest = await SparePart.findByIdAndUpdate(
     req.params.id,
     req.body,

@@ -14,7 +14,7 @@ const advancedResult = require("../middleware/advancedResult");
 const router = express.Router({ mergeParams: true });
 router.use(Auth);
 
-router.post("/sparePart/:recieverId", createSparePart);
+router.post("/sparePart", createSparePart);
 router.get("/sparePart/", advancedResult(SparePartRequest, ""), getSpareParts);
 router.put("/sparePart/:id", updateSparePart);
 router.delete("/sparePart/:id", deleteSparePart);

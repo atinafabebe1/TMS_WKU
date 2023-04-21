@@ -11,11 +11,13 @@ const SparePartSchema = new Schema(
       ref: "User",
       immutable: true,
     },
-    recieverId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User",
-    },
+    //there is only one GARAGE DIRECTOR SO No receiver id Needed
+
+    // recieverId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   required: true,
+    //   ref: "User",
+    // },
     vehicle: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "VehicleRecord",
@@ -62,7 +64,7 @@ const SparePartSchema = new Schema(
     },
     unitPrice: {
       type: Number,
-      required: true,
+      //required: true,
       validate: {
         validator: function (v) {
           return v >= 0.01;
