@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
+import axios from "axios";
 import api from "../../../api/api";
-
 const MaintenanceRequestTables = () => {
   const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [maintenanceOrder, setMaintenanceOrder] = useState('');
 
   useEffect(() => {
     // Fetch the user's vehicle requests from your server API
@@ -31,18 +32,21 @@ const MaintenanceRequestTables = () => {
         setRequests(requests.filter((request) => request._id !== id));
       })
       .catch((error) =>
-        console.error(`Error deleting vehicle request with ID ${id}:`, error)
+        console.error(`Error deleting maintenance request with ID ${id}:`, error)
       );
   };
+
   const handleMore = (request) => {
     console.log(request);
     setSelectedRequest(request);
     setShowModal(true);
   };
+
   const handleModalClose = () => {
     setShowModal(false);
     setSelectedRequest(null);
   };
+
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -53,6 +57,28 @@ const MaintenanceRequestTables = () => {
       request.status.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
+
+  const handleTransferOrder = (id) => {
+    // Send a POST request to the server API to transfer maintenance order
+    axios.post(`/MaintenanceOrder`, { maintenanceOrder })
+      .then((response) => {
+        console.log(response);
+        // Update the local state with the new status of the request
+        const updatedRequests = requests.map((request) => {
+          if (request._id === id) {
+            return {
+              ...request,
+              status: "transferred",
+            };
+          }
+          return request;
+        });
+        setRequests(updatedRequests);
+      })
+      .catch((error) => {
+        console.error(`Error transferring maintenance order for request with ID ${id}:`, error);
+      });
+  };
 
   return (
     <div className="p-4">
@@ -86,120 +112,77 @@ const MaintenanceRequestTables = () => {
           {filteredRequests.map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
-              <td>{new Date(request.createdAt).toLocaleString()}</td>
+              <td>{request.createdAt}</td>
               <td>{request.status}</td>
               <td>
-                {request.status === "approved" && (
-                  <Button className="btn btn-sm" variant="success" disabled>
-                    Approved
-                  </Button>
-                )}
+                
                 {request.status === "pending" && (
-                  <div>
+                  <>
                     <Button
-                      className="btn btn-sm"
                       variant="success"
-                      onClick={() =>
-                        window.location.replace(
-                          `/hd/maintenance-order-form?_id=${request._id}`
-                        )
-                      }
+                      className="mx-2"
+                      onClick={() => handleTransferOrder(request._id)}
                     >
                       Transfer Order
-                    </Button>{" "}
+                    </Button>
                     <Button
-                      className="btn btn-sm"
                       variant="danger"
                       onClick={() => handleDeleteRequest(request._id)}
                     >
                       Delete
-                    </Button>{" "}
-                    <Button
-                      className="btn btn-sm"
-                      variant="primary"
-                      onClick={() => handleMore(request)}
-                    >
-                      More
                     </Button>
-                  </div>
+                  </>
                 )}
+                <Button variant="info" onClick={() => handleMore(request)}>
+                  More
+                </Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
-      <Modal
-        show={showModal}
-        onHide={handleModalClose}
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
+
+      <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter"></Modal.Title>
+          <Modal.Title>Maintenance Request Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {
-            <div>
-              <table class="table table-striped table-sm">
-                <tbody>
-                  <tr>
-                    <th scope="col">Plate Number:</th>
-                    <th scope="col"> {selectedRequest?.vehicle.plateNumber}</th>
-                  </tr>
-                  <tr>
-                    <th scope="col">Chassis No:</th>
-                    <th scope="col"> {selectedRequest?.vehicle.chassisNo}</th>
-                  </tr>
-                  <tr>
-                    <th scope="col">Type of Fuel: </th>
-                    <th scope="col"> {selectedRequest?.vehicle.typeOfFuel}</th>
-                  </tr>
-                  <tr>
-                    <th scope="col">Model Number: </th>
-                    <th scope="col"> {selectedRequest?.vehicle.modelNo}</th>
-                  </tr>
-                  <tr>
-                    <th scope="col">Motor Number: </th>
-                    <th scope="col"> {selectedRequest?.vehicle.motorNo}</th>
-                  </tr>
-                  <tr>
-                    <th scope="col">CC: </th>
-                    <th scope="col"> {selectedRequest?.vehicle.cC}</th>
-                  </tr>
-                  <tr>
-                    <th scope="col">Purchase Date: </th>
-                    <th scope="col">
-                      {" "}
-                      {selectedRequest?.vehicle.purchasedDate}
-                    </th>
-                  </tr>
-
-                  <tr>
-                    <th scope="col">Proprietary Id Number: </th>
-                    <th scope="col">
-                      {" "}
-                      {selectedRequest?.vehicle.proprietaryIdNumber}
-                    </th>
-                  </tr>
-                  <tr>
-                    <th scope="col">Reason: </th>
-                    <th scope="col"> {selectedRequest?.description}</th>
-                  </tr>
-                  <tr></tr>
-                </tbody>
-              </table>
-            </div>
-          }
+          <p>
+            <strong>Plate Number:</strong> {selectedRequest?.plateNumber}
+          </p>
+          <p>
+            <strong>Date:</strong> {selectedRequest?.createdAt}
+          </p>
+          <p>
+            <strong>Status:</strong> {selectedRequest?.status}
+          </p>
+          <p>
+            <strong>Description:</strong> {selectedRequest?.description}
+          </p>
+          {selectedRequest?.status === "in-progress" && (
+            <>
+              <Form.Label>Maintenance Order</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter maintenance order"
+                value={maintenanceOrder}
+                onChange={(e) => setMaintenanceOrder(e.target.value)}
+              />
+            </>
+          )}
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            className="btn btn-sm"
-            variant="secondary"
-            onClick={handleModalClose}
-          >
+          <Button variant="secondary" onClick={handleModalClose}>
             Close
           </Button>
+          {selectedRequest?.status === "in-progress" && (
+            <Button
+              variant="primary"
+              onClick={() => handleTransferOrder(selectedRequest._id)}
+            >
+              Transfer Order
+            </Button>
+          )}
         </Modal.Footer>
       </Modal>
     </div>
