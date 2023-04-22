@@ -1,4 +1,4 @@
-import { Table, Button, Modal, Form } from "react-bootstrap";
+import { Table, Button, Modal, Form, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 
 const SparePartRequestTable = ({
@@ -11,6 +11,7 @@ const SparePartRequestTable = ({
   const [showModal, setShowModal] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [currentRequest, setCurrentRequest] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = (request) => {
@@ -23,12 +24,32 @@ const SparePartRequestTable = ({
     handleCloseModal();
   };
 
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredRequests = requests.filter((request) => {
+    return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
   if (!requests) {
     return <p>No requests found.</p>;
   }
 
   return (
     <>
+      <Form>
+        <Row className="mb-3">
+          <Col>
+            <Form.Control
+              type="text"
+              placeholder="Search by Plate Number"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </Col>
+        </Row>
+      </Form>
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
@@ -43,7 +64,7 @@ const SparePartRequestTable = ({
           </tr>
         </thead>
         <tbody>
-          {requests?.map((request) => (
+          {filteredRequests?.map((request) => (
             <tr key={request._id}>
               <td>
                 <a href="#" onClick={() => handleRequestClick(request)}>
