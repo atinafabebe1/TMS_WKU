@@ -8,12 +8,9 @@ const EditSparePartRequest = () => {
   const [request, setRequest] = useState(null);
 
   useEffect(() => {
-    console.log("id is");
-    console.log(id);
     api
       .get(`/Request/sparePart?_id=${id}`)
       .then((response) => {
-        console.log(response.data.data[0].rejectReason);
         setRequest(response.data.data);
       })
       .catch((error) => {
@@ -24,13 +21,13 @@ const EditSparePartRequest = () => {
   return (
     <div>
       {request ? (
-        ((<p> {request[0].rejectReason}</p>),
-        (
+        <>
+          <p>{request[0].rejectReason}</p>
           <SparePartRequestingForm
             title={"Edit Request"}
             request={request[0]}
           />
-        ))
+        </>
       ) : (
         <p>Loading...</p>
       )}

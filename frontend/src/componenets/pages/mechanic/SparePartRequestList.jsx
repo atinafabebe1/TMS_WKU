@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Table, Button, Row, Col } from "react-bootstrap";
+import { Table, Button, Row, Col, Form } from "react-bootstrap";
 import api from "../../../api/api";
 
 const SparePartRequestListPage = () => {
   const [requests, setRequests] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -28,12 +29,23 @@ const SparePartRequestListPage = () => {
       .delete(`/Request/sparePart/${id}`)
       .then(() => {
         // Filter out the deleted request from the local state
-        setRequests(requests.filter((request) => request._id !== id));
+        setRequests(requests);
       })
       .catch((error) =>
         console.error(`Error deleting spare Part request with ID ${id}:`, error)
       );
   };
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredRequests = requests.filter((request) => {
+    return (
+      request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.status.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   return (
     <div className="p-4">
@@ -47,6 +59,18 @@ const SparePartRequestListPage = () => {
           </Link>
         </Col>
       </Row>
+      <Form>
+        <Row className="mb-3">
+          <Col>
+            <Form.Control
+              type="text"
+              placeholder="Search by plate number or status"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </Col>
+        </Row>
+      </Form>
       {isLoading && <h4>Loading...</h4>}
       <Table striped bordered hover responsive className="table-sm">
         <thead>
@@ -61,7 +85,7 @@ const SparePartRequestListPage = () => {
           </tr>
         </thead>
         <tbody>
-          {requests?.map((request) => (
+          {filteredRequests?.map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
               <td>{request.type}</td>
@@ -70,7 +94,7 @@ const SparePartRequestListPage = () => {
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
               <td>
-                {request.status === "rejected" && (
+                {request.status === "canceled" && (
                   <Button
                     className="btn btn-sm"
                     variant="secondary"
@@ -81,6 +105,25 @@ const SparePartRequestListPage = () => {
                     }
                   >
                     Resubmit
+                  </Button>
+                )}
+                {request.status === "completed" && (
+                  <Button
+                    className="btn btn-sm"
+                    variant="success"
+                    disabled
+                    onClick={() =>
+                      navigate(
+                        `/mechanic/request/edit-vehicle-request/${request._id}`
+                      )
+                    }
+                  >
+                    Completed
+                  </Button>
+                )}
+                {request.status === "in-progress" && (
+                  <Button className="btn btn-sm" variant="success" disabled>
+                    Waiting for Store
                   </Button>
                 )}
                 {request.status === "approved" && (

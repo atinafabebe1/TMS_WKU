@@ -12,6 +12,7 @@ import FuelDistrubtorPage from "./componenets/pages/fuelDistrubtor/FuelDistrubto
 import GarageDirectorPag from "./componenets/pages/garageDirector/GarageDirectorPage"
 import VicePresidentPage from "./componenets/pages/vicePresident/VicePresidentPage";
 import HeadOfDeploymentPage from "./componenets/pages/headOfDeploymnet/HeadOfDeploymentPage";
+import StorePage from "./componenets/pages/store/StorePage";
 import {
   ROLE_ADMIN,
   ROLE_DIRECTOR,
@@ -22,6 +23,7 @@ import {
   ROLE_HEADOFDEPLOYMENT,
   ROLE_MECHANIC,
   ROLE_VICEPRESIDENT,
+  ROLE_STORE
 } from "./constants";
 import LandingPage from "./componenets/pages/home/Home";
 
@@ -91,6 +93,15 @@ function App() {
               <PrivateRoute
                 role={ROLE_VICEPRESIDENT}
                 element={VicePresidentPage}
+              />
+            }
+          />
+            <Route
+            path="/store/*"
+            element={
+              <PrivateRoute
+                role={ROLE_STORE}
+                element={StorePage}
               />
             }
           />

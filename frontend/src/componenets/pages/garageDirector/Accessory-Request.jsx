@@ -8,7 +8,6 @@ import { ROLE_GARAGEDIRECTOR } from "../../../constants/index";
 
 const AccessoryRequest = ({ link }) => {
   const { user } = useAuth();
-
   const [requests, setRequest] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [photo, setPhoto] = useState(null);
@@ -107,7 +106,7 @@ const AccessoryRequest = ({ link }) => {
       await api.put(
         `/Request/sparePart/${request._id}`,
         {
-          status: "in_progress",
+          status: "in-progress",
         },
         {
           rejectReason,
