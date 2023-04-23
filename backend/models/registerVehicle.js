@@ -12,7 +12,7 @@ const VehicleImageSchema = new Schema(
   {
     photo: {
       type: String,
-      default: "no-photo.png",
+      default: null,
     },
     title: {
       type: String,
@@ -107,7 +107,10 @@ const VehicleRecordSchema = new Schema(
       type: String,
       // required: true,
     },
-    load: { type: Number, required: true },
+    load: {
+      type: Number,
+      //  required: true
+    },
     duration: {
       type: Number,
       default: 0,
@@ -117,11 +120,11 @@ const VehicleRecordSchema = new Schema(
         tripId: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Trip",
-          required: true,
+          // required: true,
         },
         duration: {
           type: Number,
-          required: true,
+          // required: true,
         },
       },
     ],

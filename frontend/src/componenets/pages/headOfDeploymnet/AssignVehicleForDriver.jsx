@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal } from 'react-bootstrap';
-import api from '../../../api/api';
+import React, { useState, useEffect } from "react";
+import { Button, Table, Modal } from "react-bootstrap";
+import api from "../../../api/api";
 
 function UnAssignedVehicleList() {
   const [vehicles, setVehicles] = useState([]);
@@ -12,7 +12,7 @@ function UnAssignedVehicleList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await api.get('VehicleRecord');
+        const response = await api.get("VehicleRecord");
         setVehicles(response.data?.data);
       } catch (error) {
         console.error(error);
@@ -20,12 +20,14 @@ function UnAssignedVehicleList() {
     };
     fetchData();
   }, []);
-
+  //fetch user
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get('/user/getusers');
-        const driverUsers = response.data.filter(user => user.role === 'ROLE_DRIVER');
+        const response = await api.get("/user/getusers");
+        const driverUsers = response.data.filter(
+          (user) => user.role === "ROLE_DRIVER"
+        );
         setUsers(driverUsers);
       } catch (error) {
         console.error(error);
@@ -36,23 +38,28 @@ function UnAssignedVehicleList() {
 
   const handleAssign = async () => {
     try {
-      const response = await api.put(`/VehicleRecord/${selectedVehicle.id}/assign`, {
-        driverId: selectedDriver.id
-      });
+      const response = await api.put(
+        `/VehicleRecord/${selectedVehicle.id}/assign`,
+        {
+          driverId: selectedDriver.id,
+        }
+      );
       if (response.status === 200) {
         setShowModal(false);
         setSelectedVehicle(null);
         setSelectedDriver(null);
         // Update the assigned vehicle in the vehicles array to reflect the new assignment
-        setVehicles(vehicles.map(vehicle => {
-          if (vehicle.id === selectedVehicle.id) {
-            return {
-              ...vehicle,
-              assignedDriver: selectedDriver
-            };
-          }
-          return vehicle;
-        }));
+        setVehicles(
+          vehicles.map((vehicle) => {
+            if (vehicle.id === selectedVehicle.id) {
+              return {
+                ...vehicle,
+                assignedDriver: selectedDriver,
+              };
+            }
+            return vehicle;
+          })
+        );
       }
     } catch (error) {
       console.error(error);
@@ -65,12 +72,12 @@ function UnAssignedVehicleList() {
     setSelectedDriver(null);
   };
 
-  const handleAssignClick = vehicle => {
+  const handleAssignClick = (vehicle) => {
     setSelectedVehicle(vehicle);
     setShowModal(true);
   };
 
-  const handleDriverSelect = driver => {
+  const handleDriverSelect = (driver) => {
     setSelectedDriver(driver);
   };
 
@@ -87,11 +94,13 @@ function UnAssignedVehicleList() {
           </tr>
         </thead>
         <tbody>
-          {vehicles.map(vehicle => (
+          {vehicles.map((vehicle) => (
             <tr key={vehicle.id}>
               <td>{vehicle.plateNumber}</td>
               <td>{vehicle.modelNo}</td>
-              <td>{vehicle.assignedDriver ? vehicle.assignedDriver.name : 'None'}</td>
+              <td>
+                {vehicle.assignedDriver ? vehicle.assignedDriver.name : "None"}
+              </td>
               <td>
                 <Button
                   variant="outline-success"
@@ -114,12 +123,15 @@ function UnAssignedVehicleList() {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h2>Select a driver to assign to {selectedVehicle ? selectedVehicle.plateNumber : null}</h2>
+          <h2>
+            Select a driver to assign to{" "}
+            {selectedVehicle ? selectedVehicle.plateNumber : null}
+          </h2>
           <ul>
-            {users.map(user => (
-          <li key={user.id}>{user.name}</li>
-        ))}
-      </ul>
+            {users.map((user) => (
+              <li key={user.id}>{user.name}</li>
+            ))}
+          </ul>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleModalClose}>

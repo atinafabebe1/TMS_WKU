@@ -10,7 +10,7 @@ const advancedResult = require("../middleware/advancedResult");
 const User = require("../models/user");
 const router = express.Router();
 router.use(Auth);
-router.use(Authorize("ROLE_ADMIN"));
+router.use(Authorize("ROLE_ADMIN") || Authorize("ROLE_HEADOFDEPLOYMENT"));
 
 router.get("/getusers", advancedResult(User), getUsers);
 router.post("/register", registerUser);
