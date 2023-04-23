@@ -13,7 +13,7 @@ const { ROLE_EMPLOYEE } = require("../constants");
 const router = express.Router();
 router.use(Auth);
 
-router.post("/", Authorize(ROLE_EMPLOYEE), createComplain);
+router.post("/", Authorize("ROLE_EMPLOYEE"), createComplain);
 router.get("/", advancedResult(User), getComplains);
 router.put("/:id", updateComplain);
 router.delete("/:id", deleteComplain);

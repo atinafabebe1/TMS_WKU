@@ -13,12 +13,8 @@ const links = [
     url: "/gd/maintenance",
     children: [
       {
-        name: "Receive Maintenance",
-        url: "/gd/maintenance/receive-maintenance-order",
-      },
-      {
-        name: "Order Maintenance",
-        url: "/gd/maintenance/send-maintenance-order",
+        name: "Maintenance Orders",
+        url: "/gd/maintenance/maintenance-orders",
       },
       {
         name: "Approve Maintenance",
@@ -62,8 +58,8 @@ const GarageDirectorPag = () => {
           path="request/get-accessory-request"
           element={<AccessoryRequest />}
         />
-        <Route
-          path="maintenance/send-maintenance-order"
+       <Route
+          path="maintenance/maintenance-orders"
           element={<MaintenanceOrderTable link={`/MaintenanceOrder`} />}
         />
       </Routes>

@@ -11,8 +11,7 @@ const MaintenanceRequestTables = () => {
   const [maintenanceOrder, setMaintenanceOrder] = useState('');
 
   useEffect(() => {
-    // Fetch the user's vehicle
-    //requests from your server API
+    // Fetch the user's vehicle requests from your server API
     api
       .get("/Request/maintenance")
       .then((response) => {
@@ -59,7 +58,7 @@ const MaintenanceRequestTables = () => {
     );
   });
 
-  const handleTransferOrder = (id) => {
+  const handleTransferOrder = (id, maintenanceOrder) => {
     // Send a POST request to the server API to transfer maintenance order
     axios.post(`/MaintenanceOrder`, { maintenanceOrder })
       .then((response) => {
@@ -80,6 +79,7 @@ const MaintenanceRequestTables = () => {
         console.error(`Error transferring maintenance order for request with ID ${id}:`, error);
       });
   };
+  
 
   return (
     <div className="p-4">
@@ -121,20 +121,24 @@ const MaintenanceRequestTables = () => {
                   <>
                     <Button
                       variant="success"
-                      className="mx-2"
+                      className="btn btn-sm"
                       onClick={() => handleTransferOrder(request._id)}
                     >
                       Transfer Order
                     </Button>
+                    {" "}
                     <Button
                       variant="danger"
+                      className="btn btn-sm"
                       onClick={() => handleDeleteRequest(request._id)}
                     >
                       Delete
                     </Button>
+                    {" "}
                   </>
                 )}
-                <Button variant="info" onClick={() => handleMore(request)}>
+                <Button variant="info"
+                className="btn btn-sm" onClick={() => handleMore(request)}>
                   More
                 </Button>
               </td>
@@ -160,25 +164,17 @@ const MaintenanceRequestTables = () => {
           <p>
             <strong>Description:</strong> {selectedRequest?.description}
           </p>
-          {selectedRequest?.status === "in-progress" && (
-            <>
-              <Form.Label>Maintenance Order</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter maintenance order"
-                value={maintenanceOrder}
-                onChange={(e) => setMaintenanceOrder(e.target.value)}
-              />
-            </>
-          )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalClose}>
+          <Button variant="secondary" 
+          className="btn btn-sm"
+          onClick={handleModalClose}>
             Close
           </Button>
           {selectedRequest?.status === "in-progress" && (
             <Button
               variant="primary"
+              className="btn btn-sm"
               onClick={() => handleTransferOrder(selectedRequest._id)}
             >
               Transfer Order
