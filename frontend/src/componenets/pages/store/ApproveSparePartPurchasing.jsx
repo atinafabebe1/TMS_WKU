@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Modal, Tabs, Tab } from "react-bootstrap";
 import Avatar from "react-avatar";
 import api from "../../../api/api";
-import SparePartRequestTable from "../../common/sparepart/SparePartRequestTable";
+import SparePartPurchasingRequestTable from "../../common/sparepart/SparePartPurchasingRequestTable";
 import { useAuth } from "../../../context/AuthContext";
 import { ROLE_GARAGEDIRECTOR } from "../../../constants/index";
 
-const AccessoryRequest = ({ link }) => {
+const SparePartPurchasingRequest = ({ link }) => {
   const { user } = useAuth();
   const [requests, setRequest] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,8 +17,7 @@ const AccessoryRequest = ({ link }) => {
   const [activeTab, setActiveTab] = useState("pending");
 
   useEffect(() => {
-    // Fetch the user's spare
-    //Part requests from your server API
+    // Fetch the user's spare Part requests from your server API
     api
       .get("/Request/sparePart")
       .then((response) => {
@@ -59,37 +58,20 @@ const AccessoryRequest = ({ link }) => {
     setActiveTab(tabName);
   }
 
-  const pendingRequests = requests.filter(
-    (request) => request.status === "pending"
+  const requestedtoBuyRequests = requests.filter(
+    (request) => request.status === "in-progress"
   );
-  const inProgressRequests = requests.filter(
-    (request) =>
-      request.status === "in-progress" ||
-      request.status === "approved-to-buy" ||
-      request.status === "rejected-to-buy"
+  const approvedToBuyRequests = requests.filter(
+    (request) => request.status === "approved-to-buy"
   );
-  const completedRequests = requests.filter(
-    (request) => request.status === "completed"
-  );
-  const canceledRequests = requests.filter(
-    (request) => request.status === "canceled"
+  const rejectedToBuyRequests = requests.filter(
+    (request) => request.status === "rejected-to-buy"
   );
 
   const handleApproveClick = async (request) => {
     try {
       await api.put(`/Request/sparePart/${request._id}`, {
-        status: "completed",
-      });
-      const response = await api.get("/Request/sparePart");
-      setRequest(response.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleCompletedtoBuyClick = async (request) => {
-    try {
-      await api.put(`/Request/sparePart/${request._id}`, {
-        status: "completed",
+        status: "approved-to-buy",
       });
       const response = await api.get("/Request/sparePart");
       setRequest(response.data.data);
@@ -103,25 +85,7 @@ const AccessoryRequest = ({ link }) => {
       await api.put(
         `/Request/sparePart/${request._id}`,
         {
-          status: "canceled",
-        },
-        {
-          rejectReason,
-        }
-      );
-      const response = await api.get("/Request/sparePart");
-      setRequest(response.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleSendToStore = async (request, rejectReason) => {
-    try {
-      await api.put(
-        `/Request/sparePart/${request._id}`,
-        {
-          status: "in-progress",
+          status: "rejected-to-buy",
         },
         {
           rejectReason,
@@ -147,26 +111,19 @@ const AccessoryRequest = ({ link }) => {
         id="vehicle-request-tabs"
         className="my-2"
       >
-        <Tab eventKey="pending" title="Pending Requests">
-          <SparePartRequestTable
-            requests={pendingRequests}
+        <Tab eventKey="inProgress" title="Requested to Buy Requests">
+          <SparePartPurchasingRequestTable
+            requests={requestedtoBuyRequests}
             handleApproveClick={handleApproveClick}
             handleRejectClick={handleRejectClick}
             handleRequestClick={handleRequestClick}
-            handleSendToStore={handleSendToStore}
           />
         </Tab>
-        <Tab eventKey="rejected" title="In Progress Requests">
-          <SparePartRequestTable
-            requests={inProgressRequests}
-            handleCompletedtoBuyClick={handleCompletedtoBuyClick}
-          />
+        <Tab eventKey="approved-to-buy" title="Approved to Buy Requests">
+          <SparePartPurchasingRequestTable requests={approvedToBuyRequests} />
         </Tab>
-        <Tab eventKey="approved" title="Completed Requests">
-          <SparePartRequestTable requests={completedRequests} />
-        </Tab>
-        <Tab eventKey="canceled" title="Canceled Requests">
-          <SparePartRequestTable requests={canceledRequests} />
+        <Tab eventKey="rejected-to-buy" title="Rejected to Buy Requests">
+          <SparePartPurchasingRequestTable requests={rejectedToBuyRequests} />
         </Tab>
       </Tabs>
       {selectedRequest && (
@@ -208,4 +165,4 @@ const AccessoryRequest = ({ link }) => {
   );
 };
 
-export default AccessoryRequest;
+export default SparePartPurchasingRequest;

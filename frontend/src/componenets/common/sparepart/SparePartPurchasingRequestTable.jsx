@@ -1,13 +1,12 @@
 import { Table, Button, Modal, Form, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 
-const SparePartRequestTable = ({
+const SparePartPurchasingRequestTable = ({
   requests,
   handleApproveClick,
   handleRejectClick,
   handleRequestClick,
   handleSendToStore,
-  handleCompletedtoBuyClick,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
@@ -80,7 +79,7 @@ const SparePartRequestTable = ({
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
               <td>
-                {request.status === "pending" && (
+                {request.status === "in-progress" && (
                   <>
                     <Button
                       className="btn btn-sm"
@@ -91,57 +90,11 @@ const SparePartRequestTable = ({
                     </Button>{" "}
                     <Button
                       className="btn btn-sm"
-                      variant="warning"
-                      onClick={() => handleSendToStore(request)}
-                    >
-                      Send To Store
-                    </Button>{" "}
-                    <Button
-                      className="btn btn-sm"
                       variant="danger"
                       onClick={() => handleShowModal(request)}
                     >
                       Reject
                     </Button>
-                  </>
-                )}
-                {request.status === "completed" && (
-                  <>
-                    <Button className="btn btn-sm" variant="success" disabled>
-                      Request Successfully Approved
-                    </Button>{" "}
-                  </>
-                )}
-                {request.status === "canceled" && (
-                  <>
-                    <Button className="btn btn-sm" variant="warning" disabled>
-                      Request Successfully Rejected
-                    </Button>{" "}
-                  </>
-                )}
-                {request.status === "in-progress" && (
-                  <>
-                    <Button className="btn btn-sm" variant="warning" disabled>
-                      Request Waiting For Store Approval
-                    </Button>{" "}
-                  </>
-                )}
-                {request.status === "approved-to-buy" && (
-                  <>
-                    <Button className="btn btn-sm" variant="warning" disabled>
-                      Request Waiting For Garage Director Approval
-                    </Button>{" "}
-                  </>
-                )}
-                {request.status === "approved-to-buy" && (
-                  <>
-                    <Button
-                      className="btn btn-sm"
-                      variant="success"
-                      onClick={() => handleCompletedtoBuyClick(request)}
-                    >
-                      Approve
-                    </Button>{" "}
                   </>
                 )}
               </td>
@@ -185,4 +138,4 @@ const SparePartRequestTable = ({
   );
 };
 
-export default SparePartRequestTable;
+export default SparePartPurchasingRequestTable;

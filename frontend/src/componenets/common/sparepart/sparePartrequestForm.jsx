@@ -45,7 +45,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
     setQuantity("");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const result = {
       plateNumber,
       type,
@@ -68,6 +68,15 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
           setError(err.response.data?.error);
           setSuccess(null);
         });
+      try {
+        await api.put(`/Request/sparePart/${request._id}`, {
+          status: "pending",
+        });
+        const response = await api.get("/Request/sparePart");
+        console.log(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       api
         .post(`/Request/sparePart?isDeleted=false`, result)
