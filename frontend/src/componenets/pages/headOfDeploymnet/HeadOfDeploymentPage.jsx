@@ -6,7 +6,6 @@ import DailyReport from "../../common/report/dailyReport";
 import MonthlyReport from "../../common/report/monthlyReport";
 import EmmergencyReport from "../../common/report/emmergencyReport";
 import VehicleInfromation from "../../common/vehicle/DisplayVehicle";
-import RegisterVehicle from "./RegisterVehicle";
 import ServiceScheduleForm from "./ServiceScheduleForm";
 import TransferVehicle from "./TransferVehicle";
 import TrackVehicle from "../../common/vehicle/TrackVehicle";
@@ -17,6 +16,9 @@ import { useAuth } from "../../../context/AuthContext";
 import UnAssignedVehicleList from "./AssignVehicleForDriver";
 import AssignVehicle from "./AssignVehicle";
 import MaintenanceRequestTables from "../../common/maintenance/maintenancerequesttable";
+import RegisterVehicle from "./RegisterVehicles";
+import VehicleListPage from "./VehicleListPage";
+import EditVehicleRecord from "./EditVehicleRecord";
 const links = [
   {
     name: "Home",
@@ -121,7 +123,11 @@ const HeadOfDeploymentPage = () => {
         <Route path="report/daily" element={<DailyReport />} />
         <Route path="report/monthly" element={<MonthlyReport />} />
         <Route path="report/emergence" element={<EmmergencyReport />} />
-        <Route path="vehicles" element={<VehicleInfromation />} />
+        <Route path="vehicles" element={<VehicleListPage />} />
+        <Route
+          path="vehicles/edit-vehicle/:id"
+          element={<EditVehicleRecord />}
+        />
         <Route path="vehicles/Receive" element={<RegisterVehicle />} />
         <Route path="vehicles/Transfer" element={<TransferVehicle />} />
         <Route

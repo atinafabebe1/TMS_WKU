@@ -10,7 +10,7 @@ const VehicleList = () => {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  //fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {

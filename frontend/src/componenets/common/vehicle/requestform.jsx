@@ -22,6 +22,8 @@ const VehicleRequestForm = ({ title, request, onSubmit }) => {
   const [driver, setDriver] = useState("");
   const [error, setError] = useState("");
   const [success, setSucces] = useState("");
+
+  //fetch vehicle information
   const fetch = async () => {
     api
       .get("/VehicleRecord?select=plateNumber,maxPerson,typeOfFuel")
