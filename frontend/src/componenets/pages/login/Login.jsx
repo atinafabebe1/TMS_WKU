@@ -11,6 +11,7 @@ import {
   ROLE_GARAGEDIRECTOR,
   ROLE_HEADOFDEPLOYMENT,
   ROLE_MECHANIC,
+  ROLE_STORE,
   ROLE_VICEPRESIDENT,
 } from "../../../constants/index";
 import { useAuth } from "../../../context/AuthContext";
@@ -95,6 +96,8 @@ const LoginPage = () => {
           navigate("/mechanic");
         } else if (role === ROLE_VICEPRESIDENT) {
           navigate("/vp");
+        } else if (role === ROLE_STORE) {
+          navigate("/store");
         } else {
           navigate("/login");
         }

@@ -79,7 +79,14 @@ const SparePartSchema = new Schema(
     status: {
       type: String,
       default: "pending",
-      enum: ["pending", "in-progress", "completed", "canceled"],
+      enum: [
+        "pending",
+        "in-progress",
+        "completed",
+        "canceled",
+        "approved-to-buy",
+        "rejected-to-buy",
+      ],
       validate: {
         validator: function (v) {
           if (this.isNew && v !== "pending") {

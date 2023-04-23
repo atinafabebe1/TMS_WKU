@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "../../common/header/Navbar";
-
+import SparePartPurchasingRequest from "./ApproveSparePartPurchasing";
 import { Routes, Route } from "react-router-dom";
 
 const links = [
@@ -13,8 +13,8 @@ const links = [
     url: "/store/approve",
     children: [
       {
-        name: "Maintenance Order",
-        url: "/store/approve/purchasing-request",
+        name: "Spare Part Purchasing",
+        url: "/store/approve/sparePart-purchasing-request",
       },
     ],
   },
@@ -35,6 +35,12 @@ const StorePage = () => {
       <div className="mb-3">
         <Navbar links={links} title="TMS" />
       </div>
+      <Routes>
+        <Route
+          path="approve/sparePart-purchasing-request"
+          element={<SparePartPurchasingRequest />}
+        />
+      </Routes>
     </div>
   );
 };

@@ -210,19 +210,17 @@ const RegisterForm = () => {
                   Head of Deployment
                 </option>
                 <option value="ROLE_MECHANIC">Mechanic</option>
+                <option value="ROLE_STORE">Store</option>
                 <option value="ROLE_VICEPRESIDENT">Vice President</option>
               </Form.Control>
             </Form.Group>
             {user.role === "ROLE_DRIVER" && (
               <div>
-                 <Form.Group className="mb-3" controlId="yearsOfExperience">
+                <Form.Group className="mb-3" controlId="yearsOfExperience">
                   <Form.Label className="font-weight-bold">
                     Assigned Vehicle <span className="text-danger">*</span>
                   </Form.Label>
-                  <Form.Control
-                    type="text"
-                    min="0"
-                  />
+                  <Form.Control type="text" min="0" />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="yearsOfExperience">
                   <Form.Label className="font-weight-bold">
