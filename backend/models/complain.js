@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const ErrorResponse = require("../utils/errorResponse");
 
+
 const Schema = mongoose.Schema;
 
 const ComplainSchema = new Schema(
@@ -13,7 +14,7 @@ const ComplainSchema = new Schema(
     },
     receiverId: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
+      //required: true,
       ref: "User",
       immutable: true,
     },
