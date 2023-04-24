@@ -19,6 +19,7 @@ import MaintenanceRequestTables from "../../common/maintenance/maintenancereques
 import RegisterVehicle from "./RegisterVehicles";
 import VehicleListPage from "./VehicleListPage";
 import EditVehicleRecord from "./EditVehicleRecord";
+import HODMaintenanceRequestPage from "./maintenanceRequest";
 const links = [
   {
     name: "Home",
@@ -139,7 +140,7 @@ const HeadOfDeploymentPage = () => {
         <Route path="complain" element={<Complain />} />
         <Route
           path="request/maintenance"
-          element={<MaintenanceRequestTables link={`/Request/maintenance`} />}
+          element={<HODMaintenanceRequestPage link={`/Request/maintenance`} />}
         />
       </Routes>
     </div>
