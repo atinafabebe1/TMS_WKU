@@ -51,7 +51,8 @@ const MechanicPage = () => {
           path="request/accessory"
           element={<SparePartRequestListPage />}
         />
-        <Route path="request/create-accessory" element={<AccessoryRequest />} />
+
+        <Route path="request/create-accessory" element={<SparePartRequest />} />
         <Route
           path="request/edit-vehicle-request/:id"
           element={<EditSparePartRequest />}

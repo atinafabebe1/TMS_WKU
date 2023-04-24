@@ -13,13 +13,13 @@ import Complain from "./Complain";
 import WorkdaySchedule from "../../common/schedule/Workday";
 import VehiclesRequests from "../../common/vehicle/vehiclerequest";
 import { useAuth } from "../../../context/AuthContext";
-import UnAssignedVehicleList from "./AssignVehicleForDriver";
 
 import MaintenanceRequestTables from "../../common/maintenance/maintenancerequesttable";
 import RegisterVehicle from "./RegisterVehicles";
 import VehicleListPage from "./VehicleListPage";
 import EditVehicleRecord from "./EditVehicleRecord";
 import DetailVehicleInfo from "./DetailVehicleInfo";
+import SingleVehicleDetailInfoo from "./SingleVehicleDetailInfo";
 import AssignVehicle from "../../common/vehicle/AssignVehicle";
 import HODMaintenanceRequestPage from "./maintenanceRequest";
 const links = [
@@ -36,16 +36,8 @@ const links = [
         url: "/hd/vehicles",
       },
       {
-        name: "Receive Vehicle",
-        url: "/hd/vehicles/Receive",
-      },
-      {
         name: "Track Vehicle",
         url: "/hd/vehicles/Track",
-      },
-      {
-        name: "Assign Vehicle",
-        url: "/hd/vehicles/Assign",
       },
       {
         name: "Transfer Vehicle",
@@ -139,6 +131,10 @@ const HeadOfDeploymentPage = () => {
           element={<VehiclesRequests link={`/Request/vehicle`} />}
         />
         <Route path="vehicles/Track" element={<TrackVehicle />} />
+        <Route
+          path="vehicles/detail/:id"
+          element={<SingleVehicleDetailInfoo />}
+        />
         <Route path="vehicles/Assign" element={<AssignVehicle />} />
         <Route path="complain" element={<Complain />} />
         <Route

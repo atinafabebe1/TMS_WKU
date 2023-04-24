@@ -3,11 +3,12 @@ import { Form, Button, Row, Col, Container, Modal } from "react-bootstrap";
 import api from "../../../api/api";
 
 const AssignVehicleForm = ({ title, data, onSubmit }) => {
-  const [assignedTo, setAssignedTo] = useState({
-    project: null,
-    task: null,
-    serviceType: null,
-  });
+  const [assignedTo, setAssignedTo] = useState([
+    { project: null },
+    { task: null },
+    { serviceType: null },
+    { commonService: null },
+  ]);
 
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
@@ -17,11 +18,12 @@ const AssignVehicleForm = ({ title, data, onSubmit }) => {
     if (data) {
       setAssignedTo(data.assignedTo);
     } else {
-      setAssignedTo({
-        task: null,
-        project: null,
-        serviceType: null,
-      });
+      setAssignedTo([
+        { project: null },
+        { task: null },
+        { serviceType: null },
+        { commonService: null },
+      ]);
     }
   }, [data]);
 
@@ -32,11 +34,12 @@ const AssignVehicleForm = ({ title, data, onSubmit }) => {
   };
 
   const handleCancel = () => {
-    setAssignedTo({
-      task: null,
-      project: null,
-      serviceType: null,
-    });
+    setAssignedTo([
+      { project: null },
+      { task: null },
+      { serviceType: null },
+      { commonService: null },
+    ]);
   };
 
   const handleSubmit = async () => {

@@ -4,9 +4,9 @@ import { useState } from "react";
 
 const VehicleDisplayTable = ({
   vehicles,
-  handleApproveClick,
+  handledissabele,
   handledeleteClick,
-  handleRequestClick,
+  handleenable,
   handleSendToStore,
   handleCompletedtoBuyClick,
 }) => {
@@ -26,7 +26,7 @@ const VehicleDisplayTable = ({
     setSearchTerm(event.target.value);
   };
 
-  const filteredRequests = vehicles.filter((vehicle) => {
+  const filteredVehicles = vehicles.filter((vehicle) => {
     return vehicle.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
@@ -59,46 +59,78 @@ const VehicleDisplayTable = ({
           </tr>
         </thead>
         <tbody>
-          {filteredRequests?.map((vehicle) => (
+          {filteredVehicles?.map((vehicle) => (
             <tr key={vehicle._id}>
               <td>{vehicle.plateNumber}</td>
               <td>{vehicle.chassisNo}</td>
               <td>{vehicle.proprietaryIdNumber}</td>
               <td>{vehicle.modelNo}</td>
               <td>
-                {vehicle.isDeleted === false && vehicle.assignedTo === null && (
+                {vehicle.isDeleted === false &&
+                  vehicle.assignedTo === null &&
+                  vehicle.onMaintenance === false && (
+                    <>
+                      <Button
+                        className="btn btn-sm"
+                        variant="success"
+                        onClick={() =>
+                          navigate(`/hd/vehicles/assign-vehicle/${vehicle._id}`)
+                        }
+                      >
+                        Assign
+                      </Button>{" "}
+                      <Button
+                        className="btn btn-sm"
+                        variant="warning"
+                        onClick={() =>
+                          navigate(`/hd/vehicles/detail/${vehicle._id}`)
+                        }
+                      >
+                        Detail
+                      </Button>{" "}
+                      <Button
+                        className="btn btn-sm"
+                        variant="primary"
+                        onClick={() =>
+                          navigate(`/hd/vehicles/edit-vehicle/${vehicle._id}`)
+                        }
+                      >
+                        Edit
+                      </Button>{" "}
+                      <Button
+                        className="btn btn-sm"
+                        variant="secondary"
+                        onClick={() => handledissabele(vehicle)}
+                      >
+                        Temporarly Diactivate
+                      </Button>{" "}
+                      <Button
+                        className="btn btn-sm"
+                        variant="danger"
+                        onClick={() => handledeleteClick(vehicle)}
+                      >
+                        Delete
+                      </Button>{" "}
+                    </>
+                  )}
+                {vehicle.isDeleted === true && (
                   <>
-                    <Button
-                      className="btn btn-sm"
-                      variant="success"
-                      onClick={() =>
-                        navigate(`/hd/vehicles/assign-vehicle/${vehicle._id}`)
-                      }
-                    >
-                      Assign
-                    </Button>{" "}
-                    <Button
-                      className="btn btn-sm"
-                      variant="primary"
-                      onClick={() =>
-                        navigate(`/hd/vehicles/edit-vehicle/${vehicle._id}`)
-                      }
-                    >
-                      Edit
-                    </Button>{" "}
-                    <Button
-                      className="btn btn-sm"
-                      variant="danger"
-                      onClick={handledeleteClick}
-                    >
-                      Delete
+                    <Button className="btn btn-sm" variant="danger">
+                      This Vehicle Permanently Deleted
                     </Button>{" "}
                   </>
                 )}
-                {vehicle.isDeleted === true && (
+                {vehicle.onMaintenance === true && (
                   <>
-                    <Button className="btn btn-sm" variant="success">
-                      This Vehicle Permanently Deleted
+                    <Button className="btn btn-sm" variant="danger">
+                      This Vehicle Is Temporarly Unavailable
+                    </Button>{" "}
+                    <Button
+                      className="btn btn-sm"
+                      variant="success"
+                      onClick={() => handleenable(vehicle)}
+                    >
+                      Enable
                     </Button>{" "}
                   </>
                 )}

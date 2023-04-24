@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Container, Modal } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../../../api/api";
 
-const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
+const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
   //   const [plateNumber, setPlateNumber] = useState("");
   //   const [type, setType] = useState("car"); // set default value for vehicle type
   //   const [identificationNumber, setIdentificationNumber] = useState("");
@@ -21,11 +22,10 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   const [proprietaryIdNumber, setProprietaryIdNumber] = useState("");
   const [vehicleImage, setVehicleImage] = useState(null);
   const [assignedTo, setAssignedTo] = useState(null);
-  const [onMaintenance, setOnMaintenance] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
-
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data) {
@@ -43,7 +43,6 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       setProprietaryIdNumber(data.proprietaryIdNumber);
       setVehicleImage(data.vehicleImage);
       setAssignedTo(data.assignedTo);
-      setOnMaintenance(data.onMaintenance);
     } else {
       setModelNo("");
       setChassisNo("");
@@ -59,7 +58,6 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       setProprietaryIdNumber("");
       setVehicleImage(null);
       setAssignedTo(null);
-      setOnMaintenance(false);
     }
   }, [data]);
 
@@ -83,7 +81,6 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
     setProprietaryIdNumber("");
     setVehicleImage(null);
     setAssignedTo(null);
-    setOnMaintenance(false);
   };
 
   const handleSubmit = async () => {
@@ -102,7 +99,6 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       proprietaryIdNumber,
       vehicleImage,
       assignedTo,
-      onMaintenance,
     };
     if (data) {
       api
@@ -149,7 +145,6 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             setProprietaryIdNumber("");
             setVehicleImage(null);
             setAssignedTo(null);
-            setOnMaintenance(false);
           }
         })
         .catch((err) => {
@@ -177,7 +172,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <span> </span>
                   <Form.Control
                     type="number"
-                    required
+                    disabled
                     min={1000}
                     max={9999}
                     value={modelNo}
@@ -190,7 +185,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
 
                   <Form.Control
                     type="number"
-                    required
+                    disabled
                     min={100000}
                     max={999999}
                     value={chassisNo}
@@ -202,7 +197,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Label>Motor Number</Form.Label>
                   <Form.Control
                     type="number"
-                    required
+                    disabled
                     minLength={3}
                     maxLength={25}
                     value={motorNo}
@@ -216,7 +211,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Label>CC</Form.Label>
                   <Form.Control
                     type="number"
-                    required
+                    disabled
                     minLength={3}
                     maxLength={25}
                     value={cC}
@@ -228,7 +223,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Label>plate Number</Form.Label>
                   <Form.Control
                     type="string"
-                    required
+                    disabled
                     min={0}
                     minLength={3}
                     maxLength={25}
@@ -245,7 +240,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     as="select"
                     type="text"
                     placeholder="Choose"
-                    required
+                    disabled
                     value={typeOfFuel}
                     onChange={(e) => setTypeOfFuel(e.target.value)}
                   >
@@ -268,7 +263,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
 
                   <Form.Control
                     type="number"
-                    required
+                    disabled
                     min={1}
                     maxLength={10}
                     value={purchasePrice}
@@ -282,7 +277,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Control
                     type="date"
                     name="purchaseddates"
-                    required
+                    disabled
                     value={purchasedDate}
                     onChange={(e) => setPurchasedDate(e.target.value)}
                   />
@@ -299,7 +294,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Control
                     type="number"
                     name="maxperson"
-                    required
+                    disabled
                     min={0}
                     max={80}
                     value={maxPerson}
@@ -312,7 +307,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Control
                     type="number"
                     name="maxload"
-                    required
+                    disabled
                     min={0}
                     max={5000}
                     value={maxLoad}
@@ -325,7 +320,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Control
                     type="number"
                     name="maxlitres"
-                    required
+                    disabled
                     min={0}
                     max={5000}
                     value={maxLitres}
@@ -345,7 +340,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Control
                     type="number"
                     name="proprietaryIdNumber"
-                    required
+                    disabled
                     value={proprietaryIdNumber}
                     onChange={(e) => setProprietaryIdNumber(e.target.value)}
                   />
@@ -356,6 +351,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Label>Assigned to</Form.Label>
                   <Form.Control
                     type="text"
+                    disabled
                     minLength={3}
                     maxLength={100}
                     value={assignedTo}
@@ -367,6 +363,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Label>Vehicle Image</Form.Label>
                   <Form.Control
                     type="file"
+                    disabled
                     accept="image/*"
                     name="vehicleimage"
                     value={vehicleImage}
@@ -385,39 +382,14 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             <Button
               type="reset"
               className="btn-danger me-2"
-              onClick={handleClear}
+              onClick={() => navigate(`/hd/vehicles`)}
             >
-              Clear
+              Back
             </Button>
-            <Button
-              type="submit"
-              className="btn-primary"
-              onClick={() => {
-                setShowModal(true);
-              }}
-            >
-              Register
-            </Button>
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-              <Modal.Header closeButton>
-                <Modal.Title>Confirm Submission</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                Are you sure you want to submit this request?
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowModal(false)}>
-                  Cancel
-                </Button>
-                <Button variant="primary" onClick={handleConfirmation}>
-                  Submit
-                </Button>
-              </Modal.Footer>
-            </Modal>
           </div>
         </div>
       </div>
     </div>
   );
 };
-export default VehicleRegistrationForm;
+export default SingleVehicleDetailInfo;
