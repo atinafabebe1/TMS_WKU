@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../../common/header/Navbar";
 import { Routes, Route } from "react-router-dom";
 import AccessoryRequest from "./Accessory-Request";
+import MaintenanceOrderTable from "../../common/maintenance/maintenanceOrdertable";
 const links = [
   {
     name: "Home",
@@ -12,12 +13,8 @@ const links = [
     url: "/gd/maintenance",
     children: [
       {
-        name: "Receive Maintenance",
-        url: "/gd/maintenance/receive-maintenance-order",
-      },
-      {
-        name: "Order Maintenance",
-        url: "/gd/maintenance/send-maintenance-order",
+        name: "Maintenance Orders",
+        url: "/gd/maintenance/maintenance-orders",
       },
       {
         name: "Approve Maintenance",
@@ -60,6 +57,10 @@ const GarageDirectorPag = () => {
         <Route
           path="request/get-accessory-request"
           element={<AccessoryRequest />}
+        />
+       <Route
+          path="maintenance/maintenance-orders"
+          element={<MaintenanceOrderTable link={`/MaintenanceOrder`} />}
         />
       </Routes>
     </div>

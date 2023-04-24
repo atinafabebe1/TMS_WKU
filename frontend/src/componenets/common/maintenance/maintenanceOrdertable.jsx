@@ -3,17 +3,32 @@ import { Link } from "react-router-dom";
 import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import axios from "axios";
 import api from "../../../api/api";
-const MaintenanceRequestTables = () => {
+const MaintenanceOrderTable = () => {
   const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [transferModal, setTransferModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [maintenanceOrder, setMaintenanceOrder] = useState('');
+  const [mechanics, setMechanics] = useState([]);
+
+useEffect(() => {
+  const fetchMechanics = async () => {
+    try {
+      const response = await fetch('/getusers?role=ROLE_MECHANIC');
+      const data = await response.json();
+      setMechanics(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  fetchMechanics();
+}, []);
 
   useEffect(() => {
     // Fetch the user's vehicle requests from your server API
     api
-      .get("/Request/maintenance")
+      .get("/MaintenanceOrder")
       .then((response) => {
         console.log(response.data.data);
         setRequests(response.data.data);
@@ -41,7 +56,16 @@ const MaintenanceRequestTables = () => {
     setSelectedRequest(request);
     setShowModal(true);
   };
-
+  const handleTransferModal = (request) => {
+    console.log(request);
+    setSelectedRequest(request);
+    setShowModal(false);
+    setTransferModal(true);
+  };
+  const handleTransferModalClose = () => {
+    setTransferModal(false);
+    setSelectedRequest(null);
+  };
   const handleModalClose = () => {
     setShowModal(false);
     setSelectedRequest(null);
@@ -58,7 +82,7 @@ const MaintenanceRequestTables = () => {
     );
   });
 
-  const handleTransferOrder = (id, maintenanceOrder) => {
+  const handleTransferOrder = (id) => {
     // Send a POST request to the server API to transfer maintenance order
     axios.post(`/MaintenanceOrder`, { maintenanceOrder })
       .then((response) => {
@@ -79,13 +103,12 @@ const MaintenanceRequestTables = () => {
         console.error(`Error transferring maintenance order for request with ID ${id}:`, error);
       });
   };
-  
 
   return (
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h1 align="center">Maintenance Requests</h1>
+          <h1 align="center">Maintenance Orders</h1>
         </Col>
       </Row>
       <Form>
@@ -122,11 +145,10 @@ const MaintenanceRequestTables = () => {
                     <Button
                       variant="success"
                       className="btn btn-sm"
-                      onClick={() => handleTransferOrder(request._id)}
+                      onClick={() => handleTransferModal(request._id)}
                     >
                       Transfer Order
-                    </Button>
-                    {" "}
+                    </Button>{" "}
                     <Button
                       variant="danger"
                       className="btn btn-sm"
@@ -134,11 +156,11 @@ const MaintenanceRequestTables = () => {
                     >
                       Delete
                     </Button>
-                    {" "}
                   </>
-                )}
-                <Button variant="info"
-                className="btn btn-sm" onClick={() => handleMore(request)}>
+                )}{" "}
+                <Button variant="info" 
+                className="btn btn-sm"
+                onClick={() => handleMore(request)}>
                   More
                 </Button>
               </td>
@@ -149,7 +171,7 @@ const MaintenanceRequestTables = () => {
 
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Maintenance Request Details</Modal.Title>
+          <Modal.Title>Maintenance Orders Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
@@ -166,24 +188,55 @@ const MaintenanceRequestTables = () => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" 
-          className="btn btn-sm"
-          onClick={handleModalClose}>
+          <Button variant="secondary" className="btn btn-sm" onClick={handleModalClose}>
             Close
           </Button>
-          {selectedRequest?.status === "in-progress" && (
+          {selectedRequest?.status === "pending" && (
             <Button
               variant="primary"
               className="btn btn-sm"
-              onClick={() => handleTransferOrder(selectedRequest._id)}
+              onClick={() => handleTransferModal(selectedRequest._id)}
             >
               Transfer Order
             </Button>
           )}
         </Modal.Footer>
       </Modal>
+      <Modal show={transferModal} onHide={handleTransferModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Transfer Order</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+              <Form.Label>Receiver</Form.Label>
+<Form.Select aria-label="Choose Mechanic">
+  {mechanics.map((mechanic) => (
+    <option key={mechanic.id} value={mechanic.id}>
+      {mechanic.name}
+    </option>
+  ))}
+</Form.Select>
+
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" 
+          className="btn btn-sm"
+          onClick={handleTransferModalClose}>
+            Close
+          </Button>
+
+            <Button
+              variant="primary"
+              className="btn btn-sm"
+              onClick={() => handleTransferOrder(selectedRequest._id)}
+            >
+              Transfer
+            </Button>
+      
+        </Modal.Footer>
+      </Modal>
+
     </div>
   );
 };
 
-export default MaintenanceRequestTables;
+export default MaintenanceOrderTable;
