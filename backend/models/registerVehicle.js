@@ -128,6 +128,7 @@ const VehicleRecordSchema = new Schema(
         },
       },
     ],
+
     isDeleted: {
       type: Boolean,
       default: false,

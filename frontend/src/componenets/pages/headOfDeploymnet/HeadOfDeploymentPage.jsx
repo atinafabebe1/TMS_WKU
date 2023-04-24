@@ -14,11 +14,13 @@ import WorkdaySchedule from "../../common/schedule/Workday";
 import VehiclesRequests from "../../common/vehicle/vehiclerequest";
 import { useAuth } from "../../../context/AuthContext";
 import UnAssignedVehicleList from "./AssignVehicleForDriver";
-import AssignVehicle from "./AssignVehicle";
+
 import MaintenanceRequestTables from "../../common/maintenance/maintenancerequesttable";
 import RegisterVehicle from "./RegisterVehicles";
 import VehicleListPage from "./VehicleListPage";
 import EditVehicleRecord from "./EditVehicleRecord";
+import DetailVehicleInfo from "./DetailVehicleInfo";
+import AssignVehicle from "../../common/vehicle/AssignVehicle";
 import HODMaintenanceRequestPage from "./maintenanceRequest";
 const links = [
   {
@@ -124,11 +126,12 @@ const HeadOfDeploymentPage = () => {
         <Route path="report/daily" element={<DailyReport />} />
         <Route path="report/monthly" element={<MonthlyReport />} />
         <Route path="report/emergence" element={<EmmergencyReport />} />
-        <Route path="vehicles" element={<VehicleListPage />} />
+        <Route path="vehicles" element={<DetailVehicleInfo />} />
         <Route
           path="vehicles/edit-vehicle/:id"
           element={<EditVehicleRecord />}
         />
+        <Route path="vehicles/assign-vehicle/:id" element={<AssignVehicle />} />
         <Route path="vehicles/Receive" element={<RegisterVehicle />} />
         <Route path="vehicles/Transfer" element={<TransferVehicle />} />
         <Route
