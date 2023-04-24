@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Table, Button, Row, Col } from "react-bootstrap";
+import { Table, Button, Row, Col, Modal,FormGroup,FormLabel,FormControl } from "react-bootstrap";
 import api from "../../../api/api";
 
 const MaintenanceRequestPage = () => {
   const [requests, setRequests] = useState([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
   useEffect(() => {
     // Fetch the user's vehicle requests from your server API
@@ -19,6 +21,11 @@ const MaintenanceRequestPage = () => {
       );
   }, []);
 
+  const handleModalClose = () => {
+    setShowEditModal(false);
+    setSelectedRequest(null);
+  };
+
   const handleDeleteRequest = (id) => {
     // Delete the vehicle request with the specified ID from your server API
     api
@@ -29,6 +36,30 @@ const MaintenanceRequestPage = () => {
       })
       .catch((error) =>
         console.error(`Error deleting vehicle request with ID ${id}:`, error)
+      );
+  };
+
+  const handleShowEditModal = (id) => {
+    // Find the selected request from the local state and set it as the selectedRequest
+    setSelectedRequest(requests.find((request) => request._id === id));
+    setShowEditModal(true);
+  };
+
+  const handleEditRequest = () => {
+    // Edit the selected request with the specified ID on your server API
+    api
+      .put(`/Request/maintenance/${selectedRequest._id}`, selectedRequest)
+      .then(() => {
+        // Update the local state with the edited request
+        setRequests(
+          requests.map((request) =>
+            request._id === selectedRequest._id ? selectedRequest : request
+          )
+        );
+        setShowEditModal(false);
+      })
+      .catch((error) =>
+        console.error(`Error editing vehicle request with ID ${selectedRequest._id}:`, error)
       );
   };
 
@@ -47,21 +78,18 @@ const MaintenanceRequestPage = () => {
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
-            
-          <th>Plate Number</th>
+            <th>Plate Number</th>
             <th>Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {requests?.map((request) => (
+          {requests.map((request) => (
             <tr key={request._id}>
-             
               <td>{request.plateNumber}</td>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
-              
               <td>
                 {request.status === "rejected" && (
                   <Button
@@ -86,11 +114,7 @@ const MaintenanceRequestPage = () => {
                     <Button
                       className="btn btn-sm"
                       variant="primary"
-                      onClick={() =>
-                        window.location.replace(
-                          `/driver/maintenance-request-form?_id=${request._id}`
-                        )
-                      }
+                      onClick={() => handleShowEditModal(request._id)}
                     >
                       Edit
                     </Button>{" "}
@@ -108,6 +132,44 @@ const MaintenanceRequestPage = () => {
           ))}
         </tbody>
       </Table>
+      <Modal show={showEditModal} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Maintenance Request</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          
+        <FormGroup>
+  <FormLabel>Description:</FormLabel>
+  <FormControl
+    as="textarea"
+    value={selectedRequest?.description}
+    onChange={(e) =>
+      setSelectedRequest({
+        ...selectedRequest,
+        description: e.target.value,
+      })
+    }
+  />
+</FormGroup>
+
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" 
+          className="btn btn-sm"
+          onClick={handleModalClose}>
+            Close
+          </Button>
+          {selectedRequest?.status === "pending" && (
+            <Button
+              variant="primary"
+              className="btn btn-sm"
+              onClick={() => handleEditRequest(selectedRequest._id)}
+            >
+              Resubmit
+            </Button>
+          )}
+        </Modal.Footer>
+        </Modal>
     </div>
   );
 };
