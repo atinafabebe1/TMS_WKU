@@ -94,15 +94,12 @@ const VehicleRecordSchema = new Schema(
       itemDetail: { type: String },
       quantity: { type: Number },
     },
-    assignedTo: {
-      type: {
-        task: { type: String },
-        project: { type: String },
-        serviceType: { type: String },
-        commonService: { type: String },
-      },
-      default: null,
-    },
+    assignedTo: [
+      { task: { type: String, default: null } },
+      { project: { type: String, default: null } },
+      { serviceType: { type: String, default: null } },
+      { commonService: { type: String, default: null } },
+    ],
     location: {
       type: String,
       // required: true,
@@ -114,6 +111,10 @@ const VehicleRecordSchema = new Schema(
     duration: {
       type: Number,
       default: 0,
+    },
+    onMaintenance: {
+      type: Boolean,
+      default: false,
     },
     assignedTrips: [
       {
