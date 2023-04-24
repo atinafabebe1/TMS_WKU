@@ -32,7 +32,7 @@ router.get(
 );
 router.put(
   "/maintenance/:id",
-  Authorize("ROLE_DRIVER"),
+  Authorize("ROLE_DRIVER","ROLE_HEADOFDEPLOYMENT"),
   updateMaitenacneRequest
 );
 router.delete(
