@@ -6,7 +6,7 @@ const VehicleDisplayTable = ({
   vehicles,
   handledissabele,
   handledeleteClick,
-  handleenable,
+  handleEnableVehicle,
   handleSendToStore,
   handleCompletedtoBuyClick,
 }) => {
@@ -72,30 +72,30 @@ const VehicleDisplayTable = ({
                     <>
                       <Button
                         className="btn btn-sm"
+                        variant="info"
+                        onClick={() =>
+                          navigate(`/hd/vehicles/detail/${vehicle._id}`)
+                        }
+                      >
+                        See Detail
+                      </Button>{" "}
+                      <Button
+                        className="btn btn-sm"
+                        variant="warning"
+                        onClick={() =>
+                          navigate(`/hd/vehicles/edit-vehicle/${vehicle._id}`)
+                        }
+                      >
+                        Edit
+                      </Button>{" "}
+                      <Button
+                        className="btn btn-sm"
                         variant="success"
                         onClick={() =>
                           navigate(`/hd/vehicles/assign-vehicle/${vehicle._id}`)
                         }
                       >
                         Assign
-                      </Button>{" "}
-                      <Button
-                        className="btn btn-sm"
-                        variant="warning"
-                        onClick={() =>
-                          navigate(`/hd/vehicles/detail/${vehicle._id}`)
-                        }
-                      >
-                        Detail
-                      </Button>{" "}
-                      <Button
-                        className="btn btn-sm"
-                        variant="primary"
-                        onClick={() =>
-                          navigate(`/hd/vehicles/edit-vehicle/${vehicle._id}`)
-                        }
-                      >
-                        Edit
                       </Button>{" "}
                       <Button
                         className="btn btn-sm"
@@ -115,22 +115,22 @@ const VehicleDisplayTable = ({
                   )}
                 {vehicle.isDeleted === true && (
                   <>
-                    <Button className="btn btn-sm" variant="danger">
+                    <Button className="btn btn-sm" variant="danger" disabled>
                       This Vehicle Permanently Deleted
                     </Button>{" "}
                   </>
                 )}
                 {vehicle.onMaintenance === true && (
                   <>
-                    <Button className="btn btn-sm" variant="danger">
-                      This Vehicle Is Temporarly Unavailable
+                    <Button className="btn btn-sm" variant="danger" disabled>
+                      This Vehicle Is Temporarly Diactivated
                     </Button>{" "}
                     <Button
                       className="btn btn-sm"
                       variant="success"
-                      onClick={() => handleenable(vehicle)}
+                      onClick={() => handleEnableVehicle(vehicle)}
                     >
-                      Enable
+                      Activate
                     </Button>{" "}
                   </>
                 )}

@@ -3,10 +3,6 @@ import { Form, Button, Row, Col, Container, Modal } from "react-bootstrap";
 import api from "../../../api/api";
 
 const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
-  //   const [plateNumber, setPlateNumber] = useState("");
-  //   const [type, setType] = useState("car"); // set default value for vehicle type
-  //   const [identificationNumber, setIdentificationNumber] = useState("");
-  //   const [quantity, setQuantity] = useState("");
   const [modelNo, setModelNo] = useState("");
   const [chassisNo, setChassisNo] = useState("");
   const [motorNo, setMotorNo] = useState("");
@@ -281,7 +277,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
 
                   <Form.Control
                     type="date"
-                    name="purchaseddates"
+                    name="purchasedDate"
                     required
                     value={purchasedDate}
                     onChange={(e) => setPurchasedDate(e.target.value)}

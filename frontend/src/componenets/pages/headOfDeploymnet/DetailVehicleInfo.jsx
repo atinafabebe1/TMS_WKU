@@ -59,15 +59,19 @@ const DetailVehicleInfo = ({ link }) => {
       await api.put(`/VehicleRecord/${vehicle._id}`, {
         onMaintenance: true,
       });
+      const response = await api.get("/VehicleRecord");
+      setVehicles(response.data.data);
     } catch (error) {
       console.log(error);
     }
   };
-  const handleenable = async (vehicle) => {
+  const handleEnableVehicle = async (vehicle) => {
     try {
       await api.put(`/VehicleRecord/${vehicle._id}`, {
         onMaintenance: false,
       });
+      const response = await api.get("/VehicleRecord");
+      setVehicles(response.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -97,7 +101,6 @@ const DetailVehicleInfo = ({ link }) => {
             vehicles={availableVehicles}
             handledeleteClick={handledeleteClick}
             handledissabele={handledissabele}
-            handleenable={handleenable}
           />
         </Tab>
         <Tab eventKey="assignedVehicle" title="Assigned Vehicle">
@@ -108,7 +111,10 @@ const DetailVehicleInfo = ({ link }) => {
           eventKey="temporarlyunavailableVehicle"
           title="Temporarly Unavailable"
         >
-          <VehicleDisplayTable vehicles={temporarlyUnavailable} />
+          <VehicleDisplayTable
+            vehicles={temporarlyUnavailable}
+            handleEnableVehicle={handleEnableVehicle}
+          />
         </Tab>
         <Tab eventKey="deletedVehicles" title="Deleted Vehicles">
           <VehicleDisplayTable vehicles={deletedVehicles} />

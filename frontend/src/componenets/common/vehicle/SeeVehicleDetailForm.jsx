@@ -276,7 +276,7 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
 
                   <Form.Control
                     type="date"
-                    name="purchaseddates"
+                    name="purchasedDate"
                     disabled
                     value={purchasedDate}
                     onChange={(e) => setPurchasedDate(e.target.value)}
@@ -378,10 +378,9 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
           {success && <p className="text-success">{success}</p>}
 
           <div className="d-flex justify-content-end my-4">
-            <Button className="btn-secondary me-2">Cancel</Button>
             <Button
               type="reset"
-              className="btn-danger me-2"
+              variant="secondary"
               onClick={() => navigate(`/hd/vehicles`)}
             >
               Back
