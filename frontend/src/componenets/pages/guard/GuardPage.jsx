@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../../common/header/Navbar";
 import { Routes, Route } from "react-router-dom";
-
+import DetailVehicleInfo from "./approvedVehiclePermission";
 const links = [
   {
     name: "Home",
@@ -18,7 +18,9 @@ const GuardPage = () => {
       <div className="mb-3">
         <Navbar links={links} title="TMS" />
       </div>
-      <Routes></Routes>
+      <Routes>
+        <Route path="approve" element={<DetailVehicleInfo />} />
+      </Routes>
     </div>
   );
 };
