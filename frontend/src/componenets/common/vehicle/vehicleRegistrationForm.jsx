@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Container, Modal } from "react-bootstrap";
+import SuccessProvider from "../errorProvider/SuccessProvider";
+import ErrorProvider from "../errorProvider/ErrorProvider";
 import api from "../../../api/api";
 
 const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
@@ -113,7 +115,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
         })
         .catch((err) => {
           console.log(err.response.data);
-          setError(err.response.data?.error);
+          setError("Please Provide Valid Data and Try Again");
           setSuccess(null);
         });
       try {
@@ -150,7 +152,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
         })
         .catch((err) => {
           console.log(err.response.data);
-          setError(err.response.data?.error);
+          setError("Please Provide Valid Data and Try Again");
           setSuccess(null);
         });
     }
@@ -373,8 +375,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             </Form>
           </Container>
 
-          {error && <p className="text-danger">{error}</p>}
-          {success && <p className="text-success">{success}</p>}
+          {error && <ErrorProvider error={error} />}
+          {success && <SuccessProvider success={success} />}
 
           <div className="d-flex justify-content-end my-4">
             <Button className="btn-secondary me-2">Cancel</Button>

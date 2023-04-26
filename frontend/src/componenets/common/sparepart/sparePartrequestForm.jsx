@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import ErrorProvider from "../errorProvider/ErrorProvider";
+import SuccessProvider from "../errorProvider/SuccessProvider";
 import {
   Form,
   Button,
@@ -18,6 +20,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [validated, setValidated] = useState(false);
 
   useEffect(() => {
     if (request) {
@@ -34,11 +37,16 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
   }, [request]);
 
   const handleConfirmation = (event) => {
-    event.preventDefault();
-    setShowModal(false);
-    handleSubmit();
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+      setShowModal(false);
+      setValidated(true);
+      handleSubmit();
+    }
   };
-  const handleClear = (event) => {
+  const handleClear = () => {
     setPlateNumber("");
     setType("car");
     setIdentificationNumber("");
@@ -82,17 +90,18 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
         .post(`/Request/sparePart?isDeleted=false`, result)
         .then((response) => {
           if (response.status === 200) {
-            setSuccess(response.data?.message);
             setError(null);
             setPlateNumber("");
             setType("car");
             setIdentificationNumber("");
             setQuantity("");
+            setSuccess("Your Request Successfuly Sent");
           }
         })
         .catch((err) => {
           console.log(err.response.data);
-          setError(err.response.data?.error);
+          // setError(err.response.data?.error);
+          setError("Please Provide Valid Data and Try Again");
           setSuccess(null);
         });
     }
@@ -112,16 +121,25 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
               and cooperation.
             </p>
           )}
-          <Form onSubmit={handleConfirmation}>
+          <Form
+            className="form"
+            noValidate
+            validated={validated}
+            onSubmit={handleConfirmation}
+          >
             <FormGroup>
               <FormLabel>Vehicle Plate Number</FormLabel>
               <FormControl
                 name="plateNumber"
+                required
                 value={plateNumber}
                 onChange={(event) => setPlateNumber(event.target.value)}
-                required
+                validated={validated}
                 className="mb-3"
               ></FormControl>
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid Plate Number.
+              </Form.Control.Feedback>
             </FormGroup>
             <Form.Group className="mb-3" controlId="type">
               <Form.Label className="font-weight-bold">Vehicle Type</Form.Label>
@@ -129,6 +147,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                 as="select"
                 name="type"
                 required
+                validated={validated}
                 value={type}
                 onChange={(event) => setType(event.target.value)}
               >
@@ -142,6 +161,9 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
               <FormLabel> Spare Part Id</FormLabel>
               <FormControl
                 type="text"
+                minLength={3}
+                maxLength={35}
+                validated={validated}
                 value={identificationNumber}
                 onChange={(event) =>
                   setIdentificationNumber(event.target.value)
@@ -149,20 +171,35 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                 required
                 className="mb-3"
               />
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid ID.
+              </Form.Control.Feedback>
             </FormGroup>
             <FormGroup>
               <FormLabel>Quantity</FormLabel>
               <FormControl
                 type="number"
+                validated={validated}
                 value={quantity}
                 onChange={(event) => setQuantity(event.target.value)}
                 required
                 className="mb-3"
               />
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid Quantity.
+              </Form.Control.Feedback>
             </FormGroup>
 
-            {error && <p className="text-danger">{error}</p>}
-            {success && <p className="text-success">{success}</p>}
+            {error && (
+              <p className="text-danger">
+                <ErrorProvider error={error} />
+              </p>
+            )}
+            {success && (
+              <p className="text-danger">
+                <SuccessProvider error={success} />
+              </p>
+            )}
 
             <div className="d-flex justify-content-end my-4">
               <Button className="btn-secondary me-2">Cancel</Button>
