@@ -9,6 +9,7 @@ import {
   ROLE_EMPLOYEE,
   ROLE_FUELDISTRUBTOR,
   ROLE_GARAGEDIRECTOR,
+  ROLE_GUARD,
   ROLE_HEADOFDEPLOYMENT,
   ROLE_MECHANIC,
   ROLE_STORE,
@@ -98,6 +99,8 @@ const LoginPage = () => {
           navigate("/vp");
         } else if (role === ROLE_STORE) {
           navigate("/store");
+        } else if (role === ROLE_GUARD) {
+          navigate("/guard");
         } else {
           navigate("/login");
         }

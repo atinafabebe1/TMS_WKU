@@ -3,12 +3,7 @@ import { Form, Button, Row, Col, Container, Modal } from "react-bootstrap";
 import api from "../../../api/api";
 
 const AssignVehicleForm = ({ title, data, onSubmit }) => {
-  const [assignedTo, setAssignedTo] = useState([
-    { project: null },
-    { task: null },
-    { serviceType: null },
-    { commonService: null },
-  ]);
+  const [assignedTo, setAssignedTo] = useState(null);
 
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
@@ -18,31 +13,21 @@ const AssignVehicleForm = ({ title, data, onSubmit }) => {
     if (data) {
       setAssignedTo(data.assignedTo);
     } else {
-      setAssignedTo([
-        { project: null },
-        { task: null },
-        { serviceType: null },
-        { commonService: null },
-      ]);
+      setAssignedTo(null);
     }
   }, [data]);
 
   const handleConfirmation = (event) => {
     event.preventDefault();
     setShowModal(false);
-    handleSubmit();
+    handleAssign();
   };
 
   const handleCancel = () => {
-    setAssignedTo([
-      { project: null },
-      { task: null },
-      { serviceType: null },
-      { commonService: null },
-    ]);
+    setAssignedTo(null);
   };
 
-  const handleSubmit = async () => {
+  const handleAssign = async () => {
     try {
       const result = {
         assignedTo,
@@ -78,43 +63,12 @@ const AssignVehicleForm = ({ title, data, onSubmit }) => {
                 <hr></hr>
                 <br></br>
                 <Form.Group as={Col} controlId="assignedTo">
-                  <Form.Label>Task</Form.Label>
+                  <Form.Label>Assigned To</Form.Label>
                   <Form.Control
                     type="text"
                     required
-                    value={assignedTo.task}
-                    onChange={(e) =>
-                      setAssignedTo((prev) => ({
-                        ...prev,
-                        task: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-                <Form.Group as={Col} controlId="assignedTo">
-                  <Form.Label>Project</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={assignedTo.project}
-                    onChange={(e) =>
-                      setAssignedTo((prev) => ({
-                        ...prev,
-                        project: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-                <Form.Group as={Col} controlId="serviceType">
-                  <Form.Label>Service Type</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={assignedTo.serviceType}
-                    onChange={(e) =>
-                      setAssignedTo((prev) => ({
-                        ...prev,
-                        serviceType: e.target.value,
-                      }))
-                    }
+                    value={assignedTo}
+                    onChange={(e) => setAssignedTo(e.target.value)}
                   />
                 </Form.Group>
               </Row>
@@ -147,7 +101,7 @@ const AssignVehicleForm = ({ title, data, onSubmit }) => {
                 <Modal.Title>Confirm Submission</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                Are you sure you want to Assign th vehicle for {assignedTo}?
+                Are you sure you want to Assign this vehicle for {assignedTo}?
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="secondary" onClick={() => setShowModal(false)}>

@@ -15,6 +15,7 @@ const {
   ROLE_VICEPRESIDENT,
   ROLE_ADMIN,
   ROLE_STORE,
+  ROLE_GUARD,
 } = require("../constants/index");
 
 const Schema = mongoose.Schema;
@@ -109,6 +110,7 @@ const UserSchema = new Schema(
         ROLE_VICEPRESIDENT,
         ROLE_ADMIN,
         ROLE_STORE,
+        ROLE_GUARD,
       ],
       default: ROLE_EMPLOYEE,
     },

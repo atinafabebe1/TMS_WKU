@@ -7,7 +7,7 @@ const VehicleDisplayTable = ({
   handledissabele,
   handledeleteClick,
   handleEnableVehicle,
-  handleSendToStore,
+  handeleUnassign,
   handleCompletedtoBuyClick,
 }) => {
   const [showModal, setShowModal] = useState(false);
@@ -117,6 +117,20 @@ const VehicleDisplayTable = ({
                   <>
                     <Button className="btn btn-sm" variant="danger" disabled>
                       This Vehicle Permanently Deleted
+                    </Button>{" "}
+                  </>
+                )}
+                {vehicle.assignedTo !== null && (
+                  <>
+                    <Button className="btn btn-sm" variant="primary" disabled>
+                      This Vehicle Assigned For Purpose
+                    </Button>{" "}
+                    <Button
+                      className="btn btn-sm"
+                      variant="danger"
+                      onClick={() => handeleUnassign(vehicle)}
+                    >
+                      Remove Assigned Task
                     </Button>{" "}
                   </>
                 )}
