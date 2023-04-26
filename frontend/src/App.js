@@ -9,10 +9,11 @@ import EmployeePage from "./componenets/pages/employee/EmployeePage";
 import DriverPage from "./componenets/pages/driver/DriverPage";
 import MechanicPage from "./componenets/pages/mechanic/MechanicPage";
 import FuelDistrubtorPage from "./componenets/pages/fuelDistrubtor/FuelDistrubtorPage";
-import GarageDirectorPag from "./componenets/pages/garageDirector/GarageDirectorPage"
+import GarageDirectorPag from "./componenets/pages/garageDirector/GarageDirectorPage";
 import VicePresidentPage from "./componenets/pages/vicePresident/VicePresidentPage";
 import HeadOfDeploymentPage from "./componenets/pages/headOfDeploymnet/HeadOfDeploymentPage";
 import StorePage from "./componenets/pages/store/StorePage";
+import GuardPage from "./componenets/pages/guard/GuardPage";
 import {
   ROLE_ADMIN,
   ROLE_DIRECTOR,
@@ -23,7 +24,8 @@ import {
   ROLE_HEADOFDEPLOYMENT,
   ROLE_MECHANIC,
   ROLE_VICEPRESIDENT,
-  ROLE_STORE
+  ROLE_STORE,
+  ROLE_GUARD,
 } from "./constants";
 import LandingPage from "./componenets/pages/home/Home";
 
@@ -81,10 +83,13 @@ function App() {
               <PrivateRoute role={ROLE_MECHANIC} element={MechanicPage} />
             }
           />
-            <Route
+          <Route
             path="/gd/*"
             element={
-              <PrivateRoute role={ROLE_GARAGEDIRECTOR} element={GarageDirectorPag} />
+              <PrivateRoute
+                role={ROLE_GARAGEDIRECTOR}
+                element={GarageDirectorPag}
+              />
             }
           />
           <Route
@@ -96,14 +101,13 @@ function App() {
               />
             }
           />
-            <Route
+          <Route
             path="/store/*"
-            element={
-              <PrivateRoute
-                role={ROLE_STORE}
-                element={StorePage}
-              />
-            }
+            element={<PrivateRoute role={ROLE_STORE} element={StorePage} />}
+          />
+          <Route
+            path="/guard/*"
+            element={<PrivateRoute role={ROLE_GUARD} element={GuardPage} />}
           />
         </Routes>
       </>

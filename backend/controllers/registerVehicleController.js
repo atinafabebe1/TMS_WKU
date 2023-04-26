@@ -37,14 +37,14 @@ const updateVehicleRecord = asyncHandler(async (req, res, next) => {
     );
   }
   //Make sure user is vehicle owner
-  if (vehicle.user.toString() !== req.user.id) {
-    return next(
-      new ErrorResponse(
-        `User ${req.params.id} is not authorized to update this vehicle`,
-        404
-      )
-    );
-  }
+  // if (vehicle.user.toString() !== req.user.id) {
+  //   return next(
+  //     new ErrorResponse(
+  //       `User ${req.params.id} is not authorized to update this vehicle`,
+  //       404
+  //     )
+  //   );
+  // }
 
   vehicle = await RegisterVehicle.findByIdAndUpdate(req.params.id, req.body, {
     new: true,

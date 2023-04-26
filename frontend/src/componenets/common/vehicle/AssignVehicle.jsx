@@ -24,7 +24,7 @@ const AssignVehicle = () => {
       {data ? (
         <>
           <p>{data[0].rejectReason}</p>
-          <AssignVehicleForm title={"Edit Request"} data={data[0]} />
+          <AssignVehicleForm title={"Assign Vehicle"} data={data[0]} />
         </>
       ) : (
         <p>Loading...</p>

@@ -212,6 +212,7 @@ const RegisterForm = () => {
                 <option value="ROLE_MECHANIC">Mechanic</option>
                 <option value="ROLE_STORE">Store</option>
                 <option value="ROLE_VICEPRESIDENT">Vice President</option>
+                <option value="ROLE_GUARD">Guard</option>
               </Form.Control>
             </Form.Group>
             {user.role === "ROLE_DRIVER" && (

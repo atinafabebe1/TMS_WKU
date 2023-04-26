@@ -54,6 +54,18 @@ const DetailVehicleInfo = ({ link }) => {
     }
   };
 
+  const handeleUnassign = async (vehicle) => {
+    try {
+      await api.put(`/VehicleRecord/${vehicle._id}`, {
+        assignedTo: null,
+      });
+      const response = await api.get("/VehicleRecord");
+      setVehicles(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handledissabele = async (vehicle) => {
     try {
       await api.put(`/VehicleRecord/${vehicle._id}`, {
@@ -104,7 +116,10 @@ const DetailVehicleInfo = ({ link }) => {
           />
         </Tab>
         <Tab eventKey="assignedVehicle" title="Assigned Vehicle">
-          <VehicleDisplayTable vehicles={assignedVehicle} />
+          <VehicleDisplayTable
+            vehicles={assignedVehicle}
+            handeleUnassign={handeleUnassign}
+          />
         </Tab>
 
         <Tab

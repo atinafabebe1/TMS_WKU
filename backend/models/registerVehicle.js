@@ -94,12 +94,10 @@ const VehicleRecordSchema = new Schema(
       itemDetail: { type: String },
       quantity: { type: Number },
     },
-    assignedTo: [
-      { task: { type: String, default: null } },
-      { project: { type: String, default: null } },
-      { serviceType: { type: String, default: null } },
-      { commonService: { type: String, default: null } },
-    ],
+    assignedTo: {
+      type: String,
+      default: null,
+    },
     location: {
       type: String,
       // required: true,
@@ -194,19 +192,19 @@ VehicleRecordSchema.methods.updateRelatedEmergencyReports = async function () {
   );
 };
 // restrict updating assignedTo field to directors only
-VehicleRecordSchema.pre("findOneAndUpdate", async function (next) {
-  if (!this.getUpdate().assignedTo) {
-    return next();
-  }
-  const user = await this.model.findById(this.getQuery().user);
-  if (user.role !== ROLE_DIRECTOR || user.role !== ROLE_HEADOFDEPLOYMENT) {
-    throw new ErrorResponse(
-      "You do not have permission to update assignedTo field",
-      401
-    );
-  }
-  return next();
-});
+// VehicleRecordSchema.pre("findOneAndUpdate", async function (next) {
+//   if (!this.getUpdate().assignedTo) {
+//     return next();
+//   }
+//   const user = await this.model.findById(this.getQuery().user);
+//   if (user.role !== ROLE_DIRECTOR || user.role !== ROLE_HEADOFDEPLOYMENT) {
+//     throw new ErrorResponse(
+//       "You do not have permission to update assignedTo field",
+//       401
+//     );
+//   }
+//   return next();
+// });
 
 VehicleRecordSchema.virtual("VehicleRequest", {
   ref: "Vehicle Request",
