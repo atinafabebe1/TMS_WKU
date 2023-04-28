@@ -8,6 +8,8 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
   const [plateNumber, setPlateNumber] = useState("");
   const [mode, setMode] = useState("");
   const [typeOfFuel, setTypeOfFuel] = useState("");
+  const [ammount, setAmmount] = useState("");
+
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -17,10 +19,12 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
       setPlateNumber(data.plateNumber);
       setTypeOfFuel(data.typeOfFuel);
       setMode(data.mode);
+      setAmmount(data.ammount);
     } else {
       setPlateNumber("");
       setTypeOfFuel("");
       setMode("");
+      setAmmount("");
     }
   }, [data]);
 
@@ -33,6 +37,7 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
   const handleClear = (event) => {
     setPlateNumber("");
     setTypeOfFuel("");
+    setAmmount("");
     setMode("");
   };
 
@@ -41,6 +46,7 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
       plateNumber,
       typeOfFuel,
       mode,
+      ammount,
     };
     if (data) {
       try {
@@ -70,6 +76,7 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
           setPlateNumber("");
           setTypeOfFuel("");
           setMode("");
+          setAmmount("");
         }
       } catch (err) {
         console.log(err.response.data);
@@ -93,11 +100,19 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Control
                     type="string"
                     required
-                    min={0}
-                    minLength={3}
-                    maxLength={25}
                     value={plateNumber}
                     onChange={(e) => setPlateNumber(e.target.value)}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} controlId="ammount">
+                  <Form.Label>Ammount of Fuel (L)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    required
+                    min={0}
+                    max={500}
+                    value={ammount}
+                    onChange={(e) => setAmmount(e.target.value)}
                   />
                 </Form.Group>
 
