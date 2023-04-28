@@ -14,8 +14,8 @@ const advancedResult = require("../middleware/advancedResult");
 const router = express.Router({ mergeParams: true });
 router.use(Auth);
 
-router.post("/", createMaintenanceReport);
-router.get("/", advancedResult(MaintenanceReport, ""), getMaintenanceReports);
+router.post("/",Authorize("ROLE_MECHANIC"), createMaintenanceReport);
+router.get("/", Authorize("ROLE_MECHANIC"),advancedResult(MaintenanceReport, ""), getMaintenanceReports);
 router.put("/:id", updateMaintenanceReport);
 router.delete("/:id", deleteMaintenanceReport);
 router.patch("/backup/:id", backupDeletedDocument(MaintenanceReport));
