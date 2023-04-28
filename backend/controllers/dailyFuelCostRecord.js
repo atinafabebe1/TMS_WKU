@@ -50,28 +50,26 @@ const updateDailyFuelCost = asyncHandler(async (req, res, next) => {
     );
   }
   //Make sure user is report owner
-  if (dailyFuelCost.user.toString() !== req.user.id) {
+
+  // if (dailyFuelCost.user.toString() !== req.user.id) {
+  //   return next(
+  //     new ErrorResponse(
+  //       `User ${req.params.id} is not authorized to update this dailly fuel cost`,
+  //       404
+  //     )
+  //   );
+  // }
+  delete req.body.vehicle;
+  const vehicle = await DailyFuelCost.getVehicleByPlateNumber(
+    req.body.plateNumber
+  );
+  if (!vehicle) {
     return next(
       new ErrorResponse(
-        `User ${req.params.id} is not authorized to update this dailly fuel cost`,
+        `vehicle not found with plate number ${req.body.plateNumber}`,
         404
       )
     );
-  }
-  if (req.body.plateNumber) {
-    const vehicle = await MaintenanceOrder.getVehicleByPlateNumber(
-      req.body.plateNumber
-    );
-    if (!vehicle) {
-      return next(
-        new ErrorResponse(
-          `Vehicle not found with plate number ${req.body.plateNumber} `,
-          404
-        )
-      );
-    } else {
-      req.body.vehicle = vehicle._id;
-    }
   }
   dailyFuelCost = await DailyFuelCost.findByIdAndUpdate(
     req.params.id,

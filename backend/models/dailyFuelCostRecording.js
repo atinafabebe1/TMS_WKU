@@ -38,6 +38,10 @@ const DailyFuelCostRecordSchema = new Schema(
       enum: ["diesel", "benzene", "motorOil", "frenOil", "otherOil", "grease"],
       required: true,
     },
+    ammount: {
+      type: Number,
+      required: [true, "this field is required"],
+    },
     isDeleted: {
       type: Boolean,
       default: false,

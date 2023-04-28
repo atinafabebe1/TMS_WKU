@@ -20,7 +20,10 @@ const RegisteredFuel = ({ fuels }) => {
   };
 
   const filteredFuels = fuels.filter((fuel) => {
-    return fuel.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
+    return (
+      fuel.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      fuel.createdAt.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
 
   return (
@@ -43,6 +46,9 @@ const RegisteredFuel = ({ fuels }) => {
             <th>Plate Number</th>
             <th>Type Of Fuel </th>
             <th>Mode </th>
+            <th>Ammount</th>
+            <th>Registered Date </th>
+            <th>Last Edited Date </th>
             <th>Action</th>
           </tr>
         </thead>
@@ -52,11 +58,27 @@ const RegisteredFuel = ({ fuels }) => {
               <td>{fuel.plateNumber}</td>
               <td>{fuel.typeOfFuel}</td>
               <td>{fuel.mode}</td>
+              <td>{fuel.ammount}</td>
+              <td>{new Date(fuel.createdAt).toLocaleDateString()}</td>
+              <td>
+                {fuel.createdAt !== fuel.updatedAt && (
+                  <>
+                    <p>Edited in {new Date(fuel.updatedAt).toLocaleString()}</p>
+                  </>
+                )}
+              </td>
+
               <td>
                 {fuel.isDeleted === false && (
                   <>
-                    <Button className="btn btn-sm" variant="info">
-                      See Detail
+                    <Button
+                      className="btn btn-sm"
+                      variant="warning"
+                      onClick={() =>
+                        navigate(`/fd/edit-fuel-record/${fuel._id}`)
+                      }
+                    >
+                      Edit
                     </Button>{" "}
                   </>
                 )}
