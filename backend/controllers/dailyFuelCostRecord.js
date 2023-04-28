@@ -1,4 +1,4 @@
-const DailyFuelCost = require("../models/DailyFuelCostRecording");
+const DailyFuelCost = require("../models/dailyFuelCostRecording");
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
 
@@ -25,9 +25,6 @@ const createDailyFuelCost = asyncHandler(async (req, res, next) => {
       )
     );
   }
-  req.body.user = req.user.id;
-  req.body.vehicle = vehicle._id;
-
   await DailyFuelCost.create(req.body);
 
   res.status(201).json({

@@ -7,14 +7,8 @@ const DailyFuelCostRecordSchema = new Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: "User",
       immutable: true,
-    },
-    vehicle: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "VehicleRecord",
-      required: true,
     },
     plateNumber: {
       type: String,
@@ -36,6 +30,7 @@ const DailyFuelCostRecordSchema = new Schema(
     },
     mode: {
       type: String,
+      enum: ["Coupon", "Cash", "Fuel"],
       required: [true, "this field is required"],
     },
     typeOfFuel: {
@@ -64,13 +59,6 @@ DailyFuelCostRecordSchema.pre("save", async function (next) {
       )
     );
   }
-  const user = await this.model("User").findById(this.user);
-  if (!user) {
-    return next(
-      new ErrorResponse(`user Not Found with id of ${this.user}`, 404)
-    );
-  }
-  next();
 });
 
 DailyFuelCostRecordSchema.statics.getVehicleByPlateNumber = async function (
@@ -81,12 +69,5 @@ DailyFuelCostRecordSchema.statics.getVehicleByPlateNumber = async function (
     .select({ _id: 1 });
   return vehicle;
 };
-let DailyFuelCost;
 
-if (mongoose.models.DailyFuelCost) {
-  DailyFuelCost = mongoose.model("DailyFuelCost");
-} else {
-  DailyFuelCost = mongoose.model("DailyFuelCost", DailyFuelCostRecordSchema);
-}
-
-module.exports = DailyFuelCost;
+module.exports = mongoose.model("DailyFuelCost", DailyFuelCostRecordSchema);

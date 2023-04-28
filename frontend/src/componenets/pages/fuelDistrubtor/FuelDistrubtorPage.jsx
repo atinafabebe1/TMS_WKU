@@ -1,6 +1,8 @@
 import React from "react";
 import Navbar from "../../common/header/Navbar";
-
+import RegisterDailyFuel from "./RegisterDailyFuelAndOil";
+import DetailFuelInfo from "./RegisteredFuel";
+import { Routes, Route } from "react-router-dom";
 const links = [
   {
     name: "Home",
@@ -11,14 +13,20 @@ const links = [
     url: "/fd/approve-fuel-request",
   },
   {
-    name: "Register",
-    url: "/fd/register-daily-fuel",
+    name: "Daily Fuel",
+    url: "/fd/registered-fuel",
   },
 ];
 const FuelDistrubtorPage = () => {
   return (
     <div>
       <Navbar links={links} title="TMS" />
+      <div>
+        <Routes>
+          <Route path="register-daily-fuel" element={<RegisterDailyFuel />} />
+          <Route path="registered-fuel" element={<DetailFuelInfo />} />
+        </Routes>
+      </div>
     </div>
   );
 };
