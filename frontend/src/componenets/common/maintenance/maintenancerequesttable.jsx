@@ -62,10 +62,10 @@ const MaintenanceRequestTables = ({ filter }) => {
     return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const handleTransferOrder = async (request) => {
+  const handleTransferOrder = async (selectedRequest) => {
     try {
-      await api.put(`/Request/maintenance/${request._id}`, { status: "in-progress" });
-  
+      await api.put(`/Request/maintenance/${selectedRequest}`, { status: "in-progress" });
+
       const response = await api.get("/Request/maintenance");
       setRequests(response.data.data);
     } catch (error) {
@@ -85,7 +85,7 @@ const MaintenanceRequestTables = ({ filter }) => {
               onChange={handleSearch}
             />
           </Col>
-        
+
         </Row>
       </Form>
       <Table striped bordered hover responsive className="table-sm">
@@ -104,13 +104,13 @@ const MaintenanceRequestTables = ({ filter }) => {
               <td>{request.createdAt}</td>
               <td>{request.status}</td>
               <td>
-                
+
                 {request.status === "pending" && (
                   <>
                     <Button
                       variant="success"
                       className="btn btn-sm"
-                      onClick={() => handleTransferOrder(request._id)}
+                      onClick={() => handleTransferOrder(selectedRequest)}
                     >
                       Transfer Order
                     </Button>
@@ -163,7 +163,7 @@ const MaintenanceRequestTables = ({ filter }) => {
             <Button
               variant="primary"
               className="btn btn-sm"
-              onClick={() => handleTransferOrder(selectedRequest._id)}
+              onClick={() => handleTransferOrder(selectedRequest)}
             >
               Transfer Order
             </Button>

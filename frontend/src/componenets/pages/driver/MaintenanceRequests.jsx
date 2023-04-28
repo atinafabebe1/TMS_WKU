@@ -59,7 +59,7 @@ const MaintenanceRequestPage = () => {
         setShowEditModal(false);
       })
       .catch((error) =>
-        console.error(`Error editing vehicle request with ID ${selectedRequest._id}:`, error)
+        console.error(`Error editing Maintenance request with ID ${selectedRequest._id}:`, error)
       );
   };
 

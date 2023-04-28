@@ -11,6 +11,8 @@ const Complain = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedComplain, setSelectedComplain] = useState(null);
+  const [startIndex, setStartIndex] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const getSentComplains = async () => {
     try {
@@ -50,6 +52,25 @@ const Complain = () => {
       });
   };
 
+  const handleNext = () => {
+    setStartIndex(prevIndex => prevIndex + 3);
+  };
+
+  const handlePrevious = () => {
+    setStartIndex(prevIndex => Math.max(prevIndex - 3, 0));
+  };
+
+  const handleSearchTermChange = (event) => {
+    setSearchTerm(event.target.value);
+  }
+
+  const filteredComplains = complains.filter((complain) => {
+    if (complain.user && complain.user.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return true;
+    }
+    return false;
+  });
+
   useEffect(() => {
     getSentComplains();
   }, []);
@@ -58,18 +79,33 @@ const Complain = () => {
     <div>
       <div className="table-responsive p-2 my-3">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2>Complain  List</h2>
+          <h2>Complain List</h2>
+        </div>
+        <div style={{ maxWidth: '700px', width: '100%' }}>
+          <input
+            type="text"
+            placeholder="Search by user"
+            value={searchTerm}
+            onChange={handleSearchTermChange}
+            className="form-control my-2"
+          />
+          <ul className="list-group">
+            {filteredComplains.map(complain => (
+              <li className="list-group-item" key={complain.id}>
+                {complain.user}: {complain.message}
+              </li>
+            ))}
+          </ul>
         </div>
         {isLoading && <h3>Loading...</h3>}
-        {complains.map((complain) => (
-          <Container className="p-4" key={complain.id} >
+        {complains.slice(startIndex, startIndex + 3).map(complain => (
+          <Container className="p-4" key={complain.id}>
             <h6><strong>{complain.user}</strong></h6>
-            <Col style={{width:"700px"}}>
+            <Col style={{ width: "100%" }}>
               <Card>
                 <Card.Body>
-                  <Card.Title>{complain.title}</Card.Title>
-                  <Card.Text>{complain.content}</Card.Text>
-                  <Card.Text>{complain.status}</Card.Text>
+                  <Card.Title>Title: {complain.title}</Card.Title>
+                  <Card.Text>Status: {complain.status}</Card.Text>
                   <Button
                     variant="success"
                     className="btn-sm mx-2"
@@ -87,6 +123,29 @@ const Complain = () => {
           </Container>
         ))}
       </div>
+      <div className="d-flex justify-content-end align-items-center w-100">
+  <Button
+    variant="primary"
+    className="btn-sm mx-2"
+    onClick={handlePrevious}
+    disabled={startIndex === 0}
+    block
+  >
+    Previous
+  </Button>
+  <Button
+    variant="primary"
+    className="btn-sm mx-2"
+    onClick={handleNext}
+    disabled={startIndex + 3 >= complains.length}
+    block
+  >
+    Next
+  </Button>
+</div>
+
+
+
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>
@@ -106,13 +165,17 @@ const Complain = () => {
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalClose}>
+        <Button variant="success" className="btn-sm" onClick={handleResolved}>
+            Resolve
+          </Button>
+        <Button variant="danger" className="btn-sm">
+                    Reject
+                  </Button>
+          <Button variant="secondary" className="btn-sm" onClick={handleModalClose}>
             Close
           </Button>
 
-          <Button variant="success" onClick={handleResolved}>
-            Resolve
-          </Button>
+         
         </Modal.Footer>
       </Modal>
     </div>
