@@ -37,16 +37,7 @@ const DetailVehicleInfo = ({ link }) => {
         </Col>
       </Row>
 
-      <Tabs
-        activeKey={activeTab}
-        onSelect={handleTabSelect}
-        id="vehicle-request-tabs"
-        className="my-2"
-      >
-        <Tab eventKey="assignedVehicle" title="Approved Vehicle">
-          <ApprovedVehicleDisplayTable vehicles={assignedVehicle} />
-        </Tab>
-      </Tabs>
+      <ApprovedVehicleDisplayTable vehicles={assignedVehicle} />
     </>
   );
 };
