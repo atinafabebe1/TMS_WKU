@@ -9,10 +9,10 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
   const [mode, setMode] = useState("");
   const [typeOfFuel, setTypeOfFuel] = useState("");
   const [ammount, setAmmount] = useState("");
-
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [validated, setValidated] = useState(false);
 
   useEffect(() => {
     if (data) {
@@ -29,6 +29,12 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
   }, [data]);
 
   const handleConfirmation = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    setValidated(true);
     event.preventDefault();
     setShowModal(false);
     handleSubmit();
@@ -54,11 +60,9 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
           `/Report/daily-fuel-costs/${data._id}?isDeleted=false`,
           result
         );
-        if (response.status === 200) {
-          setSuccess(response.data?.message);
-          setError("");
-          onSubmit();
-        }
+        setSuccess("Successfuly Updated");
+        setError("");
+        onSubmit();
       } catch (err) {
         console.log(err.response.data);
         setError("Please Provide Valid Data and Try Again");
@@ -70,14 +74,13 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
           `/Report/daily-fuel-costs?isDeleted=false`,
           result
         );
-        if (response.status === 200) {
-          setSuccess(response.data?.message);
-          setError("");
-          setPlateNumber("");
-          setTypeOfFuel("");
-          setMode("");
-          setAmmount("");
-        }
+
+        setSuccess("Successfuly Registered");
+        setError("");
+        setPlateNumber("");
+        setTypeOfFuel("");
+        setMode("");
+        setAmmount("");
       } catch (err) {
         console.log(err.response.data);
         setError("Please Provide Valid Data and Try Again");
@@ -93,16 +96,26 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
           <h3 className="mb-3 text-center">{title}</h3>
 
           <Container breakpoint="lg">
-            <Form className="form" onSubmit={handleConfirmation}>
+            <Form
+              className="form"
+              noValidate
+              validated={validated}
+              onSubmit={handleConfirmation}
+            >
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="platenumber">
                   <Form.Label>Plate Number</Form.Label>
                   <Form.Control
                     type="string"
                     required
+                    minLength={9}
+                    maxLength={9}
                     value={plateNumber}
                     onChange={(e) => setPlateNumber(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Plate Number.
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} controlId="ammount">
                   <Form.Label>Ammount of Fuel (L)</Form.Label>
@@ -114,6 +127,9 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
                     value={ammount}
                     onChange={(e) => setAmmount(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Ammount.
+                  </Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="mode">

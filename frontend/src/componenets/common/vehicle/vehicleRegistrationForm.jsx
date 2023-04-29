@@ -17,6 +17,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   const [maxLoad, setMaxLoad] = useState("");
   const [maxLitres, setMaxLitres] = useState("");
   const [proprietaryIdNumber, setProprietaryIdNumber] = useState("");
+  const [driver, setDriver] = useState(null);
   const [vehicleImage, setVehicleImage] = useState(null);
   const [assignedTo, setAssignedTo] = useState(null);
   const [onMaintenance, setOnMaintenance] = useState(false);
@@ -24,6 +25,22 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   const [error, setError] = useState("");
 
   const [success, setSuccess] = useState("");
+  const [drivers, setDrivers] = useState("");
+
+  //to get driver information
+  // const fetch = async () => {
+  //   api
+  //     .get("/user/getusers?")
+  //     .then((response) => {
+  //       setDrivers(response.data.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
+  // useEffect(() => {
+  //   fetch();
+  // }, []);
 
   useEffect(() => {
     if (data) {
@@ -38,6 +55,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       setMaxPerson(data.maxPerson);
       setMaxLoad(data.maxLoad);
       setMaxLitres(data.maxLitres);
+      setDriver(data.driver);
       setProprietaryIdNumber(data.proprietaryIdNumber);
       setVehicleImage(data.vehicleImage);
       setAssignedTo(data.assignedTo);
@@ -54,6 +72,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       setMaxPerson("");
       setMaxLoad("");
       setMaxLitres("");
+      setDriver("");
       setProprietaryIdNumber("");
       setVehicleImage(null);
       setAssignedTo(null);
@@ -78,6 +97,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
     setMaxPerson("");
     setMaxLoad("");
     setMaxLitres("");
+    setDriver("");
     setProprietaryIdNumber("");
     setVehicleImage(null);
     setAssignedTo(null);
@@ -97,6 +117,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       maxPerson,
       maxLoad,
       maxLitres,
+      driver,
       proprietaryIdNumber,
       vehicleImage,
       assignedTo,
@@ -132,7 +153,6 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
           if (response.status === 200) {
             setSuccess(response.data?.message);
             setError(null);
-
             setModelNo("");
             setChassisNo("");
             setMotorNo("");
@@ -144,6 +164,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             setMaxPerson("");
             setMaxLoad("");
             setMaxLitres("");
+            setDriver("");
             setProprietaryIdNumber("");
             setVehicleImage(null);
             setAssignedTo(null);
@@ -359,6 +380,16 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={assignedTo}
                     onChange={(e) => setAssignedTo(e.target.value)}
                   />
+                </Form.Group>
+                <Form.Group as={Col} controlId="driver">
+                  <span> </span>
+                  <Form.Label>Driver</Form.Label>
+                  <Form.Control
+                    type="text"
+                    required
+                    value={driver}
+                    onChange={(e) => setDriver(e.target.value)}
+                  ></Form.Control>
                 </Form.Group>
                 <Form.Group as={Col} controlId="vehicleimage">
                   <span> </span>

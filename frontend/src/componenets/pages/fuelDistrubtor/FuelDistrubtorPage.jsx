@@ -10,12 +10,12 @@ const links = [
     url: "/fd",
   },
   {
-    name: "Request",
-    url: "/fd/approve-fuel-request",
-  },
-  {
     name: "Daily-Fuel",
     url: "/fd/registered-fuel",
+  },
+  {
+    name: "Report",
+    url: "/fd/approve-fuel-request",
   },
 ];
 const FuelDistrubtorPage = () => {

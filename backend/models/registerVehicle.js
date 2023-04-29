@@ -94,6 +94,11 @@ const VehicleRecordSchema = new Schema(
       itemDetail: { type: String },
       quantity: { type: Number },
     },
+    driver: {
+      type: String,
+      required: true,
+      default: null,
+    },
     assignedTo: {
       type: String,
       default: null,

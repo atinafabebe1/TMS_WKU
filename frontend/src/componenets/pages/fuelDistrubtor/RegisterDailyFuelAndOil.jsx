@@ -3,7 +3,9 @@ import DailyFuelRegistrationForm from "../../common/fuel/DailyFuelRegistrationFo
 const RegisterDailyFuel = () => {
   return (
     <div>
-      <DailyFuelRegistrationForm title={"Daily Fuel Registration Form"} />
+      <DailyFuelRegistrationForm
+        title={"Daily Fuel and Oil Registration Form"}
+      />
     </div>
   );
 };
