@@ -66,6 +66,11 @@ const RegisteredFuel = ({ fuels }) => {
                     <p>Edited in {new Date(fuel.updatedAt).toLocaleString()}</p>
                   </>
                 )}
+                {fuel.createdAt === fuel.updatedAt && (
+                  <>
+                    <p>Not Edited</p>
+                  </>
+                )}
               </td>
 
               <td>
