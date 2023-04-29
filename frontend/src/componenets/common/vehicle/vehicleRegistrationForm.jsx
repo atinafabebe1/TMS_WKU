@@ -23,8 +23,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   const [onMaintenance, setOnMaintenance] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
-
   const [success, setSuccess] = useState("");
+  const [validated, setValidated] = useState(false);
   const [drivers, setDrivers] = useState("");
 
   //to get driver information
@@ -81,6 +81,12 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   }, [data]);
 
   const handleConfirmation = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    setValidated(true);
     event.preventDefault();
     setShowModal(false);
     handleSubmit();
@@ -186,7 +192,12 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
           <h3 className="mb-3 text-center">{title}</h3>
 
           <Container breakpoint="lg">
-            <Form className="form" onSubmit={handleConfirmation}>
+            <Form
+              className="form"
+              noValidate
+              validated={validated}
+              onSubmit={handleConfirmation}
+            >
               <Row className="mb-3">
                 <h5>Vehicle Information</h5>
                 <hr></hr>
@@ -202,6 +213,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={modelNo}
                     onChange={(e) => setModelNo(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Model Number.
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} controlId="chassisnumber">
                   <span> </span>
@@ -215,6 +229,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={chassisNo}
                     onChange={(e) => setChassisNo(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Chassis Number.
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} controlId="motornumber">
                   <span> </span>
@@ -227,6 +244,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={motorNo}
                     onChange={(e) => setMotorNo(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Motor Number.
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Row>
               <Row className="mb-3">
@@ -241,6 +261,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={cC}
                     onChange={(e) => setCC(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid CC.
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} controlId="platenumber">
                   <span> </span>
@@ -254,6 +277,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={plateNumber}
                     onChange={(e) => setPlateNumber(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Plate Number.
+                  </Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="role">
@@ -275,6 +301,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     <option value="grease">Grease</option>
                     <option value="otherOil">Other Oil</option>
                   </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Fuel Type.
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Row>
               <br></br>
@@ -293,6 +322,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={purchasePrice}
                     onChange={(e) => setPurchasePrice(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Price.
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} controlId="duedate">
                   <span> </span>
@@ -305,6 +337,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={purchasedDate}
                     onChange={(e) => setPurchasedDate(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Date.
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Row>
 
@@ -324,6 +359,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={maxPerson}
                     onChange={(e) => setMaxPerson(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Ammount.
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} controlId="person">
                   <span> </span>
@@ -337,6 +375,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={maxLoad}
                     onChange={(e) => setMaxLoad(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Ammount.
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group as={Col} controlId="Adress">
                   <span> </span>
@@ -350,6 +391,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={maxLitres}
                     onChange={(e) => setMaxLitres(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Ammount.
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Row>
 
@@ -368,6 +412,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     value={proprietaryIdNumber}
                     onChange={(e) => setProprietaryIdNumber(e.target.value)}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Id.
+                  </Form.Control.Feedback>
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="assignedTo">

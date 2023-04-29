@@ -5,23 +5,33 @@ import api from "../../../api/api";
 
 const SparePartRequestListPage = () => {
   const [requests, setRequests] = useState([]);
+  const [pagination, setPagination] = useState({});
+  const [currentPage, setCurrentPage] = useState(2);
+  const [totalCount, setTotalCount] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Fetch the user's spare Part requests from your server API
-    api
-      .get("/Request/sparePart")
+  const fetchReqestData = async (page) => {
+    const limit = 7;
+    await api
+      .get(`/Request/sparePart?page=${page.page}&limit=${limit}`)
       .then((response) => {
         console.log(response.data.data);
         setRequests(response.data.data);
         setIsLoading(false);
-      })
-      .catch((error) =>
-        console.error("Error fetching Spare Part requests:", error)
-      );
+        setTotalCount(response.data.count);
+        setPagination(response.data.pagination);
+      });
+  };
+
+  useEffect(() => {
+    fetchReqestData(currentPage);
   }, []);
+
+  const handlePageChange = (page) => {
+    fetchReqestData(page);
+  };
 
   const handleDeleteRequest = (id) => {
     // Delete the SparePart request with the specified ID from your server API
@@ -158,6 +168,53 @@ const SparePartRequestListPage = () => {
           ))}
         </tbody>
       </Table>
+      <div className="d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+          <ul className="pagination">
+            {pagination.prev && (
+              <li className="page-item">
+                <a
+                  className="page-link"
+                  onClick={() => handlePageChange(pagination.prev)}
+                  aria-label="Previous"
+                >
+                  <span aria-hidden="true">&laquo;</span>
+                  <span className="sr-only">Previous</span>
+                </a>
+              </li>
+            )}
+            {pagination.pages &&
+              pagination.pages.map((page) => (
+                <li
+                  className={`page-item ${
+                    page === pagination.current ? "active" : ""
+                  }`}
+                  key={page}
+                >
+                  <a
+                    className="page-link"
+                    onClick={() => handlePageChange(page)}
+                    aria-label={`Page ${page}`}
+                  >
+                    {page}
+                  </a>
+                </li>
+              ))}
+            {pagination.next && (
+              <li className="page-item">
+                <a
+                  className="page-link"
+                  onClick={() => handlePageChange(pagination.next)}
+                  aria-label="Next"
+                >
+                  <span aria-hidden="true">&raquo;</span>
+                  <span className="sr-only">Next</span>
+                </a>
+              </li>
+            )}
+          </ul>
+        </nav>
+      </div>
     </div>
   );
 };

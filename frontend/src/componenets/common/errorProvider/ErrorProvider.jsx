@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { Container, Alert } from "react-bootstrap";
 
 const ErrorProvider = ({ error }) => {
-  const [displayError, setDisplayError] = useState(false);
+  const [displayError, setDisplayError] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {
-      setDisplayError(true);
-    }, 5000); // set the time (in milliseconds) for the error to display
+      setDisplayError(false);
+    }, 10000); // set the time (in milliseconds) for the error to display error
   }, []);
 
   return (

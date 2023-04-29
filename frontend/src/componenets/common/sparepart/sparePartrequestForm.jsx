@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import ErrorProvider from "../errorProvider/ErrorProvider";
+import SuccessProvider from "../errorProvider/SuccessProvider";
 import {
   Form,
   Button,
@@ -18,6 +20,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [validated, setValidated] = useState(false);
 
   useEffect(() => {
     if (request) {
@@ -32,12 +35,19 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
       setQuantity("");
     }
   }, [request]);
-
+  //handle validation and confirmation
   const handleConfirmation = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    setValidated(true);
     event.preventDefault();
     setShowModal(false);
     handleSubmit();
   };
+
   const handleClear = (event) => {
     setPlateNumber("");
     setType("car");
@@ -56,43 +66,39 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
       api
         .put(`/Request/sparePart/${request._id}?isDeleted=false`, result)
         .then((response) => {
-          if (response.status === 200) {
-            // check for status code instead of text
-            setSuccess(response.data?.message);
-            setError(null);
-            onSubmit();
-          }
+          setSuccess("Successfuly Updated");
+          setError(null);
+          onSubmit();
         })
         .catch((err) => {
           console.log(err.response.data);
-          setError(err.response.data?.error);
+          setError("Please Provide Valid Data and Try Again");
           setSuccess(null);
         });
-      try {
-        await api.put(`/Request/sparePart/${request._id}`, {
-          status: "pending",
-        });
-        const response = await api.get("/Request/sparePart");
-        console.log(response.data.data);
-      } catch (error) {
-        console.log(error);
-      }
+
+      // try {
+      //   await api.put(`/Request/sparePart/${request._id}`, {
+      //     status: "pending",
+      //   });
+      //   const response = await api.get("/Request/sparePart");
+      //   console.log(response.data.data);
+      // } catch (error) {
+      //   console.log(error);
+      // }
     } else {
       api
         .post(`/Request/sparePart?isDeleted=false`, result)
         .then((response) => {
-          if (response.status === 200) {
-            setSuccess(response.data?.message);
-            setError(null);
-            setPlateNumber("");
-            setType("car");
-            setIdentificationNumber("");
-            setQuantity("");
-          }
+          setSuccess("Successfuly Sent");
+          setError(null);
+          setPlateNumber("");
+          setType("car");
+          setIdentificationNumber("");
+          setQuantity("");
         })
         .catch((err) => {
           console.log(err.response.data);
-          setError(err.response.data?.error);
+          setError("Please Provide Valid Data and Try Again");
           setSuccess(null);
         });
     }
@@ -112,7 +118,12 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
               and cooperation.
             </p>
           )}
-          <Form onSubmit={handleConfirmation}>
+          <Form
+            className="form"
+            noValidate
+            validated={validated}
+            onSubmit={handleConfirmation}
+          >
             <FormGroup>
               <FormLabel>Vehicle Plate Number</FormLabel>
               <FormControl
@@ -121,7 +132,10 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                 onChange={(event) => setPlateNumber(event.target.value)}
                 required
                 className="mb-3"
-              ></FormControl>
+              ></FormControl>{" "}
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid Plate Number.
+              </Form.Control.Feedback>
             </FormGroup>
             <Form.Group className="mb-3" controlId="type">
               <Form.Label className="font-weight-bold">Vehicle Type</Form.Label>
@@ -148,7 +162,10 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                 }
                 required
                 className="mb-3"
-              />
+              />{" "}
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid SparePart Id.
+              </Form.Control.Feedback>
             </FormGroup>
             <FormGroup>
               <FormLabel>Quantity</FormLabel>
@@ -158,51 +175,50 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                 onChange={(event) => setQuantity(event.target.value)}
                 required
                 className="mb-3"
-              />
+              />{" "}
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid Quantity.
+              </Form.Control.Feedback>
             </FormGroup>
-
-            {error && <p className="text-danger">{error}</p>}
-            {success && <p className="text-success">{success}</p>}
-
-            <div className="d-flex justify-content-end my-4">
-              <Button className="btn-secondary me-2">Cancel</Button>
-              <Button
-                type="reset"
-                className="btn-danger me-2"
-                onClick={handleClear}
-              >
-                Clear
-              </Button>
-              <Button
-                type="submit"
-                className="btn-primary"
-                onClick={() => {
-                  setShowModal(true);
-                }}
-              >
-                Submit
-              </Button>
-              <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Confirm Submission</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  Are you sure you want to submit this request?
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button
-                    variant="secondary"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button variant="primary" onClick={handleConfirmation}>
-                    Submit
-                  </Button>
-                </Modal.Footer>
-              </Modal>
-            </div>
           </Form>
+          {error && <ErrorProvider error={error} />}
+          {success && <SuccessProvider success={success} />}
+
+          <div className="d-flex justify-content-end my-4">
+            <Button className="btn-secondary me-2">Cancel</Button>
+            <Button
+              type="reset"
+              className="btn-danger me-2"
+              onClick={handleClear}
+            >
+              Clear
+            </Button>
+            <Button
+              type="submit"
+              className="btn-primary"
+              onClick={() => {
+                setShowModal(true);
+              }}
+            >
+              Submit
+            </Button>
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirm Submission</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                Are you sure you want to submit this request?
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowModal(false)}>
+                  Cancel
+                </Button>
+                <Button variant="primary" onClick={handleConfirmation}>
+                  Submit
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </div>
         </div>
       </div>
     </div>

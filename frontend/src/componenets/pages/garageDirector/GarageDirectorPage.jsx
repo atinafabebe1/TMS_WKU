@@ -30,10 +30,6 @@ const links = [
         name: "Accessory Request",
         url: "/gd/request/get-accessory-request",
       },
-      {
-        name: "Send Accessory Request",
-        url: "/gd/request/send-accessory-request",
-      },
     ],
   },
   {
@@ -58,7 +54,7 @@ const GarageDirectorPag = () => {
           path="request/get-accessory-request"
           element={<AccessoryRequest />}
         />
-       <Route
+        <Route
           path="maintenance/maintenance-orders"
           element={<MaintenanceOrderTable link={`/MaintenanceOrder`} />}
         />
