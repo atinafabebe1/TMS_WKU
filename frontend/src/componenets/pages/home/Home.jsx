@@ -11,14 +11,23 @@ const LandingPage = () => {
       <div className="landing-page">
         <Container>
           <Row className="justify-content-md-center">
+          <Col md="auto" className="schedule-btn">
+    <Link to="/publschedule">
+      <Button variant="outline-primary" size="sm">
+        View Schedule
+      </Button>
+    </Link>
+  </Col>
             <Col md="auto" className="login-btn">
               <Link to="/login">
-                <Button variant="secondary" size="lg">
+                <Button variant="secondary" size="sm">
                   Login
                 </Button>
               </Link>
             </Col>
 
+</Row>
+<Row>
             <Col md="auto">
               <h1 className="text-center">
                 Welcome to WKU Transport Management System
@@ -33,6 +42,7 @@ const LandingPage = () => {
               </div>
             </Col>
           </Row>
+   
           <hr className="mt-5 mb-5" />
           <Row className="services">
             <Col md={12} lg={6}>

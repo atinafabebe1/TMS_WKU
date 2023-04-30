@@ -14,6 +14,7 @@ import VicePresidentPage from "./componenets/pages/vicePresident/VicePresidentPa
 import HeadOfDeploymentPage from "./componenets/pages/headOfDeploymnet/HeadOfDeploymentPage";
 import StorePage from "./componenets/pages/store/StorePage";
 import GuardPage from "./componenets/pages/guard/GuardPage";
+import PublicScheduleTable from "./componenets/common/schedule/viewSchedule";
 import {
   ROLE_ADMIN,
   ROLE_DIRECTOR,
@@ -37,6 +38,7 @@ function App() {
           <Route exact path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/logout" element={<LogoutButton />} />
+          <Route path="/publschedule" element={<PublicScheduleTable />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route
             path="/admin/*"

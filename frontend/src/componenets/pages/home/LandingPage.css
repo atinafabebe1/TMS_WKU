@@ -65,8 +65,14 @@
         top: 20px;
         right: 20px;
     }
-    
+    .landing-page .schedule-btn{
+        position: absolute;
+        top: 20px;
+        right: 80px;
+
+    }
     .landing-page .login-btn button {
         background-color: rgb(31, 31, 206);
     }
+ 
 }
