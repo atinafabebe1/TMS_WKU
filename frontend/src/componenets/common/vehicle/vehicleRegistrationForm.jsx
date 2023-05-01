@@ -133,12 +133,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       api
         .put(`/VehicleRecord/${data._id}?isDeleted=false`, result)
         .then((response) => {
-          if (response.status === 200) {
-            // check for status code instead of text
-            setSuccess(response.data?.message);
-            setError(null);
-            onSubmit();
-          }
+          setSuccess(response.data?.message);
+          setError(null);
+          onSubmit();
         })
         .catch((err) => {
           console.log(err.response.data);
@@ -156,26 +153,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       api
         .post(`/VehicleRecord?isDeleted=false`, result)
         .then((response) => {
-          if (response.status === 200) {
-            setSuccess(response.data?.message);
-            setError(null);
-            setModelNo("");
-            setChassisNo("");
-            setMotorNo("");
-            setCC("");
-            setPurchasePrice("");
-            setPlateNumber("");
-            setTypeOfFuel("");
-            setPurchasedDate("");
-            setMaxPerson("");
-            setMaxLoad("");
-            setMaxLitres("");
-            setDriver("");
-            setProprietaryIdNumber("");
-            setVehicleImage(null);
-            setAssignedTo(null);
-            setOnMaintenance(false);
-          }
+          setSuccess("Successfully Registered");
+          setError(null);
         })
         .catch((err) => {
           console.log(err.response.data);

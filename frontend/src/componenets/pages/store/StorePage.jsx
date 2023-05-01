@@ -1,6 +1,13 @@
 import React from "react";
 import Navbar from "../../common/header/Navbar";
+import SparePartsHomeReport from "./GenerateAndStoreReports";
 import SparePartPurchasingRequest from "./ApproveSparePartPurchasing";
+import WeeklySpareParts from "./weeklyReport";
+import MonthlySpareParts from "./monthlyReport";
+import HalfYearSpareParts from "./halfYearReport";
+import YearlySpareParts from "./yearlyReport";
+
+import SparePartsReport from "./GenerateAndStoreReport";
 import { Routes, Route } from "react-router-dom";
 
 const links = [
@@ -24,7 +31,7 @@ const links = [
     children: [
       {
         name: "Generate Report",
-        url: "/store/Report/generate-report",
+        url: "/store/Report",
       },
     ],
   },
@@ -39,6 +46,23 @@ const StorePage = () => {
         <Route
           path="approve/sparePart-purchasing-request"
           element={<SparePartPurchasingRequest />}
+        />
+        <Route path="Report" element={<SparePartsHomeReport />} />
+        <Route
+          path="Report/generate-report-weekly"
+          element={<WeeklySpareParts />}
+        />
+        <Route
+          path="Report/generate-report-monthly"
+          element={<MonthlySpareParts />}
+        />
+        <Route
+          path="Report/generate-report-halfYear"
+          element={<HalfYearSpareParts />}
+        />
+        <Route
+          path="Report/generate-report-yearly"
+          element={<YearlySpareParts />}
         />
       </Routes>
     </div>
