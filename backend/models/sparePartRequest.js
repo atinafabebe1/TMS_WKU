@@ -80,11 +80,13 @@ const SparePartSchema = new Schema(
       type: String,
       default: "pending",
       enum: [
-        "pending",
-        "in-progress",
-        "completed",
-        "canceled",
-        "approved-to-buy",
+        "pending", //whan request is sent
+        "in-progress", //when Garage Director take some action
+        "approved", // when garage director approve request
+        "completed", // whan sparepart taken by mechanic
+        "canceled", // whan request rejected by GD
+        "store-approved-to-buy",
+        "Garage-approved-to-buy",
         "rejected-to-buy",
       ],
       validate: {

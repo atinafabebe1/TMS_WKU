@@ -59,19 +59,45 @@ const SparePartPurchasingRequest = ({ link }) => {
   }
 
   const requestedtoBuyRequests = requests.filter(
-    (request) => request.status === "in-progress"
+    (request) => request.status === "approved"
   );
   const approvedToBuyRequests = requests.filter(
-    (request) => request.status === "approved-to-buy"
+    (request) =>
+      request.status === "store-approved-to-buy" ||
+      request.status === "Garage-approved-to-buy"
   );
   const rejectedToBuyRequests = requests.filter(
     (request) => request.status === "rejected-to-buy"
   );
 
+  const handleApproveClicked = async (request) => {
+    try {
+      await api.put(`/Request/sparePart/${request._id}`, {
+        status: "approved",
+      });
+      const response = await api.get("/Request/sparePart");
+      setRequest(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleApproveClick = async (request) => {
     try {
       await api.put(`/Request/sparePart/${request._id}`, {
-        status: "approved-to-buy",
+        status: "store-approved-to-buy",
+      });
+      const response = await api.get("/Request/sparePart");
+      setRequest(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCompleteClick = async (request) => {
+    try {
+      await api.put(`/Request/sparePart/${request._id}`, {
+        status: "completed",
       });
       const response = await api.get("/Request/sparePart");
       setRequest(response.data.data);
@@ -111,16 +137,20 @@ const SparePartPurchasingRequest = ({ link }) => {
         id="vehicle-request-tabs"
         className="my-2"
       >
-        <Tab eventKey="inProgress" title="Requested to Buy Requests">
+        <Tab eventKey="inProgress" title="Requests">
           <SparePartPurchasingRequestTable
             requests={requestedtoBuyRequests}
             handleApproveClick={handleApproveClick}
+            handleCompleteClick={handleCompleteClick}
             handleRejectClick={handleRejectClick}
             handleRequestClick={handleRequestClick}
           />
         </Tab>
-        <Tab eventKey="approved-to-buy" title="Approved to Buy Requests">
-          <SparePartPurchasingRequestTable requests={approvedToBuyRequests} />
+        <Tab eventKey="store-approved-to-buy" title="Approved to Buy Requests">
+          <SparePartPurchasingRequestTable
+            requests={approvedToBuyRequests}
+            handleApproveClicked={handleApproveClicked}
+          />
         </Tab>
         <Tab eventKey="rejected-to-buy" title="Rejected to Buy Requests">
           <SparePartPurchasingRequestTable requests={rejectedToBuyRequests} />

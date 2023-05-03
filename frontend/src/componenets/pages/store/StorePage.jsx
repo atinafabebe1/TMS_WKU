@@ -7,7 +7,6 @@ import MonthlySpareParts from "./monthlyReport";
 import HalfYearSpareParts from "./halfYearReport";
 import YearlySpareParts from "./yearlyReport";
 
-import SparePartsReport from "./GenerateAndStoreReport";
 import { Routes, Route } from "react-router-dom";
 
 const links = [

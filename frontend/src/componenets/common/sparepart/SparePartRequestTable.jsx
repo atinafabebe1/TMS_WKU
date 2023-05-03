@@ -6,7 +6,7 @@ const SparePartRequestTable = ({
   handleApproveClick,
   handleRejectClick,
   handleRequestClick,
-  handleSendToStore,
+  //handleSendToStore,
   handleCompletedtoBuyClick,
 }) => {
   const [showModal, setShowModal] = useState(false);
@@ -89,13 +89,13 @@ const SparePartRequestTable = ({
                     >
                       Approve
                     </Button>{" "}
-                    <Button
+                    {/* <Button
                       className="btn btn-sm"
                       variant="warning"
                       onClick={() => handleSendToStore(request)}
                     >
                       Send To Store
-                    </Button>{" "}
+                    </Button>{" "} */}
                     <Button
                       className="btn btn-sm"
                       variant="danger"
@@ -126,14 +126,14 @@ const SparePartRequestTable = ({
                     </Button>{" "}
                   </>
                 )}
-                {request.status === "approved-to-buy" && (
+                {request.status === "store-approved-to-buy" && (
                   <>
                     <Button className="btn btn-sm" variant="warning" disabled>
-                      Request Waiting For Garage Director Approval
+                      Request Waiting For Your Approval
                     </Button>{" "}
                   </>
                 )}
-                {request.status === "approved-to-buy" && (
+                {request.status === "store-approved-to-buy" && (
                   <>
                     <Button
                       className="btn btn-sm"
