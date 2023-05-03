@@ -4,9 +4,10 @@ import { useState } from "react";
 const SparePartPurchasingRequestTable = ({
   requests,
   handleApproveClick,
+  handleCompleteClick,
   handleRejectClick,
   handleRequestClick,
-  handleSendToStore,
+  handleApproveClicked,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
@@ -79,14 +80,21 @@ const SparePartPurchasingRequestTable = ({
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
               <td>
-                {request.status === "in-progress" && (
+                {request.status === "approved" && (
                   <>
                     <Button
                       className="btn btn-sm"
                       variant="success"
+                      onClick={() => handleCompleteClick(request)}
+                    >
+                      Complete
+                    </Button>{" "}
+                    <Button
+                      className="btn btn-sm"
+                      variant="primary"
                       onClick={() => handleApproveClick(request)}
                     >
-                      Approve
+                      Approve to Buy
                     </Button>{" "}
                     <Button
                       className="btn btn-sm"
@@ -95,6 +103,29 @@ const SparePartPurchasingRequestTable = ({
                     >
                       Reject
                     </Button>
+                  </>
+                )}
+                {request.status === "store-approved-to-buy" && (
+                  <>
+                    <Button
+                      className="btn btn-sm"
+                      variant="warning"
+                      disabled
+                      onClick={() => handleCompleteClick(request)}
+                    >
+                      Waiting For Garage Director Approval
+                    </Button>
+                  </>
+                )}
+                {request.status === "Garage-approved-to-buy" && (
+                  <>
+                    <Button
+                      className="btn btn-sm"
+                      variant="success"
+                      onClick={() => handleApproveClicked(request)}
+                    >
+                      Approve it's Purchased
+                    </Button>{" "}
                   </>
                 )}
               </td>

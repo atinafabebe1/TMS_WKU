@@ -62,12 +62,11 @@ const AccessoryRequest = ({ link }) => {
   const pendingRequests = requests.filter(
     (request) => request.status === "pending"
   );
-  const inProgressRequests = requests.filter(
-    (request) =>
-      request.status === "in-progress" ||
-      request.status === "approved-to-buy" ||
-      request.status === "rejected-to-buy"
+
+  const requestingToBuy = requests.filter(
+    (request) => request.status === "store-approved-to-buy"
   );
+
   const completedRequests = requests.filter(
     (request) => request.status === "completed"
   );
@@ -78,7 +77,7 @@ const AccessoryRequest = ({ link }) => {
   const handleApproveClick = async (request) => {
     try {
       await api.put(`/Request/sparePart/${request._id}`, {
-        status: "completed",
+        status: "approved",
       });
       const response = await api.get("/Request/sparePart");
       setRequest(response.data.data);
@@ -89,7 +88,7 @@ const AccessoryRequest = ({ link }) => {
   const handleCompletedtoBuyClick = async (request) => {
     try {
       await api.put(`/Request/sparePart/${request._id}`, {
-        status: "completed",
+        status: "Garage-approved-to-buy",
       });
       const response = await api.get("/Request/sparePart");
       setRequest(response.data.data);
@@ -116,23 +115,23 @@ const AccessoryRequest = ({ link }) => {
     }
   };
 
-  const handleSendToStore = async (request, rejectReason) => {
-    try {
-      await api.put(
-        `/Request/sparePart/${request._id}`,
-        {
-          status: "in-progress",
-        },
-        {
-          rejectReason,
-        }
-      );
-      const response = await api.get("/Request/sparePart");
-      setRequest(response.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleSendToStore = async (request, rejectReason) => {
+  //   try {
+  //     await api.put(
+  //       `/Request/sparePart/${request._id}`,
+  //       {
+  //         status: "in-progress",
+  //       },
+  //       {
+  //         rejectReason,
+  //       }
+  //     );
+  //     const response = await api.get("/Request/sparePart");
+  //     setRequest(response.data.data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleRequestClick = (request) => {
     setSelectedRequest(request);
@@ -153,12 +152,12 @@ const AccessoryRequest = ({ link }) => {
             handleApproveClick={handleApproveClick}
             handleRejectClick={handleRejectClick}
             handleRequestClick={handleRequestClick}
-            handleSendToStore={handleSendToStore}
+            //handleSendToStore={handleSendToStore}
           />
         </Tab>
-        <Tab eventKey="rejected" title="In Progress Requests">
+        <Tab eventKey="requested-to-buy" title="To Buy Request">
           <SparePartRequestTable
-            requests={inProgressRequests}
+            requests={requestingToBuy}
             handleCompletedtoBuyClick={handleCompletedtoBuyClick}
           />
         </Tab>
