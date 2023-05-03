@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Modal,Row,Col } from "react-bootstrap";
-import axios from "axios";
 import api from "../../../api/api";
+import { useAuth } from "../../../context/AuthContext";
+import { ROLE_HEADOFDEPLOYMENT } from "../../../constants/index";
 
 const MaintenanceRequestTables = ({ filter }) => {
   const [requests, setRequests] = useState([]);
@@ -20,15 +21,12 @@ const MaintenanceRequestTables = ({ filter }) => {
       });
   }, []);
 
-  const handleRejectClick = async (request, rejectReason) => {
+  const handleRejectClick = async (request) => {
     try {
       await api.put(
-        `/Request/maintenance/${request._id}`,
+        `/Request/maintenance/${request}`,
         {
           status: "cancelled",
-        },
-        {
-          data: {rejectReason}
         }
       );
       const response = await api.get("/Request/maintenance");
@@ -110,7 +108,7 @@ const MaintenanceRequestTables = ({ filter }) => {
                     <Button
                       variant="success"
                       className="btn btn-sm"
-                      onClick={() => handleTransferOrder(selectedRequest)}
+                      onClick={() => handleTransferOrder(request)}
                     >
                       Transfer Order
                     </Button>
@@ -118,7 +116,7 @@ const MaintenanceRequestTables = ({ filter }) => {
                     <Button
                       variant="danger"
                       className="btn btn-sm"
-                      onClick={() => handleRejectClick(request._id)}
+                      onClick={() => handleRejectClick(request)}
                     >
                       Reject
                     </Button>

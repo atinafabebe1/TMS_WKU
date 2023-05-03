@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MaintenanceRequestTables from "../../common/maintenance/maintenancerequesttable";
-import { Form, Row, Col, Tabs, Tab } from "react-bootstrap";
+import {Tabs, Tab } from "react-bootstrap";
 
 const HODmaintenanceRequestPage = () => {
   const [filter, setFilter] = useState("all");
