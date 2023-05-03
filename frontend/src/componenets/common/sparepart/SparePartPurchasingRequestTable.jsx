@@ -1,7 +1,9 @@
 import { Table, Button, Modal, Form, Row, Col } from "react-bootstrap";
+import Loading from "../errorProvider/LoadingProvider";
 import { useState } from "react";
 
 const SparePartPurchasingRequestTable = ({
+  isLoading,
   requests,
   handleApproveClick,
   handleCompleteClick,
@@ -30,7 +32,10 @@ const SparePartPurchasingRequestTable = ({
   };
 
   const filteredRequests = requests.filter((request) => {
-    return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
+    return (
+      request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.status.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
 
   if (!requests) {
@@ -51,6 +56,7 @@ const SparePartPurchasingRequestTable = ({
           </Col>
         </Row>
       </Form>
+      {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>

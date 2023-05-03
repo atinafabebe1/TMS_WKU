@@ -1,36 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Table, Button, Row, Col, Form } from "react-bootstrap";
+import Loading from "../../common/errorProvider/LoadingProvider";
 import api from "../../../api/api";
 
 const SparePartRequestListPage = () => {
   const [requests, setRequests] = useState([]);
-  const [pagination, setPagination] = useState({});
-  const [currentPage, setCurrentPage] = useState(2);
-  const [totalCount, setTotalCount] = useState(0);
+  const [startIndex, setStartIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchReqestData = async (page) => {
-    const limit = 7;
-    await api
-      .get(`/Request/sparePart?page=${page.page}&limit=${limit}`)
-      .then((response) => {
-        console.log(response.data.data);
-        setRequests(response.data.data);
-        setIsLoading(false);
-        setTotalCount(response.data.count);
-        setPagination(response.data.pagination);
-      });
+  const fetchReqestData = async () => {
+    await api.get(`/Request/sparePart`).then((response) => {
+      console.log(response.data.data);
+      setRequests(response.data.data);
+      setIsLoading(false);
+    });
   };
 
   useEffect(() => {
-    fetchReqestData(currentPage);
+    fetchReqestData();
   }, []);
 
-  const handlePageChange = (page) => {
-    fetchReqestData(page);
+  const handleNext = () => {
+    setStartIndex((prevIndex) => prevIndex + 7);
+  };
+
+  const handlePrevious = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
   };
 
   const handleDeleteRequest = (id) => {
@@ -61,7 +59,7 @@ const SparePartRequestListPage = () => {
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h1>My Spare Part Requests</h1>
+          <h3>Your Last Spare Part Requests</h3>
         </Col>
         <Col className="text-end">
           <Link to="/mechanic/request/create-accessory">
@@ -81,7 +79,7 @@ const SparePartRequestListPage = () => {
           </Col>
         </Row>
       </Form>
-      {isLoading && <h4>Loading...</h4>}
+      {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
@@ -95,7 +93,7 @@ const SparePartRequestListPage = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredRequests?.map((request) => (
+          {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
               <td>{request.type}</td>
@@ -168,52 +166,25 @@ const SparePartRequestListPage = () => {
           ))}
         </tbody>
       </Table>
-      <div className="d-flex justify-content-center">
-        <nav aria-label="Page navigation example">
-          <ul className="pagination">
-            {pagination.prev && (
-              <li className="page-item">
-                <a
-                  className="page-link"
-                  onClick={() => handlePageChange(pagination.prev)}
-                  aria-label="Previous"
-                >
-                  <span aria-hidden="true">&laquo;</span>
-                  <span className="sr-only">Previous</span>
-                </a>
-              </li>
-            )}
-            {pagination.pages &&
-              pagination.pages.map((page) => (
-                <li
-                  className={`page-item ${
-                    page === pagination.current ? "active" : ""
-                  }`}
-                  key={page}
-                >
-                  <a
-                    className="page-link"
-                    onClick={() => handlePageChange(page)}
-                    aria-label={`Page ${page}`}
-                  >
-                    {page}
-                  </a>
-                </li>
-              ))}
-            {pagination.next && (
-              <li className="page-item">
-                <a
-                  className="page-link"
-                  onClick={() => handlePageChange(pagination.next)}
-                  aria-label="Next"
-                >
-                  <span aria-hidden="true">&raquo;</span>
-                  <span className="sr-only">Next</span>
-                </a>
-              </li>
-            )}
-          </ul>
-        </nav>
+      <div className="d-flex justify-content-center align-items-center w-100">
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handlePrevious}
+          disabled={startIndex === 0}
+          block
+        >
+          Previous
+        </Button>
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handleNext}
+          disabled={startIndex + 7 >= requests.length}
+          block
+        >
+          Next
+        </Button>
       </div>
     </div>
   );

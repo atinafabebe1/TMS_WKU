@@ -9,7 +9,7 @@ import { ROLE_GARAGEDIRECTOR } from "../../../constants/index";
 const SparePartPurchasingRequest = ({ link }) => {
   const { user } = useAuth();
   const [requests, setRequest] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [photo, setPhoto] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -131,66 +131,74 @@ const SparePartPurchasingRequest = ({ link }) => {
 
   return (
     <>
-      <Tabs
-        activeKey={activeTab}
-        onSelect={handleTabSelect}
-        id="vehicle-request-tabs"
-        className="my-2"
-      >
-        <Tab eventKey="inProgress" title="Requests">
-          <SparePartPurchasingRequestTable
-            requests={requestedtoBuyRequests}
-            handleApproveClick={handleApproveClick}
-            handleCompleteClick={handleCompleteClick}
-            handleRejectClick={handleRejectClick}
-            handleRequestClick={handleRequestClick}
-          />
-        </Tab>
-        <Tab eventKey="store-approved-to-buy" title="Approved to Buy Requests">
-          <SparePartPurchasingRequestTable
-            requests={approvedToBuyRequests}
-            handleApproveClicked={handleApproveClicked}
-          />
-        </Tab>
-        <Tab eventKey="rejected-to-buy" title="Rejected to Buy Requests">
-          <SparePartPurchasingRequestTable requests={rejectedToBuyRequests} />
-        </Tab>
-      </Tabs>
-      {selectedRequest && (
-        <Modal
-          show={showUserModal}
-          onHide={() => setShowUserModal(false)}
-          size="md"
+      <div className="p-4">
+        <Tabs
+          activeKey={activeTab}
+          onSelect={handleTabSelect}
+          id="vehicle-request-tabs"
+          className="my-2"
         >
-          <Modal.Header closeButton>
-            <Modal.Title>User Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body className="bg-light">
-            <div className="d-flex align-items-center mb-3">
-              <div className="me-3">
-                {photo ? (
-                  <Avatar src={photo} size={80} round={true} />
-                ) : (
-                  <Avatar
-                    name={`${selectedRequest.user.firstName} ${selectedRequest.user.lastName}`}
-                    size={80}
-                    round={true}
-                  />
-                )}
+          <Tab eventKey="inProgress" title="Requests">
+            <SparePartPurchasingRequestTable
+              requests={requestedtoBuyRequests}
+              handleApproveClick={handleApproveClick}
+              handleCompleteClick={handleCompleteClick}
+              handleRejectClick={handleRejectClick}
+              handleRequestClick={handleRequestClick}
+              isLoading={isLoading}
+            />
+          </Tab>
+          <Tab
+            eventKey="store-approved-to-buy"
+            title="Approved to Buy Requests"
+          >
+            <SparePartPurchasingRequestTable
+              requests={approvedToBuyRequests}
+              handleApproveClicked={handleApproveClicked}
+            />
+          </Tab>
+          <Tab eventKey="rejected-to-buy" title="Rejected to Buy Requests">
+            <SparePartPurchasingRequestTable requests={rejectedToBuyRequests} />
+          </Tab>
+        </Tabs>
+        {selectedRequest && (
+          <Modal
+            show={showUserModal}
+            onHide={() => setShowUserModal(false)}
+            size="md"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>User Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="bg-light">
+              <div className="d-flex align-items-center mb-3">
+                <div className="me-3">
+                  {photo ? (
+                    <Avatar src={photo} size={80} round={true} />
+                  ) : (
+                    <Avatar
+                      name={`${selectedRequest.user.firstName} ${selectedRequest.user.lastName}`}
+                      size={80}
+                      round={true}
+                    />
+                  )}
+                </div>
+                <h5 className="mb-0 ml-3">
+                  {selectedRequest.user.firstName}{" "}
+                  {selectedRequest.user.lastName}
+                </h5>
               </div>
-              <h5 className="mb-0 ml-3">
-                {selectedRequest.user.firstName} {selectedRequest.user.lastName}
-              </h5>
-            </div>
-            <p>
-              <strong>Email:</strong> {selectedRequest.user.email}
-            </p>
-            <p>
-              <strong>Phone Number:</strong> {selectedRequest.user.phoneNumber}
-            </p>
-          </Modal.Body>
-        </Modal>
-      )}
+              <p>
+                <strong>Email:</strong> {selectedRequest.user.email}
+              </p>
+              <p>
+                <strong>Phone Number:</strong>{" "}
+                {selectedRequest.user.phoneNumber}
+              </p>
+            </Modal.Body>
+          </Modal>
+        )}
+      </div>
     </>
   );
 };

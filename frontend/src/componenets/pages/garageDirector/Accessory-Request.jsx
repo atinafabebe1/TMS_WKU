@@ -140,69 +140,73 @@ const AccessoryRequest = ({ link }) => {
 
   return (
     <>
-      <Tabs
-        activeKey={activeTab}
-        onSelect={handleTabSelect}
-        id="vehicle-request-tabs"
-        className="my-2"
-      >
-        <Tab eventKey="pending" title="Pending Requests">
-          <SparePartRequestTable
-            requests={pendingRequests}
-            handleApproveClick={handleApproveClick}
-            handleRejectClick={handleRejectClick}
-            handleRequestClick={handleRequestClick}
-            //handleSendToStore={handleSendToStore}
-          />
-        </Tab>
-        <Tab eventKey="requested-to-buy" title="To Buy Request">
-          <SparePartRequestTable
-            requests={requestingToBuy}
-            handleCompletedtoBuyClick={handleCompletedtoBuyClick}
-          />
-        </Tab>
-        <Tab eventKey="approved" title="Completed Requests">
-          <SparePartRequestTable requests={completedRequests} />
-        </Tab>
-        <Tab eventKey="canceled" title="Canceled Requests">
-          <SparePartRequestTable requests={canceledRequests} />
-        </Tab>
-      </Tabs>
-      {selectedRequest && (
-        <Modal
-          show={showUserModal}
-          onHide={() => setShowUserModal(false)}
-          size="md"
+      <div className="p-4">
+        <Tabs
+          activeKey={activeTab}
+          onSelect={handleTabSelect}
+          id="vehicle-request-tabs"
+          className="my-2"
         >
-          <Modal.Header closeButton>
-            <Modal.Title>User Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body className="bg-light">
-            <div className="d-flex align-items-center mb-3">
-              <div className="me-3">
-                {photo ? (
-                  <Avatar src={photo} size={80} round={true} />
-                ) : (
-                  <Avatar
-                    name={`${selectedRequest.user.firstName} ${selectedRequest.user.lastName}`}
-                    size={80}
-                    round={true}
-                  />
-                )}
+          <Tab eventKey="pending" title="Pending Requests">
+            <SparePartRequestTable
+              requests={pendingRequests}
+              handleApproveClick={handleApproveClick}
+              handleRejectClick={handleRejectClick}
+              handleRequestClick={handleRequestClick}
+              //handleSendToStore={handleSendToStore}
+            />
+          </Tab>
+          <Tab eventKey="requested-to-buy" title="To Buy Request">
+            <SparePartRequestTable
+              requests={requestingToBuy}
+              handleCompletedtoBuyClick={handleCompletedtoBuyClick}
+            />
+          </Tab>
+          <Tab eventKey="approved" title="Completed Requests">
+            <SparePartRequestTable requests={completedRequests} />
+          </Tab>
+          <Tab eventKey="canceled" title="Canceled Requests">
+            <SparePartRequestTable requests={canceledRequests} />
+          </Tab>
+        </Tabs>
+        {selectedRequest && (
+          <Modal
+            show={showUserModal}
+            onHide={() => setShowUserModal(false)}
+            size="md"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>User Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="bg-light">
+              <div className="d-flex align-items-center mb-3">
+                <div className="me-3">
+                  {photo ? (
+                    <Avatar src={photo} size={80} round={true} />
+                  ) : (
+                    <Avatar
+                      name={`${selectedRequest.user.firstName} ${selectedRequest.user.lastName}`}
+                      size={80}
+                      round={true}
+                    />
+                  )}
+                </div>
+                <h5 className="mb-0 ml-3">
+                  {selectedRequest.user.firstName}{" "}
+                  {selectedRequest.user.lastName}
+                </h5>
               </div>
-              <h5 className="mb-0 ml-3">
-                {selectedRequest.user.firstName} {selectedRequest.user.lastName}
-              </h5>
-            </div>
-            <p>
-              <strong>Email:</strong> {selectedRequest.user.email}
-            </p>
-            <p>
-              <strong>Phone Number:</strong> {selectedRequest.user.phoneNumber}
-            </p>
-          </Modal.Body>
-        </Modal>
-      )}
+              <p>
+                <strong>Email:</strong> {selectedRequest.user.email}
+              </p>
+              <p>
+                <strong>Phone Number:</strong>{" "}
+                {selectedRequest.user.phoneNumber}
+              </p>
+            </Modal.Body>
+          </Modal>
+        )}
+      </div>
     </>
   );
 };

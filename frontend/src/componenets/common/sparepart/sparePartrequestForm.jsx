@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ErrorProvider from "../errorProvider/ErrorProvider";
 import SuccessProvider from "../errorProvider/SuccessProvider";
+import Loading from "../../common/errorProvider/LoadingProvider";
+
 import {
   Form,
   Button,
@@ -8,7 +10,6 @@ import {
   FormLabel,
   FormControl,
   Modal,
-  FormCheck,
 } from "react-bootstrap";
 import api from "../../../api/api";
 
@@ -19,6 +20,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
   const [quantity, setQuantity] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [validated, setValidated] = useState(false);
 
@@ -56,6 +58,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     const result = {
       plateNumber,
       type,
@@ -66,12 +69,14 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
       api
         .put(`/Request/sparePart/${request._id}?isDeleted=false`, result)
         .then((response) => {
+          setIsLoading(false);
           setSuccess("Successfuly Updated");
           setError(null);
           onSubmit();
         })
         .catch((err) => {
           console.log(err.response.data);
+          setIsLoading(false);
           setError("Please Provide Valid Data and Try Again");
           setSuccess(null);
         });
@@ -89,15 +94,13 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
       api
         .post(`/Request/sparePart?isDeleted=false`, result)
         .then((response) => {
+          setIsLoading(false);
           setSuccess("Successfuly Sent");
           setError(null);
-          setPlateNumber("");
-          setType("car");
-          setIdentificationNumber("");
-          setQuantity("");
         })
         .catch((err) => {
           console.log(err.response.data);
+          setIsLoading(false);
           setError("Please Provide Valid Data and Try Again");
           setSuccess(null);
         });
@@ -181,6 +184,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
               </Form.Control.Feedback>
             </FormGroup>
           </Form>
+          {isLoading && <Loading />}
           {error && <ErrorProvider error={error} />}
           {success && <SuccessProvider success={success} />}
 
