@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Modal, Button } from "react-bootstrap";
-
+import { useNavigate } from "react-router-dom";
 import api from "../../../api/api";
 
 const PublicScheduleTable = () => {
@@ -19,12 +19,20 @@ const PublicScheduleTable = () => {
     };
     fetch();
   }, []);
-
-
+  const navigate = useNavigate();
+  const handleHomeClick = () => {
+    navigate("/");
+  };
 
 
   return (
     <div className="container d-flex flex-column justify-content-center align-items-center">
+    <div className="w-100 d-flex justify-content-end">
+      <Button onClick={handleHomeClick} className="btn-sm">
+        Home
+      </Button>
+    </div>
+
       <h3 style={{ marginBottom: "20px" }}>Schedules</h3>
   
   

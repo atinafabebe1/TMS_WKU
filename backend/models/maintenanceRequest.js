@@ -41,6 +41,28 @@ const MaintenanceRequestSchema = new Schema(
       ],
       maxlength: [500, "The description cannot be longer than 500 characters."],
     },
+    firstApproval: {
+      approver: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      status: {
+        type: String,
+        enum: ["pending", "approved", "rejected"],
+        default: "pending",
+      },
+    },
+    secondApproval: {
+      approver: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      status: {
+        type: String,
+        enum: ["pending", "approved", "rejected"],
+        default: "pending",
+      },
+    },
     status: {
       type: String,
       default: "pending",
@@ -55,6 +77,9 @@ const MaintenanceRequestSchema = new Schema(
         message: (props) =>
           `Cannot set status "${props.value}" when creating a new maintenance request.`,
       },
+    },
+     rejectReason: {
+      type: String,
     },
     isDeleted: {
       type: Boolean,
