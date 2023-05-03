@@ -6,13 +6,13 @@ const SparePartRequestTable = ({
   handleApproveClick,
   handleRejectClick,
   handleRequestClick,
-  //handleSendToStore,
   handleCompletedtoBuyClick,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [currentRequest, setCurrentRequest] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [startIndex, setStartIndex] = useState(0);
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = (request) => {
@@ -29,6 +29,13 @@ const SparePartRequestTable = ({
     setSearchTerm(event.target.value);
   };
 
+  const handleNext = () => {
+    setStartIndex((prevIndex) => prevIndex + 7);
+  };
+
+  const handlePrevious = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
+  };
   const filteredRequests = requests.filter((request) => {
     return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
   });
@@ -56,8 +63,8 @@ const SparePartRequestTable = ({
           <tr>
             <th>User</th>
             <th>Plate Number</th>
-            <th>ID </th>
             <th>Type</th>
+            <th>Spare Part ID </th>
             <th>Quantity</th>
             <th>Date</th>
             <th>Status</th>
@@ -65,7 +72,7 @@ const SparePartRequestTable = ({
           </tr>
         </thead>
         <tbody>
-          {filteredRequests?.map((request) => (
+          {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
             <tr key={request._id}>
               <td>
                 <a href="#" onClick={() => handleRequestClick(request)}>
@@ -89,13 +96,6 @@ const SparePartRequestTable = ({
                     >
                       Approve
                     </Button>{" "}
-                    {/* <Button
-                      className="btn btn-sm"
-                      variant="warning"
-                      onClick={() => handleSendToStore(request)}
-                    >
-                      Send To Store
-                    </Button>{" "} */}
                     <Button
                       className="btn btn-sm"
                       variant="danger"
@@ -108,14 +108,14 @@ const SparePartRequestTable = ({
                 {request.status === "completed" && (
                   <>
                     <Button className="btn btn-sm" variant="success" disabled>
-                      Request Successfully Approved
+                      Request Successfully Completed
                     </Button>{" "}
                   </>
                 )}
                 {request.status === "canceled" && (
                   <>
-                    <Button className="btn btn-sm" variant="warning" disabled>
-                      Request Successfully Rejected
+                    <Button className="btn btn-sm" variant="danger" disabled>
+                      Oops Request Rejected
                     </Button>{" "}
                   </>
                 )}
@@ -149,6 +149,26 @@ const SparePartRequestTable = ({
           ))}
         </tbody>
       </Table>
+      <div className="d-flex justify-content-center align-items-center w-100">
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handlePrevious}
+          disabled={startIndex === 0}
+          block
+        >
+          Previous
+        </Button>
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handleNext}
+          disabled={startIndex + 7 >= requests.length}
+          block
+        >
+          Next
+        </Button>
+      </div>
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Request</Modal.Title>
