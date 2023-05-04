@@ -90,7 +90,7 @@ const DetailVehicleInfo = ({ link }) => {
   };
 
   return (
-    <>
+    <div className="p-4">
       <Row className="mb-4">
         <Col>
           <h3>Vehicle Property Information</h3>
@@ -135,7 +135,7 @@ const DetailVehicleInfo = ({ link }) => {
           <VehicleDisplayTable vehicles={deletedVehicles} />
         </Tab>
       </Tabs>
-    </>
+    </div>
   );
 };
 

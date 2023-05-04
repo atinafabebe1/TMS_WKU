@@ -5,17 +5,13 @@ import WeeklyReport from "../../common/report/weeklyReport";
 import DailyReport from "../../common/report/dailyReport";
 import MonthlyReport from "../../common/report/monthlyReport";
 import EmmergencyReport from "../../common/report/emmergencyReport";
-import VehicleInfromation from "../../common/vehicle/DisplayVehicle";
 import ServiceScheduleForm from "./ServiceScheduleForm";
 import TransferVehicle from "./TransferVehicle";
 import TrackVehicle from "../../common/vehicle/TrackVehicle";
 import Complain from "./Complain";
 import WorkdaySchedule from "../../common/schedule/Workday";
 import VehiclesRequests from "../../common/vehicle/vehiclerequest";
-import { useAuth } from "../../../context/AuthContext";
-
 import RegisterVehicle from "./RegisterVehicles";
-import VehicleListPage from "./VehicleListPage";
 import EditVehicleRecord from "./EditVehicleRecord";
 import DetailVehicleInfo from "./DetailVehicleInfo";
 import SingleVehicleDetailInfoo from "./SingleVehicleDetailInfo";
@@ -105,7 +101,6 @@ const links = [
   },
 ];
 const HeadOfDeploymentPage = () => {
-  const { user } = useAuth();
   return (
     <div>
       <div className="mb-3">

@@ -4,13 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../../../api/api";
 
 const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
-  //   const [plateNumber, setPlateNumber] = useState("");
-  //   const [type, setType] = useState("car"); // set default value for vehicle type
-  //   const [identificationNumber, setIdentificationNumber] = useState("");
-  //   const [quantity, setQuantity] = useState("");
   const [modelNo, setModelNo] = useState("");
   const [chassisNo, setChassisNo] = useState("");
   const [motorNo, setMotorNo] = useState("");
+  const [type, setType] = useState("");
   const [cC, setCC] = useState("");
   const [plateNumber, setPlateNumber] = useState("");
   const [typeOfFuel, setTypeOfFuel] = useState("");
@@ -22,6 +19,7 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
   const [proprietaryIdNumber, setProprietaryIdNumber] = useState("");
   const [vehicleImage, setVehicleImage] = useState(null);
   const [assignedTo, setAssignedTo] = useState(null);
+  const [driver, setDriver] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -32,6 +30,7 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
       setModelNo(data.modelNo);
       setChassisNo(data.chassisNo);
       setMotorNo(data.motorNo);
+      setType(data.type);
       setCC(data.cC);
       setPurchasePrice(data.purchasePrice);
       setPlateNumber(data.plateNumber);
@@ -40,6 +39,7 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
       setMaxPerson(data.maxPerson);
       setMaxLoad(data.maxLoad);
       setMaxLitres(data.maxLitres);
+      setDriver(data.driver);
       setProprietaryIdNumber(data.proprietaryIdNumber);
       setVehicleImage(data.vehicleImage);
       setAssignedTo(data.assignedTo);
@@ -47,12 +47,14 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
       setModelNo("");
       setChassisNo("");
       setMotorNo("");
+      setType("");
       setCC("");
       setPurchasePrice("");
       setPlateNumber("");
       setTypeOfFuel("");
       setPurchasedDate("");
       setMaxPerson("");
+      setDriver("");
       setMaxLoad("");
       setMaxLitres("");
       setProprietaryIdNumber("");
@@ -78,6 +80,7 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
     setMaxPerson("");
     setMaxLoad("");
     setMaxLitres("");
+    setDriver("");
     setProprietaryIdNumber("");
     setVehicleImage(null);
     setAssignedTo(null);
@@ -88,6 +91,7 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
       modelNo,
       chassisNo,
       motorNo,
+      type,
       cC,
       purchasePrice,
       plateNumber,
@@ -96,6 +100,7 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
       maxPerson,
       maxLoad,
       maxLitres,
+      driver,
       proprietaryIdNumber,
       vehicleImage,
       assignedTo,
@@ -134,6 +139,7 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
             setModelNo("");
             setChassisNo("");
             setMotorNo("");
+            setType("");
             setCC("");
             setPurchasePrice("");
             setPlateNumber("");
@@ -142,6 +148,7 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
             setMaxPerson("");
             setMaxLoad("");
             setMaxLitres("");
+            setDriver("");
             setProprietaryIdNumber("");
             setVehicleImage(null);
             setAssignedTo(null);
@@ -192,6 +199,9 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
                     onChange={(e) => setChassisNo(e.target.value)}
                   />
                 </Form.Group>
+              </Row>
+              <br />
+              <Row>
                 <Form.Group as={Col} controlId="motornumber">
                   <span> </span>
                   <Form.Label>Motor Number</Form.Label>
@@ -204,7 +214,27 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
                     onChange={(e) => setMotorNo(e.target.value)}
                   />
                 </Form.Group>
+                <Form.Group as={Col} controlId="motornumber">
+                  <span> </span>
+                  <Form.Label>Type Of Vehicle</Form.Label>
+                  <Form.Control
+                    as="select"
+                    type="text"
+                    placeholder="Choose"
+                    disabled
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                  >
+                    <option value="">Choose</option>
+                    <option value="Bus">Bus</option>
+                    <option value="Truck">Truck</option>
+                    <option value="Pick Up">Pick Up</option>
+                    <option value="Ambulace">Ambulace</option>
+                    <option value="Automobile">Automobile</option>
+                  </Form.Control>
+                </Form.Group>
               </Row>
+              <br />
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="cc">
                   <span> </span>
@@ -348,15 +378,13 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
 
                 <Form.Group as={Col} controlId="assignedTo">
                   <span> </span>
-                  <Form.Label>Assigned to</Form.Label>
+                  <Form.Label>Driver</Form.Label>
                   <Form.Control
                     type="text"
                     disabled
-                    minLength={3}
-                    maxLength={100}
-                    value={assignedTo}
-                    onChange={(e) => setAssignedTo(e.target.value)}
-                  />
+                    value={driver}
+                    onChange={(e) => setDriver(e.target.value)}
+                  ></Form.Control>
                 </Form.Group>
                 <Form.Group as={Col} controlId="vehicleimage">
                   <span> </span>

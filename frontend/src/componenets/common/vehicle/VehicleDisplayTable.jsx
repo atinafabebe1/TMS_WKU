@@ -35,7 +35,7 @@ const VehicleDisplayTable = ({
   }
 
   return (
-    <>
+    <div className="p-4">
       <Form>
         <Row className="mb-3">
           <Col>
@@ -52,9 +52,10 @@ const VehicleDisplayTable = ({
         <thead>
           <tr>
             <th>Plate Number</th>
-            <th>ChassisNo </th>
+            <th>Type </th>
             <th>Proprietary Id Number</th>
             <th>Model Number</th>
+            <th>Items With</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -62,9 +63,14 @@ const VehicleDisplayTable = ({
           {filteredVehicles?.map((vehicle) => (
             <tr key={vehicle._id}>
               <td>{vehicle.plateNumber}</td>
-              <td>{vehicle.chassisNo}</td>
+              <td>{vehicle.type}</td>
               <td>{vehicle.proprietaryIdNumber}</td>
               <td>{vehicle.modelNo}</td>
+              <td>
+                {vehicle.itemsWithVehicle
+                  ?.map((item) => item.itemDetail)
+                  .join(", ")}
+              </td>
               <td>
                 {vehicle.isDeleted === false &&
                   vehicle.assignedTo === null &&
@@ -153,7 +159,7 @@ const VehicleDisplayTable = ({
           ))}
         </tbody>
       </Table>
-    </>
+    </div>
   );
 };
 
