@@ -3,6 +3,7 @@ import Navbar from "../../common/header/Navbar";
 import { Routes, Route } from "react-router-dom";
 import AccessoryRequest from "./Accessory-Request";
 import MaintenanceOrderTable from "../../common/maintenance/maintenanceOrdertable";
+import MaintenanceReport from "../../common/maintenance/maintenanceReport";
 const links = [
   {
     name: "Home",
@@ -58,6 +59,7 @@ const GarageDirectorPag = () => {
           path="maintenance/maintenance-orders"
           element={<MaintenanceOrderTable link={`/MaintenanceOrder`} />}
         />
+        <Route path="report/receive-maintenance-report" element={<MaintenanceReport/>}/>
       </Routes>
     </div>
   );
