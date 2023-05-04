@@ -3,7 +3,7 @@ import VehicleRegistrationForm from "../../common/vehicle/vehicleRegistrationFor
 
 const RegisterVehicle = () => {
   return (
-    <div>
+    <div className="p-4">
       <VehicleRegistrationForm title={"Vehicle Registration Form"} />
     </div>
   );

@@ -48,6 +48,11 @@ const VehicleRecordSchema = new Schema(
       type: Number,
       unique: true,
     },
+    type: {
+      type: String,
+      enum: ["Bus", "Truck", "Pick Up", "Ambulace", "Automobile"],
+      required: true,
+    },
     cC: {
       type: Number,
     },
