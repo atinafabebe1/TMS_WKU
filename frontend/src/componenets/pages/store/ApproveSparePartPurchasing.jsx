@@ -4,7 +4,6 @@ import Avatar from "react-avatar";
 import api from "../../../api/api";
 import SparePartPurchasingRequestTable from "../../common/sparepart/SparePartPurchasingRequestTable";
 import { useAuth } from "../../../context/AuthContext";
-import { ROLE_GARAGEDIRECTOR } from "../../../constants/index";
 
 const SparePartPurchasingRequest = ({ link }) => {
   const { user } = useAuth();
@@ -12,7 +11,6 @@ const SparePartPurchasingRequest = ({ link }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [photo, setPhoto] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [showRejectModal, setShowRejectModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [activeTab, setActiveTab] = useState("pending");
 

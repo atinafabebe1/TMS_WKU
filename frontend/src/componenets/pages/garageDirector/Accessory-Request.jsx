@@ -4,7 +4,6 @@ import Avatar from "react-avatar";
 import api from "../../../api/api";
 import SparePartRequestTable from "../../common/sparepart/SparePartRequestTable";
 import { useAuth } from "../../../context/AuthContext";
-import { ROLE_GARAGEDIRECTOR } from "../../../constants/index";
 
 const AccessoryRequest = ({ link }) => {
   const { user } = useAuth();
@@ -12,7 +11,6 @@ const AccessoryRequest = ({ link }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [showRejectModal, setShowRejectModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [activeTab, setActiveTab] = useState("pending");
 
@@ -31,6 +29,7 @@ const AccessoryRequest = ({ link }) => {
       );
   }, []);
   console.log(requests);
+
   useEffect(() => {
     console.log("selectedRequest");
     console.log(selectedRequest);
@@ -115,24 +114,6 @@ const AccessoryRequest = ({ link }) => {
     }
   };
 
-  // const handleSendToStore = async (request, rejectReason) => {
-  //   try {
-  //     await api.put(
-  //       `/Request/sparePart/${request._id}`,
-  //       {
-  //         status: "in-progress",
-  //       },
-  //       {
-  //         rejectReason,
-  //       }
-  //     );
-  //     const response = await api.get("/Request/sparePart");
-  //     setRequest(response.data.data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const handleRequestClick = (request) => {
     setSelectedRequest(request);
     setShowUserModal(true);
@@ -153,7 +134,6 @@ const AccessoryRequest = ({ link }) => {
               handleApproveClick={handleApproveClick}
               handleRejectClick={handleRejectClick}
               handleRequestClick={handleRequestClick}
-              //handleSendToStore={handleSendToStore}
             />
           </Tab>
           <Tab eventKey="requested-to-buy" title="To Buy Request">

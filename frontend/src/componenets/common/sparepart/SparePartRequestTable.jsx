@@ -78,6 +78,7 @@ const SparePartRequestTable = ({
                 <a href="#" onClick={() => handleRequestClick(request)}>
                   {console.log(request.user.firstName)}
                   {request.user?.firstName} {request.user?.lastName}
+                  <p>{request.user}</p>
                 </a>
               </td>
               <td>{request.plateNumber}</td>
