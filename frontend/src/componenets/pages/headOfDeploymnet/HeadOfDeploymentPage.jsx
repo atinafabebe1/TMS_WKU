@@ -14,7 +14,6 @@ import WorkdaySchedule from "../../common/schedule/Workday";
 import VehiclesRequests from "../../common/vehicle/vehiclerequest";
 import { useAuth } from "../../../context/AuthContext";
 
-import MaintenanceRequestTables from "../../common/maintenance/maintenancerequesttable";
 import RegisterVehicle from "./RegisterVehicles";
 import VehicleListPage from "./VehicleListPage";
 import EditVehicleRecord from "./EditVehicleRecord";

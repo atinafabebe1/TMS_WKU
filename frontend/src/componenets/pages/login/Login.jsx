@@ -23,6 +23,9 @@ import Joi from "joi";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const handleHomeClick = () => {
+    navigate("/");
+  };
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -123,7 +126,14 @@ const LoginPage = () => {
   };
 
   return (
+    <div className="container d-flex flex-column justify-content-center align-items-center">
+    <div className="w-100 d-flex justify-content-end">
+      <Button onClick={handleHomeClick} className="btn-sm">
+        Home
+      </Button>
+    </div>
     <Container className="py-5">
+
       <Row className="justify-content-center">
         <Col xs={12} md={6} lg={4}>
           <div className="text-center mb-4">
@@ -196,6 +206,7 @@ const LoginPage = () => {
         </Col>
       </Row>
     </Container>
+    </div>
   );
 };
 
