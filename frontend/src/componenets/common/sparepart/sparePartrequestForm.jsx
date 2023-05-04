@@ -2,22 +2,17 @@ import React, { useState, useEffect } from "react";
 import ErrorProvider from "../errorProvider/ErrorProvider";
 import SuccessProvider from "../errorProvider/SuccessProvider";
 import Loading from "../../common/errorProvider/LoadingProvider";
-
-import {
-  Form,
-  Button,
-  FormGroup,
-  FormLabel,
-  FormControl,
-  Modal,
-} from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
+import { Form, Button, Modal } from "react-bootstrap";
 import api from "../../../api/api";
 
 const SparePartRequestingForm = ({ title, request, onSubmit }) => {
   const [plateNumber, setPlateNumber] = useState("");
   const [type, setType] = useState("car"); // set default value for vehicle type
   const [identificationNumber, setIdentificationNumber] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [quantity, setQuantity] = useState(0);
+  const [unitPrice, setUnitPrice] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,11 +25,15 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
       setType(request.type);
       setIdentificationNumber(request.identificationNumber);
       setQuantity(request.quantity);
+      setUnitPrice(request.unitPrice);
+      setTotalPrice(request.totalPrice);
     } else {
       setPlateNumber("");
       setType("car");
       setIdentificationNumber("");
       setQuantity("");
+      setUnitPrice("");
+      setTotalPrice("");
     }
   }, [request]);
   //handle validation and confirmation
@@ -55,6 +54,8 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
     setType("car");
     setIdentificationNumber("");
     setQuantity("");
+    setUnitPrice("");
+    setTotalPrice("");
   };
 
   const handleSubmit = async () => {
@@ -64,6 +65,8 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
       type,
       identificationNumber,
       quantity,
+      unitPrice,
+      totalPrice,
     };
     if (request) {
       api
@@ -80,16 +83,6 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
           setError("Please Provide Valid Data and Try Again");
           setSuccess(null);
         });
-
-      // try {
-      //   await api.put(`/Request/sparePart/${request._id}`, {
-      //     status: "pending",
-      //   });
-      //   const response = await api.get("/Request/sparePart");
-      //   console.log(response.data.data);
-      // } catch (error) {
-      //   console.log(error);
-      // }
     } else {
       api
         .post(`/Request/sparePart?isDeleted=false`, result)
@@ -107,11 +100,22 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
     }
   };
 
+  const handleQuantityChange = (event) => {
+    const newQuantity = parseInt(event.target.value, 10);
+    setQuantity(newQuantity);
+    setTotalPrice(newQuantity * unitPrice);
+  };
+
+  const handleUnitPriceChange = (event) => {
+    const newUnitPrice = parseFloat(event.target.value);
+    setUnitPrice(newUnitPrice);
+    setTotalPrice(newUnitPrice * quantity);
+  };
   return (
     <div className="container my-3">
       <div className="row justify-content-center">
         <div className="col-lg-8">
-          <h1 className="mb-3 text-center">{title}</h1>
+          <h4 className="mb-3 text-center">{title}</h4>
           {request?.rejectReason && (
             <p className="text-danger">
               Kindly be informed that your request has been rejected due to the
@@ -127,62 +131,98 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
             validated={validated}
             onSubmit={handleConfirmation}
           >
-            <FormGroup>
-              <FormLabel>Vehicle Plate Number</FormLabel>
-              <FormControl
-                name="plateNumber"
-                value={plateNumber}
-                onChange={(event) => setPlateNumber(event.target.value)}
-                required
-                className="mb-3"
-              ></FormControl>{" "}
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid Plate Number.
-              </Form.Control.Feedback>
-            </FormGroup>
-            <Form.Group className="mb-3" controlId="type">
-              <Form.Label className="font-weight-bold">Vehicle Type</Form.Label>
-              <Form.Control
-                as="select"
-                name="type"
-                required
-                value={type}
-                onChange={(event) => setType(event.target.value)}
-              >
-                <option value="car">Car</option>
-                <option value="truck">Truck</option>
-                <option value="motorcycle">Motor Cycle</option>
-                <option value="bus">Bus</option>
-              </Form.Control>
-            </Form.Group>
-            <FormGroup>
-              <FormLabel> Spare Part Id</FormLabel>
-              <FormControl
-                type="text"
-                value={identificationNumber}
-                onChange={(event) =>
-                  setIdentificationNumber(event.target.value)
-                }
-                required
-                className="mb-3"
-              />{" "}
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid SparePart Id.
-              </Form.Control.Feedback>
-            </FormGroup>
-            <FormGroup>
-              <FormLabel>Quantity</FormLabel>
-              <FormControl
-                type="number"
-                value={quantity}
-                onChange={(event) => setQuantity(event.target.value)}
-                required
-                className="mb-3"
-              />{" "}
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid Quantity.
-              </Form.Control.Feedback>
-            </FormGroup>
+            <Row className="mb-3">
+              <Form.Group as={Col}>
+                <Form.Label>Vehicle Plate Number</Form.Label>
+                <Form.Control
+                  name="plateNumber"
+                  value={plateNumber}
+                  onChange={(event) => setPlateNumber(event.target.value)}
+                  required
+                  className="mb-3"
+                ></Form.Control>{" "}
+                <Form.Control.Feedback type="invalid">
+                  Please provide a valid Plate Number.
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group as={Col} className="mb-3" controlId="type">
+                <Form.Label className="font-weight-bold">
+                  Vehicle Type
+                </Form.Label>
+                <Form.Control
+                  as="select"
+                  name="type"
+                  required
+                  value={type}
+                  onChange={(event) => setType(event.target.value)}
+                >
+                  <option value="">Choose</option>
+                  <option value="Bus">Bus</option>
+                  <option value="Truck">Truck</option>
+                  <option value="Pick Up">Pick Up</option>
+                  <option value="Ambulace">Ambulace</option>
+                  <option value="Automobile">Automobile</option>
+                </Form.Control>
+              </Form.Group>
+            </Row>
+            <Row>
+              <Form.Group as={Col}>
+                <Form.Label> Spare Part Id</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={identificationNumber}
+                  onChange={(event) =>
+                    setIdentificationNumber(event.target.value)
+                  }
+                  required
+                  className="mb-3"
+                />{" "}
+                <Form.Control.Feedback type="invalid">
+                  Please provide a valid SparePart Id.
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Label>Quantity</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                  required
+                  className="mb-3"
+                />{" "}
+                <Form.Control.Feedback type="invalid">
+                  Please provide a valid Quantity.
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              <Form.Group as={Col}>
+                <Form.Label>Unit Price</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={unitPrice}
+                  onChange={handleUnitPriceChange}
+                  required
+                  className="mb-3"
+                />{" "}
+                <Form.Control.Feedback type="invalid">
+                  Please provide a valid Price.
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Label>Total Price</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={totalPrice}
+                  readOnly
+                  required
+                  className="mb-3"
+                />{" "}
+                <Form.Control.Feedback type="invalid">
+                  Please provide a valid Price.
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Row>
           </Form>
           {isLoading && <Loading />}
           {error && <ErrorProvider error={error} />}

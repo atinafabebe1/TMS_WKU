@@ -3,7 +3,6 @@ import Navbar from "../../common/header/Navbar";
 import SparePartRequest from "./CreateAccessoryRequest";
 import SparePartRequestListPage from "./SparePartRequestList";
 import EditSparePartRequest from "./EditAccessoryRequest";
-import AccessoryRequest from "./AccessoryRequest";
 import MecMaintenanceReport from "./maintenanceReport";
 import { Routes, Route } from "react-router-dom";
 
@@ -52,7 +51,10 @@ const MechanicPage = () => {
           path="request/accessory"
           element={<SparePartRequestListPage />}
         />
-        <Route path="maintenance/send-maintenance-report" element={<MecMaintenanceReport/>}/>
+        <Route
+          path="maintenance/send-maintenance-report"
+          element={<MecMaintenanceReport />}
+        />
         <Route path="request/create-accessory" element={<SparePartRequest />} />
         <Route
           path="request/edit-vehicle-request/:id"
