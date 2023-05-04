@@ -84,9 +84,11 @@ const SparePartRequestListPage = () => {
         <thead>
           <tr>
             <th>Plate Number</th>
-            <th>ID </th>
             <th>Type</th>
+            <th>ID </th>
             <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total Price</th>
             <th>Date</th>
             <th>Status</th>
             <th>Action</th>
@@ -99,6 +101,8 @@ const SparePartRequestListPage = () => {
               <td>{request.type}</td>
               <td>{request.identificationNumber}</td>
               <td>{request.quantity}</td>
+              <td>{request.unitPrice}</td>
+              <td>{request.totalPrice}</td>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
               <td>

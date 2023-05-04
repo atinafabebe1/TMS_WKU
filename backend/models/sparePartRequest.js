@@ -37,7 +37,7 @@ const SparePartSchema = new Schema(
     type: {
       type: String,
       required: true,
-      enum: ["car", "truck", "motorcycle", "bus"],
+      enum: ["Bus", "Truck", "Pick Up", "Ambulace", "Automobile"],
     },
     identificationNumber: {
       type: String,
@@ -64,7 +64,7 @@ const SparePartSchema = new Schema(
     },
     unitPrice: {
       type: Number,
-      //required: true,
+      required: true,
       validate: {
         validator: function (v) {
           return v >= 0.01;
@@ -75,6 +75,7 @@ const SparePartSchema = new Schema(
     },
     totalPrice: {
       type: Number,
+      required: true,
     },
     status: {
       type: String,

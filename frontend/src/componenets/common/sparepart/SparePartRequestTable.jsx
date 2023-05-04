@@ -66,6 +66,8 @@ const SparePartRequestTable = ({
             <th>Type</th>
             <th>Spare Part ID </th>
             <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total price</th>
             <th>Date</th>
             <th>Status</th>
             <th>Action</th>
@@ -85,6 +87,8 @@ const SparePartRequestTable = ({
               <td>{request.type}</td>
               <td>{request.identificationNumber}</td>
               <td>{request.quantity}</td>
+              <td>{request.unitPrice}</td>
+              <td>{request.totalPrice}</td>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
               <td>
