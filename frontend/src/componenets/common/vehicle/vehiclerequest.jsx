@@ -120,10 +120,16 @@ const VehiclesRequest = ({ link }) => {
           />
         </Tab>
         <Tab eventKey="approved" title="Approved Requests">
-          <RequestTable requests={approvedRequests} />
+          <RequestTable
+            requests={approvedRequests}
+            handleRequestClick={handleRequestClick}
+          />
         </Tab>
         <Tab eventKey="rejected" title="Rejected Requests">
-          <RequestTable requests={rejectedRequests} />
+          <RequestTable
+            requests={rejectedRequests}
+            handleRequestClick={handleRequestClick}
+          />
         </Tab>
       </Tabs>
       {selectedRequest && (
