@@ -21,6 +21,7 @@ import DetailVehicleInfo from "./DetailVehicleInfo";
 import SingleVehicleDetailInfoo from "./SingleVehicleDetailInfo";
 import AssignVehicle from "../../common/vehicle/AssignVehicle";
 import HODMaintenanceRequestPage from "./maintenanceRequest";
+import Example from "./Home";
 const links = [
   {
     name: "Home",
@@ -111,6 +112,7 @@ const HeadOfDeploymentPage = () => {
         <Navbar links={links} title="TMS" />
       </div>
       <Routes>
+        <Route path="/" element={<Example />} />
         <Route path="schedule/workday" element={<WorkdaySchedule />} />
         <Route path="schedule/workday-new" element={<ServiceScheduleForm />} />
         <Route path="report/weekly" element={<WeeklyReport />} />
