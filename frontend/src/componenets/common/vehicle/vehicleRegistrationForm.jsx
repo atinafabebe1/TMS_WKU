@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Container, Modal } from "react-bootstrap";
-import SuccessProvider from "../errorProvider/SuccessProvider";
-import ErrorProvider from "../errorProvider/ErrorProvider";
+import SuccessProvider from "../Provider/SuccessProvider";
+import ErrorProvider from "../Provider/ErrorProvider";
 import api from "../../../api/api";
 
 const VehicleRegistrationForm = ({ title, data, onSubmit }) => {

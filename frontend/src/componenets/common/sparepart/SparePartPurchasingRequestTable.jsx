@@ -1,5 +1,5 @@
 import { Table, Button, Modal, Form, Row, Col } from "react-bootstrap";
-import Loading from "../errorProvider/LoadingProvider";
+import Loading from "../Provider/LoadingProvider";
 import { useState } from "react";
 
 const SparePartPurchasingRequestTable = ({

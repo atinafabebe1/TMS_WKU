@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Container, Modal } from "react-bootstrap";
-import SuccessProvider from "../errorProvider/SuccessProvider";
-import ErrorProvider from "../errorProvider/ErrorProvider";
+import SuccessProvider from "../Provider/SuccessProvider";
+import ErrorProvider from "../Provider/ErrorProvider";
 import api from "../../../api/api";
 
 const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
@@ -76,11 +76,6 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
         );
 
         setSuccess("Successfuly Registered");
-        setError("");
-        setPlateNumber("");
-        setTypeOfFuel("");
-        setMode("");
-        setAmmount("");
       } catch (err) {
         console.log(err.response.data);
         setError("Please Provide Valid Data and Try Again");

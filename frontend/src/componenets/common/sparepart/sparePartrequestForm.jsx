@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import ErrorProvider from "../errorProvider/ErrorProvider";
-import SuccessProvider from "../errorProvider/SuccessProvider";
-import Loading from "../../common/errorProvider/LoadingProvider";
+import ErrorProvider from "../Provider/ErrorProvider";
+import SuccessProvider from "../Provider/SuccessProvider";
+import Loading from "../../common/Provider/LoadingProvider";
 import { Row, Col } from "react-bootstrap";
 import { Form, Button, Modal } from "react-bootstrap";
 import api from "../../../api/api";

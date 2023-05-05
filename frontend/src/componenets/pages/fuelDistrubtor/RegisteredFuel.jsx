@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Tabs, Tab } from "react-bootstrap";
-import { Table, Button, Form, Row, Col } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Button, Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import api from "../../../api/api";
 import RegisteredFuel from "../../common/fuel/RegisteredFuelDisplayTable";
 
 const DetailFuelInfo = ({ link }) => {
   const [fuels, setFuels] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("pending");
 
   useEffect(() => {
+    setIsLoading(true);
     api
       .get("/Report/daily-fuel-costs")
       .then((response) => {
@@ -31,7 +31,9 @@ const DetailFuelInfo = ({ link }) => {
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h5>Last Registered Fuel Information</h5>
+          <h5 style={{ color: "GrayText" }}>
+            Last Registered Fuel Information
+          </h5>
         </Col>
         <Col className="text-end">
           <Link to="/fd/register-daily-fuel">
