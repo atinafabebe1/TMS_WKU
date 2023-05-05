@@ -17,6 +17,7 @@ import DetailVehicleInfo from "./DetailVehicleInfo";
 import SingleVehicleDetailInfoo from "./SingleVehicleDetailInfo";
 import AssignVehicle from "../../common/vehicle/AssignVehicle";
 import HODMaintenanceRequestPage from "./maintenanceRequest";
+import ApproveFuelRequest from "./ApproveFuelRequest";
 import Example from "./Home";
 const links = [
   {
@@ -51,7 +52,7 @@ const links = [
       },
       {
         name: "Fuel",
-        url: "/request/fuel",
+        url: "/hd/request/fuel",
       },
       {
         name: "Maintenance",
@@ -137,6 +138,7 @@ const HeadOfDeploymentPage = () => {
           path="request/maintenance"
           element={<HODMaintenanceRequestPage link={`/Request/maintenance`} />}
         />
+        <Route path="request/fuel" element={<ApproveFuelRequest />} />
       </Routes>
     </div>
   );

@@ -16,10 +16,9 @@ const advancedResult = require("../middleware/advancedResult");
 const router = express.Router({ mergeParams: true });
 router.use(Auth);
 
-router.post("/fuel/", createFuelRequest);
-router.get("/fuel/", advancedResult(FuelRequest, ""), getfuelRequests);
+router.post("/fuel", createFuelRequest);
+router.get("/fuel", advancedResult(FuelRequest, ""), getfuelRequests);
 router.put("/fuel/:id", updateFuelRequest);
 router.delete("/fuel/:id", deleteFuelRequest);
-router.put("/fuel/status/:id", updateFuelRequestStatus);
 router.patch("/fuel/backup/:id", backupDeletedDocument(FuelRequest));
 module.exports = router;

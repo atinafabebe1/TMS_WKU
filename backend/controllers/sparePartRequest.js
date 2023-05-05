@@ -12,7 +12,7 @@ const getSpareParts = asyncHandler(async (req, res) => {
 
 //@desc      to create spare part request
 //@route     POST/http://localhost:3500/SparePart
-//@access    MECHANIC
+//@access    MECHANICS
 const createSparePart = asyncHandler(async (req, res) => {
   req.body.user = req.user.id;
 

@@ -17,14 +17,14 @@ const createDailyFuelCost = asyncHandler(async (req, res, next) => {
   const vehicle = await DailyFuelCost.getVehicleByPlateNumber(
     req.body.plateNumber
   );
-  if (!vehicle) {
-    return next(
-      new ErrorResponse(
-        `vehicle not found with plate number ${req.body.plateNumber}`,
-        404
-      )
-    );
-  }
+  // if (!vehicle) {
+  //   return next(
+  //     new ErrorResponse(
+  //       `vehicle not found with plate number ${req.body.plateNumber}`,
+  //       404
+  //     )
+  //   );
+  // }
   await DailyFuelCost.create(req.body);
 
   res.status(201).json({
