@@ -1,33 +1,37 @@
 import { Table, Button, Modal, Form, Row, Col } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const RegisteredFuel = ({ fuels }) => {
-  const [showModal, setShowModal] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
-  const [currentRequest, setCurrentRequest] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
+  const [startIndex, setStartIndex] = useState(0);
 
-  const handleCloseModal = () => setShowModal(false);
-  const handleShowModal = (fuel) => {
-    setCurrentRequest(fuel);
-    setShowModal(fuel);
-  };
+  const navigate = useNavigate();
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
+  const handleNext = () => {
+    setStartIndex((prevIndex) => prevIndex + 7);
+  };
+
+  const handlePrevious = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
+  };
+
   const filteredFuels = fuels.filter((fuel) => {
     return (
       fuel.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      fuel.createdAt.toLowerCase().includes(searchTerm.toLowerCase())
+      fuel.createdAt
+        .toLocaleDateString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
     );
   });
 
   return (
-    <>
+    <div className="p-4">
       <Form>
         <Row className="mb-3">
           <Col>
@@ -53,7 +57,7 @@ const RegisteredFuel = ({ fuels }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredFuels?.map((fuel) => (
+          {filteredFuels.slice(startIndex, startIndex + 7).map((fuel) => (
             <tr key={fuel._id}>
               <td>{fuel.plateNumber}</td>
               <td>{fuel.typeOfFuel}</td>
@@ -92,7 +96,27 @@ const RegisteredFuel = ({ fuels }) => {
           ))}
         </tbody>
       </Table>
-    </>
+      <div className="d-flex justify-content-center align-items-center w-100">
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handlePrevious}
+          disabled={startIndex === 0}
+          block
+        >
+          Previous
+        </Button>
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handleNext}
+          disabled={startIndex + 7 >= fuels.length}
+          block
+        >
+          Next
+        </Button>
+      </div>
+    </div>
   );
 };
 
