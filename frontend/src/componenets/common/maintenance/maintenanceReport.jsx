@@ -3,18 +3,26 @@ import { Link } from "react-router-dom";
 import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import axios from "axios";
 import api from "../../../api/api";
+
 const MaintenanceOrderTable = () => {
   const [reports, setReports] = useState([]);
+  const [spare, setSpare] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [reportModal, setReportModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
-  const [maintenanceOrder, setMaintenanceOrder] = useState('');
+  const [maintenanceReport, setMaintenanceReport] = useState("");
   const [mechanics, setMechanics] = useState([]);
 
+  const fetchSpareData = async () => {
+    await api.get(`/Request/sparePart`).then((response) => {
+      console.log(response.data.data);
+      setSpare(response.data.data);
+    });
+  };
 
   useEffect(() => {
-    // Fetch the  reports from your server API
+    // Fetch the reports from your server API
     api
       .get("/MaintenanceOrder")
       .then((response) => {
@@ -24,24 +32,26 @@ const MaintenanceOrderTable = () => {
       .catch((error) =>
         console.error("Error fetching maintenance reports:", error)
       );
+    fetchSpareData();
   }, []);
-
 
   const handleMore = (report) => {
     console.log(report);
     setSelectedReport(report);
     setShowModal(true);
   };
+
   const handleReportModal = (report) => {
     console.log(report);
     setSelectedReport(report);
-    setShowModal(false);
     setReportModal(true);
   };
+
   const handleReportModalClose = () => {
     setReportModal(false);
     setSelectedReport(null);
   };
+
   const handleModalClose = () => {
     setShowModal(false);
     setSelectedReport(null);
@@ -52,17 +62,22 @@ const MaintenanceOrderTable = () => {
   };
 
   const filteredReports = reports.filter((report) => {
-    const plateNumber = typeof report.plateNumber === 'string' ? report.plateNumber : '';
+    const plateNumber =
+      typeof report.plateNumber === "string" ? report.plateNumber : "";
     return (
       plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.status.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
-  
 
   const handleReport = (id) => {
     // Send a POST report to the server API to transfer maintenance order
-    axios.post(`/MaintenanceReport`, { maintenanceOrder })
+    axios
+      .post(`/MaintenanceReport`, {
+        maintenanceOrder: id,
+        reportStatus: "reported",
+        description: maintenanceReport,
+      })
       .then((response) => {
         console.log(response);
         // Update the local state with the new status of the report
@@ -70,12 +85,14 @@ const MaintenanceOrderTable = () => {
           if (report._id === id) {
             return {
               ...report,
-              status: "reported",
+              reportStatus: "reported",
             };
           }
           return report;
         });
         setReports(updatedReports);
+        setMaintenanceReport("");
+        setReportModal(false);
       })
       .catch((error) => {
         console.error(`Error reporting maintenance with ID ${id}:`, error);
@@ -125,7 +142,7 @@ const MaintenanceOrderTable = () => {
                     <Button
                       variant="success"
                       className="btn btn-sm"
-                      onClick={() => handleReportModal(report._id)}
+                      onClick={() => handleReportModal(spare)}
                     >
                       Report
                     </Button>{" "}
@@ -184,7 +201,13 @@ const MaintenanceOrderTable = () => {
           <Modal.Title>MaintenanceReport Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-             
+        <p>
+            <strong>Spare ID:</strong> {spare?.identificationNumber}
+        </p>
+        <p>
+            <strong>Spare ID:</strong> {spare?.identificationNumber}
+        </p>
+      
 
         </Modal.Body>
         <Modal.Footer>

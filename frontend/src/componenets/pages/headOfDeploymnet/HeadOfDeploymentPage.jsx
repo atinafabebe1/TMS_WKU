@@ -16,7 +16,7 @@ import EditVehicleRecord from "./EditVehicleRecord";
 import DetailVehicleInfo from "./DetailVehicleInfo";
 import SingleVehicleDetailInfoo from "./SingleVehicleDetailInfo";
 import AssignVehicle from "../../common/vehicle/AssignVehicle";
-import HODMaintenanceRequestPage from "./maintenanceRequest";
+import FilterMaintenanceRequestPage from "../../common/maintenance/maintenanceRequest";
 import Example from "./Home";
 const links = [
   {
@@ -135,7 +135,7 @@ const HeadOfDeploymentPage = () => {
         <Route path="complain" element={<Complain />} />
         <Route
           path="request/maintenance"
-          element={<HODMaintenanceRequestPage link={`/Request/maintenance`} />}
+          element={<FilterMaintenanceRequestPage link={`/Request/maintenance`} />}
         />
       </Routes>
     </div>

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import MaintenanceRequestTables from "../../common/maintenance/maintenancerequesttable";
+import MaintenanceRequestTables from "./maintenancerequesttable";
 import {Tabs, Tab } from "react-bootstrap";
 
-const HODmaintenanceRequestPage = () => {
+const FilterMaintenanceRequestPage = () => {
   const [filter, setFilter] = useState("all");
 
   const handleFilter = (eventKey) => {
@@ -36,4 +36,4 @@ const HODmaintenanceRequestPage = () => {
   );
 };
 
-export default HODmaintenanceRequestPage;
+export default FilterMaintenanceRequestPage;

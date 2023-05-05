@@ -9,6 +9,7 @@ const MaintenanceRequestTables = ({ filter }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     api
@@ -23,10 +24,10 @@ const MaintenanceRequestTables = ({ filter }) => {
 
   const handleRejectClick = async (request) => {
     try {
-      await api.put(
-        `/Request/maintenance/${request}`,
+      await api.patch(
+        `/Request/maintenance/${request._id}`,
         {
-          status: "cancelled",
+          status: "canceled",
         }
       );
       const response = await api.get("/Request/maintenance");
@@ -60,9 +61,9 @@ const MaintenanceRequestTables = ({ filter }) => {
     return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const handleTransferOrder = async (selectedRequest) => {
+  const handleTransferOrder = async (request) => {
     try {
-      await api.put(`/Request/maintenance/${selectedRequest}`, { status: "in-progress" });
+      await api.patch(`/Request/maintenance/${request._id}`, { status: "in-progress" });
 
       const response = await api.get("/Request/maintenance");
       setRequests(response.data.data);
@@ -89,6 +90,7 @@ const MaintenanceRequestTables = ({ filter }) => {
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
+          <th>User</th>
             <th>Plate Number</th>
             <th>Date</th>
             <th>Status</th>
@@ -98,6 +100,7 @@ const MaintenanceRequestTables = ({ filter }) => {
         <tbody>
           {filteredRequests.map((request) => (
             <tr key={request._id}>
+              <td>{request.user.role}</td>
               <td>{request.plateNumber}</td>
               <td>{request.createdAt}</td>
               <td>{request.status}</td>
