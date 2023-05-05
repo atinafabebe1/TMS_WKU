@@ -45,21 +45,23 @@ function MyNavbar({ links, title, role }) {
               );
             }
           })}
-          <div className="ms-3">
-            {user && (
-              <NavDropdown
-                title={<FaUser />}
-                id="basic-nav-dropdown"
-                className="dropdown-menu-right bg-dark text-light"
-                align="end"
-              >
-                <NavDropdown.Item>My Profile</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item>
-                  <LogoutLink />
-                </NavDropdown.Item>
-              </NavDropdown>
-            )}
+          <div style={{ paddingLeft: "20px" }}>
+            <div className="ms-3">
+              {user && (
+                <NavDropdown
+                  title={<FaUser />}
+                  id="basic-nav-dropdown"
+                  className="dropdown-menu-right bg-dark text-light"
+                  align="end"
+                >
+                  <NavDropdown.Item>My Profile</NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item>
+                    <LogoutLink />
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
+            </div>
           </div>
         </Nav>
       </Navbar.Collapse>

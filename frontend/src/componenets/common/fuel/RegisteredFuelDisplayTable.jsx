@@ -21,10 +21,15 @@ const RegisteredFuel = ({ fuels }) => {
   };
 
   const filteredFuels = fuels.filter((fuel) => {
+    const createdAtDate = new Date(fuel.createdAt);
+    if (!(createdAtDate instanceof Date && !isNaN(createdAtDate))) {
+      return false;
+    }
+
     return (
       fuel.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      fuel.createdAt
-        .toLocaleDateString()
+      createdAtDate
+        .toLocaleString()
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
     );
@@ -37,7 +42,7 @@ const RegisteredFuel = ({ fuels }) => {
           <Col>
             <Form.Control
               type="text"
-              placeholder="Search by Plate Number"
+              placeholder="Search by Plate Number or Registered Date"
               value={searchTerm}
               onChange={handleSearch}
             />
@@ -63,7 +68,7 @@ const RegisteredFuel = ({ fuels }) => {
               <td>{fuel.typeOfFuel}</td>
               <td>{fuel.mode}</td>
               <td>{fuel.ammount}</td>
-              <td>{new Date(fuel.createdAt).toLocaleDateString()}</td>
+              <td>{new Date(fuel.createdAt).toLocaleString()}</td>
               <td>
                 {fuel.createdAt !== fuel.updatedAt && (
                   <>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Table, Button, Row, Col, Form } from "react-bootstrap";
-import Loading from "../../common/errorProvider/LoadingProvider";
+import Loading from "../../common/Provider/LoadingProvider";
 import api from "../../../api/api";
 
 const SparePartRequestListPage = () => {

@@ -3,6 +3,7 @@ import Navbar from "../../common/header/Navbar";
 import RegisterDailyFuel from "./RegisterDailyFuelAndOil";
 import DetailFuelInfo from "./RegisteredFuel";
 import EditFuelRecord from "./EditRegisteredFuel";
+import FDHomePage from "./HomePage";
 import { Routes, Route } from "react-router-dom";
 const links = [
   {
@@ -14,7 +15,7 @@ const links = [
     url: "/fd/registered-fuel",
   },
   {
-    name: "Report",
+    name: "Approve",
     url: "/fd/approve-fuel-request",
   },
 ];
@@ -24,6 +25,7 @@ const FuelDistrubtorPage = () => {
       <Navbar links={links} title="TMS" />
       <div>
         <Routes>
+          <Route path="/" element={<FDHomePage />} />
           <Route path="register-daily-fuel" element={<RegisterDailyFuel />} />
           <Route path="registered-fuel" element={<DetailFuelInfo />} />
           <Route path="edit-fuel-record/:id" element={<EditFuelRecord />} />
