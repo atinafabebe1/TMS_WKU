@@ -154,6 +154,21 @@ const MaintenanceOrderSchema = new Schema(
           `Cannot set status "${props.value}" when creating a new maintenance request.`,
       },
     },
+    reportStatus: {
+      type: String,
+      default: "not reported",
+      enum: ["reported", "not-reported", "cancelled"],
+      validate: {
+        validator: function (v) {
+          if (this.isNew && v !== "not reported") {
+            return false;
+          }
+          return true;
+        },
+        message: (props) =>
+          `Cannot set report status "${props.value}" when creating a new maintenance request.`,
+      },
+    },
     isDeleted: {
       type: Boolean,
       default: false,
