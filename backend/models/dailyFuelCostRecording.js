@@ -35,10 +35,21 @@ const DailyFuelCostRecordSchema = new Schema(
     },
     typeOfFuel: {
       type: String,
-      enum: ["diesel", "benzene", "motorOil", "frenOil", "otherOil", "grease"],
+      enum: [
+        "Diesel",
+        "Benzene",
+        "Motor Oil",
+        "Fren Oil",
+        "Other Oil",
+        "Grease",
+      ],
       required: true,
     },
-    ammount: {
+    approvedAmount: {
+      type: Number,
+      required: [true, "this field is required"],
+    },
+    price: {
       type: Number,
       required: [true, "this field is required"],
     },

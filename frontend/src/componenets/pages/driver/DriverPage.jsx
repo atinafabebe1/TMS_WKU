@@ -3,6 +3,7 @@ import Navbar from "../../common/header/Navbar";
 import MaintenanceRequestPage from "./MaintenanceRequests";
 import MaintenanceRequestForm from "./maintenance-request-form";
 import Complain from "../../common/complain/complainForm";
+import FuelRequest from "./CreateFuelRequest";
 import { Routes, Route } from "react-router-dom";
 const links = [
   {
@@ -34,8 +35,6 @@ const links = [
       {
         name: "Fuel",
         url: "/driver/request/fuel",
-        name: "Fuel",
-        url: "/driver/request/vehicle",
       },
       {
         name: "Maintenance",
@@ -63,6 +62,7 @@ const DriverPage = () => {
     <div>
       <Navbar links={links} title="TMS" />
       <Routes>
+        <Route path="request/fuel" element={<FuelRequest />}></Route>
         <Route
           path="request/maintenance"
           element={<MaintenanceRequestPage link={`/Request/maintenance`} />}
@@ -72,7 +72,6 @@ const DriverPage = () => {
           element={<MaintenanceRequestForm />}
         />
         <Route path="complain" element={<Complain />} />
-
       </Routes>
     </div>
   );

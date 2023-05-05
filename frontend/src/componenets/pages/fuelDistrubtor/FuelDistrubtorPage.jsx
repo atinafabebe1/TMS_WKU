@@ -4,6 +4,7 @@ import RegisterDailyFuel from "./RegisterDailyFuelAndOil";
 import DetailFuelInfo from "./RegisteredFuel";
 import EditFuelRecord from "./EditRegisteredFuel";
 import FDHomePage from "./HomePage";
+import ApproveAndRegisterFuelRequest from "./CompleteFuelRequest";
 import { Routes, Route } from "react-router-dom";
 const links = [
   {
@@ -29,6 +30,10 @@ const FuelDistrubtorPage = () => {
           <Route path="register-daily-fuel" element={<RegisterDailyFuel />} />
           <Route path="registered-fuel" element={<DetailFuelInfo />} />
           <Route path="edit-fuel-record/:id" element={<EditFuelRecord />} />
+          <Route
+            path="approve-fuel-request"
+            element={<ApproveAndRegisterFuelRequest />}
+          />
         </Routes>
       </div>
     </div>

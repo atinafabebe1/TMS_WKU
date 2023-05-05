@@ -9,9 +9,8 @@ const MaintenanceOrderTable = () => {
   const [showModal, setShowModal] = useState(false);
   const [reportModal, setReportModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
-  const [maintenanceOrder, setMaintenanceOrder] = useState('');
+  const [maintenanceOrder, setMaintenanceOrder] = useState("");
   const [mechanics, setMechanics] = useState([]);
-
 
   useEffect(() => {
     // Fetch the  reports from your server API
@@ -25,7 +24,6 @@ const MaintenanceOrderTable = () => {
         console.error("Error fetching maintenance reports:", error)
       );
   }, []);
-
 
   const handleMore = (report) => {
     console.log(report);
@@ -52,17 +50,18 @@ const MaintenanceOrderTable = () => {
   };
 
   const filteredReports = reports.filter((report) => {
-    const plateNumber = typeof report.plateNumber === 'string' ? report.plateNumber : '';
+    const plateNumber =
+      typeof report.plateNumber === "string" ? report.plateNumber : "";
     return (
       plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.status.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
-  
 
   const handleReport = (id) => {
     // Send a POST report to the server API to transfer maintenance order
-    axios.post(`/MaintenanceReport`, { maintenanceOrder })
+    axios
+      .post(`/MaintenanceReport`, { maintenanceOrder })
       .then((response) => {
         console.log(response);
         // Update the local state with the new status of the report
@@ -119,8 +118,8 @@ const MaintenanceOrderTable = () => {
               <td>{report.status}</td>
               <td>{report.reportStatus}</td>
               <td>
-                
-                {//report.status === "approved" && (
+                {
+                  //report.status === "approved" && (
                   <>
                     <Button
                       variant="success"
@@ -130,11 +129,13 @@ const MaintenanceOrderTable = () => {
                       Report
                     </Button>{" "}
                   </>
-               // )
+                  // )
                 }{" "}
-                <Button variant="info" 
-                className="btn btn-sm"
-                onClick={() => handleMore(report)}>
+                <Button
+                  variant="info"
+                  className="btn btn-sm"
+                  onClick={() => handleMore(report)}
+                >
                   More
                 </Button>
               </td>
@@ -165,7 +166,11 @@ const MaintenanceOrderTable = () => {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" className="btn btn-sm" onClick={handleModalClose}>
+          <Button
+            variant="secondary"
+            className="btn btn-sm"
+            onClick={handleModalClose}
+          >
             Close
           </Button>
           {selectedReport?.status === "pending" && (
@@ -183,28 +188,25 @@ const MaintenanceOrderTable = () => {
         <Modal.Header closeButton>
           <Modal.Title>MaintenanceReport Details</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-             
-
-        </Modal.Body>
+        <Modal.Body></Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" 
-          className="btn btn-sm"
-          onClick={handleReportModalClose}>
+          <Button
+            variant="secondary"
+            className="btn btn-sm"
+            onClick={handleReportModalClose}
+          >
             Close
           </Button>
 
-            <Button
-              variant="primary"
-              className="btn btn-sm"
-              onClick={() => handleReport(selectedReport._id)}
-            >
-              Report
-            </Button>
-      
+          <Button
+            variant="primary"
+            className="btn btn-sm"
+            onClick={() => handleReport(selectedReport._id)}
+          >
+            Report
+          </Button>
         </Modal.Footer>
       </Modal>
-
     </div>
   );
 };
