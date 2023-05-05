@@ -28,10 +28,10 @@ const DetailFuelInfo = ({ link }) => {
   const RegisteredFuels = fuels.filter((fuel) => fuel.isDeleted === false);
 
   return (
-    <>
+    <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h3>Last Registered Fuel Info</h3>
+          <h5>Last Registered Fuel Information</h5>
         </Col>
         <Col className="text-end">
           <Link to="/fd/register-daily-fuel">
@@ -41,7 +41,7 @@ const DetailFuelInfo = ({ link }) => {
       </Row>
 
       <RegisteredFuel fuels={RegisteredFuels} />
-    </>
+    </div>
   );
 };
 

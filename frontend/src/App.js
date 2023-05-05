@@ -15,6 +15,7 @@ import HeadOfDeploymentPage from "./componenets/pages/headOfDeploymnet/HeadOfDep
 import StorePage from "./componenets/pages/store/StorePage";
 import GuardPage from "./componenets/pages/guard/GuardPage";
 import PublicScheduleTable from "./componenets/common/schedule/viewSchedule";
+import Footer from "./componenets/common/header/Footer";
 import {
   ROLE_ADMIN,
   ROLE_DIRECTOR,
@@ -113,6 +114,7 @@ function App() {
           />
         </Routes>
       </>
+      <Footer />
     </BrowserRouter>
   );
 }
