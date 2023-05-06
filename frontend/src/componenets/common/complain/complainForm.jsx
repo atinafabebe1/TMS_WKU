@@ -1,150 +1,105 @@
-import api from "../../../api/api";
-import { Button, Modal, Form, Alert } from "react-bootstrap";
-import React, { useState, useEffect } from "react";
-import { Container, Card, Col } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
-
-const COMPLAIN_ENDPOINT = "/Complain";
+import React, { useState, useEffect } from 'react';
+import { Form, InputGroup, Button, ListGroup, ListGroupItem, Modal } from 'react-bootstrap';
+import api from '../../../api/api';
 
 const Complain = () => {
-  const [user, setUser] = useState({});
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [topic, setTitle] = useState('');
+  const [messagekk, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [isSending, setIsSending] = useState(false);
-  const [isSent, setIsSent] = useState(false);
-  const [complaints, setComplaints] = useState([]);
 
-  const location = useLocation();
-
-  // set the user state to the user information passed as props
   useEffect(() => {
-    if (location.state && location.state.userInfo) {
-      setUser(location.state.userInfo);
-    }
-  }, [location.state]);
-
-  // fetch complaints sent by the user on page load
-  useEffect(() => {
-    const fetchComplaints = async () => {
-      try {
-        const response = await api.get(`${COMPLAIN_ENDPOINT}?userId=${user.id}`);
-        setComplaints(response.data);
-      } catch (error) {
+    api.get('/Complain')
+      .then(response => {
+        setMessages(response.data);
+      })
+      .catch(error => {
         console.log(error);
-      }
-    };
-    if (user.id) {
-      fetchComplaints();
-    }
-  }, [user.id]);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setIsSending(true);
-    try {
-      const response = await api.post(COMPLAIN_ENDPOINT, {
-        user,
-        title,
-        content,
-        status: "Pending",
+        setMessages([]);
       });
-      setIsSent(true);
-      setShowModal(false);
-      setTitle("");
-      setContent("");
-      setIsSending(false);
-      setComplaints([response.data, ...complaints]); // add new complaint to the top of the list
-    } catch (error) {
-      console.log(error);
-      setIsSending(false);
-    }
-  };
+  }, []);
 
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-  const handleNewComplain = () => {
-    setIsSent(false);
+    api.post('/Complain', {
+      title: topic,
+      content: messagekk
+    })
+      .then(response => {
+        setMessages([...messages, response.data]);
+        setMessage('');
+        setTitle('');
+        setShowModal(false);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
+  const filteredMessages = Array.isArray(messages) && messages.filter((message) => {
+    const user =
+      typeof message.user === "string" ? message.user : "";
+    return (
+      user.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      message.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Complaints</h2>
-        <Button variant="primary" onClick={() => setShowModal(true)}>
-          Create New Complaint
-        </Button>
+    <>
+      <div className="d-flex justify-content-end mb-3">
+        <Button onClick={() => setShowModal(true)}>Create New Complain</Button>
       </div>
-      {isSent ? (
-        <Alert variant="success" className="my-3">
-          Complaint sent successfully!
-          <Button
-            variant="link"
-            className="p-0 ml-2"
-            onClick={handleNewComplain}
-          >
-            Create a new complaint.
-          </Button>
-        </Alert>
-      ) : null}
-      {complaints.length === 0 ? (
-        <p>No complaints found.</p>
-      ) : (
-        <Container>
-          {complaints.map((complaint) => (
-            <Card key={complaint.id} className="my-3">
-              <Card.Header>{complaint.title}</Card.Header>
-              <Card.Body>
-                <Card.Text>{complaint.content}</Card.Text>
-                <Card.Text>Status: {complaint.status}</Card.Text>
-              </Card.Body>
-            </Card>
-          ))}
-        </Container>
-      )}
-      <Modal show={showModal} onHide={handleModalClose}>
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Create Complain</Modal.Title>
+          <Modal.Title>Create New Complain</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-            <Form.Group as={Col} controlId="cc">
+            <Form.Group>
               <Form.Label>Title</Form.Label>
               <Form.Control
                 type="text"
-                minLength={3}
-                maxLength={100}
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                required
+                placeholder="Enter the topic of your message"
+                value={topic}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </Form.Group>
-            <Form.Group as={Col} controlId="cc">
+            <Form.Group>
               <Form.Label>Content</Form.Label>
               <Form.Control
-                as={"textarea"}
-                type="text"
-                minLength={3}
-                maxLength={700}
-                value={content}
-                onChange={(event) => setContent(event.target.value)}
-                required
+                as="textarea"
+                placeholder="Enter your message"
+                value={messagekk}
+                onChange={(e) => setMessage(e.target.value)}
+                style={{ height: '100px' }}
               />
             </Form.Group>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={handleModalClose}>
-                Close
-              </Button>
-              <Button variant="primary" type="submit" disabled={isSending}>
-                {isSending ? "Sending..." : "Send"}
-              </Button>
-            </Modal.Footer>
+            <Button type="submit">Send</Button>
           </Form>
         </Modal.Body>
-     </Modal>
-     </div>
+      </Modal>
+
+      <Form>
+        <Form.Control
+          type="text"
+          placeholder="Search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          size="sm"
+        />
+      </Form>
+
+      <ListGroup>
+        {Array.isArray(filteredMessages) && filteredMessages.map((message) => (
+          <ListGroupItem key={message._id}>
+            <h5>{message.title}</h5>
+            <p>{message.content}</p>
+          </ListGroupItem>
+        ))}
+      </ListGroup>
+    </>
   );
 };
 
