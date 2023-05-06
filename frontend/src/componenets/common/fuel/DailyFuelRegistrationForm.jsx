@@ -103,7 +103,7 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
                     <Form.Label>Plate Number</Form.Label>
                     <Form.Control
                       type="string"
-                      required
+                      readOnly
                       minLength={9}
                       maxLength={9}
                       value={plateNumber}
@@ -117,7 +117,7 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
                     <Form.Label>Ammount of Fuel (L)</Form.Label>
                     <Form.Control
                       type="number"
-                      required
+                      readOnly
                       min={0}
                       max={500}
                       value={ammount}
@@ -152,21 +152,12 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
                       Type Of Fuel
                     </Form.Label>
                     <Form.Control
-                      as="select"
                       type="text"
                       placeholder="Choose"
-                      required
+                      readOnly
                       value={typeOfFuel}
                       onChange={(e) => setTypeOfFuel(e.target.value)}
-                    >
-                      <option value="Choose">Choose</option>
-                      <option value="diesel">Diesel</option>
-                      <option value="benzene">Benzene</option>
-                      <option value="motorOil">Motor Oil</option>
-                      <option value="frenOil">Fren Oil</option>
-                      <option value="grease">Grease</option>
-                      <option value="otherOil">Other Oil</option>
-                    </Form.Control>
+                    ></Form.Control>
                   </Form.Group>
                 </Row>
               </Form>

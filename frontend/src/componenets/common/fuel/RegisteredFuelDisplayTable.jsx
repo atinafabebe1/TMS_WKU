@@ -1,4 +1,4 @@
-import { Table, Button, Modal, Form, Row, Col } from "react-bootstrap";
+import { Table, Button, Form, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -56,6 +56,7 @@ const RegisteredFuel = ({ fuels }) => {
             <th>Type Of Fuel </th>
             <th>Mode </th>
             <th>Ammount</th>
+            <th>Price</th>
             <th>Registered Date </th>
             <th>Last Edited Date </th>
             <th>Action</th>
@@ -67,7 +68,8 @@ const RegisteredFuel = ({ fuels }) => {
               <td>{fuel.plateNumber}</td>
               <td>{fuel.typeOfFuel}</td>
               <td>{fuel.mode}</td>
-              <td>{fuel.ammount}</td>
+              <td>{fuel.approvedAmount}</td>
+              <td>{fuel.price}</td>
               <td>{new Date(fuel.createdAt).toLocaleString()}</td>
               <td>
                 {fuel.createdAt !== fuel.updatedAt && (
