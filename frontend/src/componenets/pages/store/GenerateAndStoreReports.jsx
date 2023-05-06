@@ -1,7 +1,6 @@
 import React from "react";
-import { Button } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
 const SparePartsHomeReport = () => {
   const navigate = useNavigate();
 
@@ -22,19 +21,44 @@ const SparePartsHomeReport = () => {
 
   return (
     <div>
-      <h1>Generate SparePart Report</h1>
-      <Button variant="primary" onClick={handleButton1Click}>
-        Weekly Report
-      </Button>{" "}
-      <Button variant="primary" onClick={handleButton2Click}>
-        Monthly Report
-      </Button>{" "}
-      <Button variant="primary" onClick={handleButton3Click}>
-        Half Year Report
-      </Button>{" "}
-      <Button variant="primary" onClick={handleButton4Click}>
-        Yearly Report
-      </Button>
+      <div className="d-flex justify-content-center">
+        <h4 style={{ color: "#4169E1" }}>
+          <strong>Generate Spare Part Report</strong>
+        </h4>
+      </div>
+      <div className="d-flex justify-content-center">
+        <Card style={{ marginRight: "20px" }}>
+          <Card.Body>
+            <Button variant="primary" onClick={handleButton1Click}>
+              Weekly Report
+            </Button>
+          </Card.Body>
+        </Card>
+
+        <Card style={{ marginRight: "20px" }}>
+          <Card.Body>
+            <Button variant="primary" onClick={handleButton2Click}>
+              Monthly Report
+            </Button>
+          </Card.Body>
+        </Card>
+
+        <Card style={{ marginRight: "20px" }}>
+          <Card.Body>
+            <Button variant="primary" onClick={handleButton3Click}>
+              Half Year Report
+            </Button>
+          </Card.Body>
+        </Card>
+
+        <Card style={{ marginRight: "20px" }}>
+          <Card.Body>
+            <Button variant="primary" onClick={handleButton4Click}>
+              Yearly Report
+            </Button>
+          </Card.Body>
+        </Card>
+      </div>
     </div>
   );
 };
