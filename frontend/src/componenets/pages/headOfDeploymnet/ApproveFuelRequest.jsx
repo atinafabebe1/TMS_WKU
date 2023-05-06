@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import Loading from "../../common/Provider/LoadingProvider";
 import api from "../../../api/api";
-import axios from "axios";
 const ApproveFuelRequest = () => {
   const [requests, setRequests] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
@@ -13,8 +11,6 @@ const ApproveFuelRequest = () => {
   const [approvedAmount, setApprovedAmount] = useState(0);
   const [price, setPrice] = useState(0);
   const [selectedRequest, setSelectedRequest] = useState(null);
-
-  const navigate = useNavigate();
 
   const fetchReqestData = async () => {
     await api.get(`/Request/fuel`).then((response) => {
@@ -44,22 +40,6 @@ const ApproveFuelRequest = () => {
 
   const handlePrevious = () => {
     setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
-  };
-
-  const handleDeleteRequest = (id) => {
-    // Delete the SparePart request with the specified ID from your server API
-    api
-      .delete(`/Request/fuel/${id}`)
-      .then(() => {
-        // Filter out the deleted request from the local state
-        const updatedRequests = requests.filter(
-          (request) => request._id !== id
-        );
-        setRequests(updatedRequests);
-      })
-      .catch((error) =>
-        console.error(`Error deleting spare Part request with ID ${id}:`, error)
-      );
   };
 
   const handleUnapprove = async (request) => {
@@ -154,7 +134,6 @@ const ApproveFuelRequest = () => {
                     className="btn btn-sm"
                     variant="primary"
                     onClick={() => handleShowModal(request)}
-                    // onClick={handleShowModal}
                   >
                     Approve
                   </Button>
