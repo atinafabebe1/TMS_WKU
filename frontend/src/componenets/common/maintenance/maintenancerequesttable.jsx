@@ -22,24 +22,34 @@ const MaintenanceRequestTables = ({ filter }) => {
   }, []);
 
   const handleRejectClick = async (request) => {
+    const reason = prompt("Please enter a reason for rejection:");
+    if (!reason) return; // If the user cancels the prompt, do nothing
     try {
-      await api.put(
-        `/Request/maintenance/${request}`,
-        {
-          status: "cancelled",
-        }
-      );
+      await api.patch(`/Request/maintenance/${request._id}`, {
+        status: "canceled",
+        rejectReason: reason, // Add the reason to the patch request
+      });
       const response = await api.get("/Request/maintenance");
       setRequests(response.data.data);
     } catch (error) {
       console.log(error);
     }
   };
+  
 
   const handleMore = (request) => {
     setSelectedRequest(request);
-    setShowModal(true);
+    if (request.status === "canceled") {
+      setShowModal(false); // Close the existing modal
+      const reason = request.rejectReason || "No reason provided";
+      // Set the selected request with the rejection reason
+      setSelectedRequest({ ...request, reason });
+      setShowModal(true); // Reopen the modal with the rejection reason
+    } else {
+      setShowModal(true);
+    }
   };
+  
 
   const handleModalClose = () => {
     setShowModal(false);
@@ -60,9 +70,9 @@ const MaintenanceRequestTables = ({ filter }) => {
     return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const handleTransferOrder = async (selectedRequest) => {
+  const handleTransferOrder = async (request) => {
     try {
-      await api.put(`/Request/maintenance/${selectedRequest}`, { status: "in-progress" });
+      await api.patch(`/Request/maintenance/${request._id}`, { status: "in-progress" });
 
       const response = await api.get("/Request/maintenance");
       setRequests(response.data.data);
@@ -134,40 +144,46 @@ const MaintenanceRequestTables = ({ filter }) => {
       </Table>
 
       <Modal show={showModal} onHide={handleModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Maintenance Request Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            <strong>Plate Number:</strong> {selectedRequest?.plateNumber}
-          </p>
-          <p>
-            <strong>Date:</strong> {selectedRequest?.createdAt}
-          </p>
-          <p>
-            <strong>Status:</strong> {selectedRequest?.status}
-          </p>
-          <p>
-            <strong>Description:</strong> {selectedRequest?.description}
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" 
-          className="btn btn-sm"
-          onClick={handleModalClose}>
-            Close
-          </Button>
-          {selectedRequest?.status === "pending" && (
-            <Button
-              variant="primary"
-              className="btn btn-sm"
-              onClick={() => handleTransferOrder(selectedRequest)}
-            >
-              Transfer Order
-            </Button>
-          )}
-        </Modal.Footer>
-      </Modal>
+  <Modal.Header closeButton>
+    <Modal.Title>Maintenance Request Details</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <p>
+      <strong>Plate Number:</strong> {selectedRequest?.plateNumber}
+    </p>
+    <p>
+      <strong>Date:</strong> {selectedRequest?.createdAt}
+    </p>
+    <p>
+      <strong>Status:</strong> {selectedRequest?.status}
+    </p>
+    <p>
+      <strong>Description:</strong> {selectedRequest?.description}
+    </p>
+    {selectedRequest?.status === "canceled" && (
+      <p>
+        <strong>Rejection Reason:</strong> {selectedRequest?.reason}
+      </p>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" 
+    className="btn btn-sm"
+    onClick={handleModalClose}>
+      Close
+    </Button>
+    {selectedRequest?.status === "pending" && (
+      <Button
+        variant="primary"
+        className="btn btn-sm"
+        onClick={() => handleTransferOrder(selectedRequest)}
+      >
+        Transfer Order
+      </Button>
+    )}
+  </Modal.Footer>
+</Modal>
+
     </div>
   );
 };

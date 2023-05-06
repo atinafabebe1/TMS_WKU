@@ -27,7 +27,7 @@ const HODmaintenanceRequestPage = () => {
         </Tab>
         <Tab eventKey="completed" title="Completed">
         </Tab>
-        <Tab eventKey="cancelled" title="Cancelled">
+        <Tab eventKey="canceled" title="Cancelled">
         </Tab>
       </Tabs>
 
