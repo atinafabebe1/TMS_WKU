@@ -37,7 +37,6 @@ const Complain = () => {
         console.log(error);
       });
   };
-
   const filteredMessages = Array.isArray(messages) && messages.filter((message) => {
     const user =
       typeof message.user === "string" ? message.user : "";
