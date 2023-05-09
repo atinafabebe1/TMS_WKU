@@ -11,12 +11,7 @@ const ComplainSchema = new Schema(
       ref: "User",
       immutable: true,
     },
-    receiverId: {
-      type: mongoose.Schema.Types.ObjectId,
-      //required: true,
-      ref: "User",
-      immutable: true,
-    },
+   
     title: {
       type: String,
       required: [true, "Title is required"],
@@ -37,6 +32,7 @@ const ComplainSchema = new Schema(
     response: {
       type: String,
     },
+
   },
   { timestamps: true }
 );
@@ -48,12 +44,7 @@ ComplainSchema.pre("save", async function (next) {
       new ErrorResponse(`User not found with id of ${this.user}`, 404)
     );
   }
-  const receiver = await this.model("User").findById(this.receiverId);
-  if (!receiver) {
-    return next(
-      new ErrorResponse(`User not found with id of ${this.receiverId}`, 404)
-    );
-  }
+ 
   next();
 });
 
