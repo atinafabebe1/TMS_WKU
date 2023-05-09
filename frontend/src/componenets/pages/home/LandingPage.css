@@ -1,3 +1,89 @@
+.top-section{
+    padding-top: 20px;
+    
+    background-color: #757070;
+    
+     
+    }
+    
+    .nav-link1{
+        color: white ;
+    }
+    
+    .head{
+    color:rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    justify-content: center;
+    
+    background-image: url("../../../images/header_background.jpg");
+    background-Repeat: no-repeat;
+    background-Position: center center;
+    background-Size: cover;
+    
+    }
+    
+    .row1{
+       
+        height: 150px;
+        width: 95%;
+        margin: 0px auto 70px;
+    }
+    
+    .second-section{
+        margin: 0px;
+        background-color: rgb(245, 242, 242);
+    }
+    .second-section p{
+        font-family: "Helvetica Neue", Helvetica, sans-serif;
+    
+        font-size: 20px;
+        
+    }
+    .third-section{
+        background-color: #D3D3D3;
+        height: 620px;
+    }
+    
+    
+    
+     
+      @media (max-width: 716px) {
+        .caption {
+          font-size: 15px;
+          line-height: 1.1;
+        }
+        .caption h3 {
+            font-size: 17px;
+            font-weight: bold;
+            
+            
+            
+          }
+          .third-section{
+            
+            height: 420px;
+        }
+        
+      }
+      @media (max-width: 576px) {
+        .caption {
+          font-size: 13px;
+          line-height: 1.2;
+        }
+        .caption h3 {
+            font-size: 15px;
+            font-weight: bold;
+            line-height: 1.2;
+            
+          }
+          
+      }
+
+
+
+
 .landing-page {
     background-color: #f8f9fa;
     padding-top: 100px;
