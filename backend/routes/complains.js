@@ -20,3 +20,4 @@ router.put("/:id", updateComplain);
 router.delete("/:id", deleteComplain);
 
 module.exports = router;
+

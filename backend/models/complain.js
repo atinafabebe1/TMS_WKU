@@ -11,12 +11,7 @@ const ComplainSchema = new Schema(
       ref: "User",
       immutable: true,
     },
-    receiverId: {
-      type: mongoose.Schema.Types.ObjectId,
-      //required: true,
-      ref: "User",
-      immutable: true,
-    },
+
     title: {
       type: String,
       required: [true, "Title is required"],

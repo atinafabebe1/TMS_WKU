@@ -9,7 +9,6 @@ const { ROLE_DRIVER, ROLE_HEADOFDEPLOYMENT } = require("../constants");
 //@route Post /Request/maintenance
 //@access Private/Driver
 const createMaintenanceRequest = asyncHandler(async (req, res, next) => {
-  req.body.plateNumber = "3A8888888";
   let headofDeployemnt = await UserSchema.findOne({
     role: ROLE_HEADOFDEPLOYMENT,
     isActive: true,
