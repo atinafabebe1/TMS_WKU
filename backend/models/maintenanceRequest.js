@@ -11,11 +11,6 @@ const MaintenanceRequestSchema = new Schema(
       required: true,
       immutable: true,
     },
-    reciever: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     vehicle: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "VehicleRecord",
@@ -102,14 +97,8 @@ MaintenanceRequestSchema.pre("save", async function (next) {
       )
     );
   }
-  const reciever = await this.model("User").findById(this.reciever);
   const user = await this.model("User").findById(this.user);
 
-  if (!reciever) {
-    return next(
-      new ErrorResponse(`Reciever with ID ${this.reciever} not found`, 404)
-    );
-  }
   if (!user) {
     return next(new ErrorResponse(`User with ID ${this.user} not found`, 404));
   }

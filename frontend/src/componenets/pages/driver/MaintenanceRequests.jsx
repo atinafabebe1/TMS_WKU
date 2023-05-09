@@ -67,7 +67,7 @@ const MaintenanceRequestPage = () => {
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h1>My Maintenance Requests</h1>
+          <h1>Maintenance Requests</h1>
         </Col>
         <Col className="text-end">
           <Link to="/driver/maintenance-request-form">
