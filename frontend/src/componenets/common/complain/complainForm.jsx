@@ -28,7 +28,9 @@ const Complain = () => {
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
-        const response = await api.get(`${COMPLAIN_ENDPOINT}?userId=${user.id}`);
+        const response = await api.get(
+          `${COMPLAIN_ENDPOINT}?userId=${user.id}`
+        );
         setComplaints(response.data);
       } catch (error) {
         console.log(error);
@@ -143,8 +145,8 @@ const Complain = () => {
             </Modal.Footer>
           </Form>
         </Modal.Body>
-     </Modal>
-     </div>
+      </Modal>
+    </div>
   );
 };
 

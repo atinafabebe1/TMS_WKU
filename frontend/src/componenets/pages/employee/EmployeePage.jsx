@@ -27,7 +27,6 @@ const EmployeePage = () => {
     <div>
       <Navbar links={links} title="TMS" />
       <Routes>
-        <Route path="" element={<LandingPage />} />
         <Route path="vehicle-request" element={<CreateVehicleRequestForm />} />
         <Route path="edit-vehicle-request/:id" element={<EditRequest />} />
         <Route path="request/vehicle" element={<VehicleRequestListPage />} />

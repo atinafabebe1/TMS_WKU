@@ -1,30 +1,36 @@
-import api from "../../../api/api";
-import { Button, Modal, Form } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import { Container, Card, Col } from "react-bootstrap";
-
-const COMPLAIN_ENDPOINT = "/Complain";
-
+import { Button, Row, Col, Form, Modal } from "react-bootstrap";
+import Loading from "../../common/Provider/LoadingProvider";
+import api from "../../../api/api";
+import {
+  MDBCard,
+  MDBCardBody,
+  MDBCardTitle,
+  MDBCardText,
+  MDBCardHeader,
+  MDBCardFooter,
+} from "mdb-react-ui-kit";
 const Complain = () => {
   const [complains, setComplains] = useState([]);
-  const [status, setStatus] = useState("pending");
+  const [startIndex, setStartIndex] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedComplain, setSelectedComplain] = useState(null);
-  const [startIndex, setStartIndex] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [response, setResponse] = useState("");
 
-  const getSentComplains = async () => {
-    try {
-      const response = await api.get(COMPLAIN_ENDPOINT);
+  const fetchRequestData = async () => {
+    await api.get(`/Complain?status=Pending`).then((response) => {
+      console.log(response.data.data);
       setComplains(response.data.data);
       setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
+  useEffect(() => {
+    fetchRequestData();
+  }, []);
 
-  const handleResolve = (complain) => {
+  const handleShowModal = (complain) => {
     setSelectedComplain(complain);
     setShowModal(true);
   };
@@ -34,150 +40,138 @@ const Complain = () => {
     setShowModal(false);
   };
 
-  const handleResolved = () => {
-    const updatedComplain = { ...selectedComplain, status: "resolved" };
-    api.put(`/Complain/${selectedComplain.id}`, updatedComplain)
-      .then(() => {
-        setSelectedComplain(null);
-        setShowModal(false);
-        setStatus("resolved");
-        setComplains(prevComplains =>
-          prevComplains.map(complain =>
-            complain.id === updatedComplain.id ? updatedComplain : complain
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error updating status:", error);
-      });
-  };
-
   const handleNext = () => {
-    setStartIndex(prevIndex => prevIndex + 3);
+    setStartIndex((prevIndex) => prevIndex + 7);
   };
 
   const handlePrevious = () => {
-    setStartIndex(prevIndex => Math.max(prevIndex - 3, 0));
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
   };
 
-  const handleSearchTermChange = (event) => {
+  const handleResolve = async () => {
+    const updatedComplain = {
+      ...selectedComplain,
+      response: response,
+      status: "Resolved",
+    };
+    await api
+      .put(`/Complain/${selectedComplain._id}`, updatedComplain)
+      .then((response) => {
+        selectedComplain(updatedComplain);
+        setShowModal(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-  }
-
-  const filteredComplains = complains.filter((complain) => {
-    if (complain.user && complain.user.toLowerCase().includes(searchTerm.toLowerCase())) {
-      return true;
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    getSentComplains();
-  }, []);
+  };
 
   return (
-    <div>
-      <div className="table-responsive p-2 my-3">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2>Complain List</h2>
+    <div className="p-4">
+      <Row className="mb-4">
+        <Col>
+          <h3>Complains</h3>
+        </Col>
+      </Row>
+      <Form>
+        <Row className="mb-3">
+          <Col>
+            <Form.Control
+              type="text"
+              placeholder="Search by plate number or status"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </Col>
+        </Row>
+      </Form>
+      {isLoading && <Loading />}
+      {complains.slice(startIndex, startIndex + 3).map((complain) => (
+        <div className="p-4" style={{ paddingTop: "70px" }}>
+          <MDBCard alignment="center" key={complain._id}>
+            <MDBCardHeader>{complain.user}</MDBCardHeader>
+            <MDBCardBody>
+              <MDBCardTitle>{complain.title}</MDBCardTitle>
+              <MDBCardText>{complain.content}</MDBCardText>
+              <MDBCardText>{complain.response}</MDBCardText>
+              <Button
+                href="#"
+                variant="success"
+                onClick={() => handleShowModal(complain)}
+              >
+                Resolve
+              </Button>
+            </MDBCardBody>
+            <MDBCardFooter className="text-muted">
+              {complain.daysAgo}
+            </MDBCardFooter>
+          </MDBCard>
         </div>
-        <div style={{ maxWidth: '700px', width: '100%' }}>
-          <input
-            type="text"
-            placeholder="Search by user"
-            value={searchTerm}
-            onChange={handleSearchTermChange}
-            className="form-control my-2"
-          />
-          <ul className="list-group">
-            {filteredComplains.map(complain => (
-              <li className="list-group-item" key={complain.id}>
-                {complain.user}: {complain.message}
-              </li>
-            ))}
-          </ul>
-        </div>
-        {isLoading && <h3>Loading...</h3>}
-        {complains.slice(startIndex, startIndex + 3).map(complain => (
-          <Container className="p-4" key={complain.id}>
-            <h6><strong>{complain.user}</strong></h6>
-            <Col style={{ width: "100%" }}>
-              <Card>
-                <Card.Body>
-                  <Card.Title>Title: {complain.title}</Card.Title>
-                  <Card.Text>Status: {complain.status}</Card.Text>
-                  <Button
-                    variant="success"
-                    className="btn-sm mx-2"
-                    onClick={() => handleResolve(complain)}
-                    disabled={complain.status === "resolved"}
-                  >
-                    Resolve
-                  </Button>
-                  <Button variant="danger" className="btn-sm">
-                    Reject
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Container>
-        ))}
-      </div>
-      <div className="d-flex justify-content-end align-items-center w-100">
-  <Button
-    variant="primary"
-    className="btn-sm mx-2"
-    onClick={handlePrevious}
-    disabled={startIndex === 0}
-    block
-  >
-    Previous
-  </Button>
-  <Button
-    variant="primary"
-    className="btn-sm mx-2"
-    onClick={handleNext}
-    disabled={startIndex + 3 >= complains.length}
-    block
-  >
-    Next
-  </Button>
-</div>
-
-
-
+      ))}
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title>
-            <h5><strong>Resolve Complain</strong></h5>
-          </Modal.Title>
+          <Modal.Title>Resolve Complain</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Group as={Col} controlId="cc">
-            <span> </span>
-            <Form.Label>Response Message</Form.Label>
-            <Form.Control
-              as={"textarea"}
-              type="text"
-              minLength={3}
-              maxLength={700}
-            />
-          </Form.Group>
+          <Form>
+            <Form.Group as={Col}>
+              <Form.Label>Response Mesage</Form.Label>
+              <Form.Control
+                type="text"
+                value={response}
+                onChange={(event) => setResponse(event.target.value)}
+                required
+                className="mb-3"
+              />
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid Quantity.
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Form>
         </Modal.Body>
         <Modal.Footer>
-        <Button variant="success" className="btn-sm" onClick={handleResolved}>
-            Resolve
+          <Button
+            variant="secondary"
+            className="btn btn-sm"
+            onClick={handleModalClose}
+          >
+            Cancel
           </Button>
-        <Button variant="danger" className="btn-sm">
-                    Reject
-                  </Button>
-          <Button variant="secondary" className="btn-sm" onClick={handleModalClose}>
-            Close
+          <Button
+            variant="secondary"
+            className="btn btn-sm"
+            onClick={() => handleResolve(selectedComplain)}
+          >
+            Send Response
           </Button>
-
-         
         </Modal.Footer>
       </Modal>
+      <div
+        className="d-flex justify-content-center align-items-center w-100"
+        style={{ paddingBottom: "70px", paddingTop: "50px" }}
+      >
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handlePrevious}
+          disabled={startIndex === 0}
+          block
+        >
+          Previous
+        </Button>
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handleNext}
+          disabled={startIndex + 7 >= complains.length}
+          block
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

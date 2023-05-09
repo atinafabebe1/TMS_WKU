@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const ErrorResponse = require("../utils/errorResponse");
 
-
 const Schema = mongoose.Schema;
 
 const ComplainSchema = new Schema(
@@ -35,9 +34,8 @@ const ComplainSchema = new Schema(
       default: "Pending",
       enum: ["Pending", "Resolved"],
     },
-    assignedTo: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    response: {
+      type: String,
     },
   },
   { timestamps: true }
@@ -59,11 +57,4 @@ ComplainSchema.pre("save", async function (next) {
   next();
 });
 
-let Complain;
-
-if (mongoose.models.Complain) {
-  Complain = mongoose.model("Complain");
-} else {
-  Complain = mongoose.model("Complain", ComplainSchema);
-}
-module.exports = Complain;
+module.exports = mongoose.model("Complains", ComplainSchema);
