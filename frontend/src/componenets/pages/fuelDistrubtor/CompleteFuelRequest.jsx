@@ -204,6 +204,7 @@ const ApproveAndRegisterFuelRequest = () => {
               <Form.Control
                 as="select"
                 type="text"
+                autoFocus
                 placeholder="Choose"
                 min={0}
                 minLength={3}

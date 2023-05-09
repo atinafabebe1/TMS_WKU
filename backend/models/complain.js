@@ -37,6 +37,11 @@ const ComplainSchema = new Schema(
     response: {
       type: String,
     },
+    seen: {
+      type: String,
+      enum: ["unseen", "seen"],
+      default: "unseen",
+    },
   },
   { timestamps: true }
 );
@@ -46,12 +51,6 @@ ComplainSchema.pre("save", async function (next) {
   if (!sender) {
     return next(
       new ErrorResponse(`User not found with id of ${this.user}`, 404)
-    );
-  }
-  const receiver = await this.model("User").findById(this.receiverId);
-  if (!receiver) {
-    return next(
-      new ErrorResponse(`User not found with id of ${this.receiverId}`, 404)
     );
   }
   next();
