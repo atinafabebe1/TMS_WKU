@@ -10,6 +10,14 @@ const Complain = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+
+    const fetchComplaints = async () => {
+      try {
+        const response = await api.get(
+          `${COMPLAIN_ENDPOINT}?userId=${user.id}`
+        );
+        setComplaints(response.data);
+      } catch (error) {
     api.get('/Complain')
       .then(response => {
         setMessages(response.data);
@@ -80,6 +88,8 @@ const Complain = () => {
           </Form>
         </Modal.Body>
       </Modal>
+
+    </div>
 
       <Form>
         <Form.Control

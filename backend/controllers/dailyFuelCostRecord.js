@@ -82,7 +82,7 @@ const updateDailyFuelCost = asyncHandler(async (req, res, next) => {
   res.status(200).json(dailyFuelCost);
 });
 
-//@desc       to Delete  daily fuel cost
+//@desc       to Delete  daily fuel costs
 //@routee     DELETE /DailyFuelCost
 //@access     fueldistrubutor
 const deleteDailyFuelCost = asyncHandler(async (req, res, next) => {
