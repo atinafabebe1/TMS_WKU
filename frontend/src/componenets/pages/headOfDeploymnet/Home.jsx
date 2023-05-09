@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Col, Alert, Container } from "react-bootstrap";
+import { Button, Col, Alert, Container, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import PieCharts from "../../common/Graph/pieCharts";
 import BarCharts from "../../common/Graph/BarCharts";
@@ -27,21 +27,24 @@ const Example = () => {
 
         <Col className="text-end">
           <Link to="/hd/vehicles">
-            <Button variant="primary">Get Vehicles Detail</Button>
+            <Button variant="primary">Get Vehicles</Button>
           </Link>
         </Col>
       </div>
       <div>
-        <Container className="p-4">
-          <Alert variant="primary">
-            <p2>
-              {dataCount} Complains Waiting for your Response
-              <Link to="/hd/request/vehicle">
-                <Button variant="success">Explore</Button>
-              </Link>
-            </p2>
-          </Alert>
-        </Container>
+        {dataCount !== 0 && (
+          <Container className="p-4">
+            <Alert variant="primary">
+              <p2>
+                <Badge bg="danger">{dataCount}</Badge> Complains Waiting for
+                your Response{" "}
+                <Link to="/hd/complain">
+                  <Badge bg="success">Resolve</Badge>
+                </Link>
+              </p2>
+            </Alert>
+          </Container>
+        )}
       </div>
       <div>
         <Container className="p-4">

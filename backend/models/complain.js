@@ -11,7 +11,7 @@ const ComplainSchema = new Schema(
       ref: "User",
       immutable: true,
     },
-   
+
     title: {
       type: String,
       required: [true, "Title is required"],
@@ -32,7 +32,11 @@ const ComplainSchema = new Schema(
     response: {
       type: String,
     },
-
+    seen: {
+      type: String,
+      enum: ["unseen", "seen"],
+      default: "unseen",
+    },
   },
   { timestamps: true }
 );
@@ -44,7 +48,6 @@ ComplainSchema.pre("save", async function (next) {
       new ErrorResponse(`User not found with id of ${this.user}`, 404)
     );
   }
- 
   next();
 });
 
