@@ -20,6 +20,28 @@ const Example = () => {
     fetchComplainData();
   }, []);
 
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    api
+      .get(`/Vehiclerecord?isDeleted=false`)
+      .then((response) => {
+        setData(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const groupedData = data.reduce((acc, vehicle) => {
+    const index = acc.findIndex((item) => item.name === vehicle.type);
+    if (index !== -1) {
+      acc[index].Vehicles++;
+    } else {
+      acc.push({ name: vehicle.type, Vehicles: 1 });
+    }
+    return acc;
+  }, []);
+
   return (
     <div className="p-4">
       <div style={{ display: "flex" }}>
@@ -82,8 +104,8 @@ const Example = () => {
         </Container>
 
         <br></br>
-        <div>
-          <BarCharts />
+        <div style={{ paddingBottom: "70px" }}>
+          <BarCharts data={groupedData} />
         </div>
       </div>
     </div>
