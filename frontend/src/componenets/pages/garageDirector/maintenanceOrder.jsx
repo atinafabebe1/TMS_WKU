@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import MaintenanceRequestTables from "../../common/maintenance/maintenancerequesttable";
+import GDMaintenanceRequestTables from "./maintenanceReqToOrder";
 import {Tabs, Tab } from "react-bootstrap";
 
 const GDmaintenanceRequestPage = () => {
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState("in-progress");
 
   const handleFilter = (eventKey) => {
     setFilter(eventKey);
@@ -12,7 +12,7 @@ const GDmaintenanceRequestPage = () => {
   return (
     <>
             <div className="text-center">
-        <h1>Maintenance Requests</h1>
+        <h1>Maintenance Orders</h1>
       </div>
       <Tabs
         activeKey={filter}
@@ -27,7 +27,7 @@ const GDmaintenanceRequestPage = () => {
         </Tab>
       </Tabs>
 
-      <MaintenanceRequestTables filter={filter} />
+      <GDMaintenanceRequestTables filter={filter} />
     </>
   );
 };
