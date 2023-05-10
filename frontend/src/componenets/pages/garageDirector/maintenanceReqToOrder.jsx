@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Form, Modal,Row,Col } from "react-bootstrap";
+import { Table, Button, Form, Modal,Row,Col,FormControl,FormLabel,FormGroup } from "react-bootstrap";
 import api from "../../../api/api";
 
-const MaintenanceRequestTables = ({ filter }) => {
+const GDMaintenanceRequestTables = ({ filter }) => {
   const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [transferModal,setTransferModal]=useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [vehicless,setVehicles]=useState("");
+  const [mechanics,setMechanics]=useState("");
+  const [plateNumber,setPlateNumber]=useState("");
+  const [selectedMechanic, setSelectedMechanic] = useState("");
 
+  function handleMechanicChange(event) {
+    setSelectedMechanic(event.target.value);
+  }
   useEffect(() => {
     api
       .get("/Request/maintenance")
@@ -47,10 +55,15 @@ const MaintenanceRequestTables = ({ filter }) => {
       setShowModal(true);
     }
   };
-  
+  const handleTransferModal =(request)=>{
+    setSelectedRequest(request);
+    setVehicles(vehicless);
+    setTransferModal(true);
+  }
 
   const handleModalClose = () => {
     setShowModal(false);
+    setTransferModal(false);
     setSelectedRequest(null);
   };
 
@@ -78,7 +91,30 @@ const MaintenanceRequestTables = ({ filter }) => {
       console.log(error);
     }
   };
-
+  const fetch = async () => {
+    api
+      .get("/VehicleRecord?select=plateNumber,type,assignedTo")
+      .then((response) => {
+        setVehicles(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const fetchMachanics = async () => {
+    api
+      .get("/user/getusers?select=role,firstName")
+      .then((response) => {
+        setMechanics(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    fetch();
+    fetchMachanics();
+  }, []);
   return (
     <div className="p-4">
       <Form>
@@ -91,7 +127,6 @@ const MaintenanceRequestTables = ({ filter }) => {
               onChange={handleSearch}
             />
           </Col>
-
         </Row>
       </Form>
       <Table striped bordered hover responsive className="table-sm">
@@ -111,12 +146,12 @@ const MaintenanceRequestTables = ({ filter }) => {
               <td>{request.status}</td>
               <td>
 
-                {request.status === "pending" && (
+                {request.status === "in-progress" && (
                   <>
                     <Button
                       variant="success"
                       className="btn btn-sm"
-                      onClick={() => handleTransferOrder(request)}
+                      onClick={() => handleTransferModal(request)}
                     >
                       Transfer Order
                     </Button>
@@ -143,7 +178,7 @@ const MaintenanceRequestTables = ({ filter }) => {
 
       <Modal show={showModal} onHide={handleModalClose}>
   <Modal.Header closeButton>
-    <Modal.Title>Maintenance Request Details</Modal.Title>
+    <Modal.Title>Maintenance Order Details</Modal.Title>
   </Modal.Header>
   <Modal.Body>
     <p>
@@ -182,8 +217,112 @@ const MaintenanceRequestTables = ({ filter }) => {
   </Modal.Footer>
 </Modal>
 
+
+
+
+
+<Modal show={transferModal} onHide={handleModalClose} size="lg">
+  <Modal.Header closeButton>
+    <Modal.Title>Transfer to Mechanic Order</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <p>
+      <strong>Plate Number: </strong> {selectedRequest?.plateNumber}
+    </p>
+
+    <p>
+      <strong>Vehicle Type: </strong>
+      {Array.isArray(vehicless) &&
+        vehicless.map((vehicle) => {
+          if (vehicle.plateNumber === selectedRequest?.plateNumber) {
+            return vehicle.type;
+          } else {
+            return null;
+          }
+        })}
+    </p>
+
+    <p>
+      <strong>Assigned Work flow: </strong>{" "}
+      {Array.isArray(vehicless) &&
+        vehicless.map((vehicle) => {
+          if (vehicle.plateNumber === selectedRequest?.plateNumber) {
+            return vehicle.assignedTo;
+          } else {
+            return null;
+          }
+        })}
+    </p>
+
+    <Form>
+      <Form.Group as={Col}>
+        <Form.Label>Kilometer Reading</Form.Label>
+        <Form.Control
+          type="number"
+          // value={approvedAmount}
+          // onChange={(event) => setApprovedAmount(event.target.value)}
+          // required
+          className="mb-3"
+        />
+        <Form.Control.Feedback type="invalid">
+          Please provide a valid Amount.
+        </Form.Control.Feedback>
+      </Form.Group>
+     
+    </Form>
+    <p>
+  <strong>Description:</strong> {selectedRequest?.description}
+</p>
+
+    <ul>
+  {Array.isArray(mechanics) &&
+    mechanics
+      .filter((mechanic) => mechanic.role === "ROLE_MECHANIC")
+      .map((mechanic) => {
+        return <li key={mechanic.role}>{mechanic.name}</li>;
+      })}
+</ul>
+
+<select value={selectedMechanic} onChange={handleMechanicChange}>
+  <option value="">Select a Mechanic</option>
+  {Array.isArray(mechanics) &&
+    mechanics
+      .filter((mechanic) => mechanic.role === "ROLE_MECHANIC")
+      .map((mechanic) => {
+        return (
+          <option key={mechanic.id} value={mechanic.firstName}>
+            {mechanic.firstName}
+          </option>
+        );
+      })}
+</select>
+
+
+  
+  </Modal.Body>
+  <Modal.Footer>
+    <Button
+      variant="secondary"
+      className="btn btn-sm"
+      onClick={handleModalClose}
+    >
+      Cancel
+    </Button>
+    <Button
+      variant="secondary"
+      className="btn btn-sm"
+      // onClick={() => handleApprove(selectedRequest)}
+    >
+      Approve
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+
+
     </div>
   );
 };
 
-export default MaintenanceRequestTables;
+export default GDMaintenanceRequestTables;
+
