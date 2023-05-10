@@ -9,6 +9,8 @@ import api from "../../../api/api";
 const Example = () => {
   const [complains, setComplains] = useState([]);
   const [dataCount, setDataCount] = useState(0);
+  const [dataCount2, setDataCount2] = useState(0);
+
   const fetchComplainData = async () => {
     await api.get(`/Complain?status=Pending`).then((response) => {
       console.log(response.data.data);
@@ -18,6 +20,16 @@ const Example = () => {
   };
   useEffect(() => {
     fetchComplainData();
+  }, []);
+  const fetchRequestData = async () => {
+    await api.get(`/Request/vehicle?status=pending`).then((response) => {
+      console.log(response.data.data);
+      setComplains(response.data.data);
+      setDataCount2(response.data.data.length);
+    });
+  };
+  useEffect(() => {
+    fetchRequestData();
   }, []);
 
   const [data, setData] = useState([]);
@@ -55,13 +67,26 @@ const Example = () => {
       </div>
       <div>
         {dataCount !== 0 && (
-          <Container className="p-4">
+          <Container>
             <Alert variant="primary">
               <p2>
                 <Badge bg="danger">{dataCount}</Badge> Complains Waiting for
                 your Response{" "}
                 <Link to="/hd/complain">
-                  <Badge bg="success">Resolve</Badge>
+                  <Badge bg="info">Resolve</Badge>
+                </Link>
+              </p2>
+            </Alert>
+          </Container>
+        )}
+        {dataCount2 !== 0 && (
+          <Container>
+            <Alert variant="primary">
+              <p2>
+                <Badge bg="danger">{dataCount2} </Badge> <span> </span> New
+                Vehicle Request{" "}
+                <Link to="/hd/request/vehicle">
+                  <Badge bg="info">See more</Badge>
                 </Link>
               </p2>
             </Alert>
@@ -87,6 +112,16 @@ const Example = () => {
             <PieCharts />
           </div>
           <div style={{ paddingLeft: "80px" }}>
+            <Container className="p-4">
+              <Alert variant="success">
+                <p2>
+                  <strong style={{ color: "#4169E1" }}>
+                    {" "}
+                    Vehicle Availablity Status Analytics
+                  </strong>
+                </p2>
+              </Alert>
+            </Container>
             <VerticalBarCharts />
           </div>
         </div>

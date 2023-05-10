@@ -96,17 +96,12 @@ const AccessoryRequest = ({ link }) => {
     }
   };
 
-  const handleRejectClick = async (request, rejectReason) => {
+  const handleRejectClick = async (request, rejectedReason) => {
     try {
-      await api.put(
-        `/Request/sparePart/${request._id}`,
-        {
-          status: "canceled",
-        },
-        {
-          rejectReason,
-        }
-      );
+      await api.put(`/Request/sparePart/${request._id}`, {
+        status: "canceled",
+        rejectedReason: rejectedReason,
+      });
       const response = await api.get("/Request/sparePart");
       setRequest(response.data.data);
     } catch (error) {

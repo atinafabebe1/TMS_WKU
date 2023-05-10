@@ -104,17 +104,12 @@ const SparePartPurchasingRequest = ({ link }) => {
     }
   };
 
-  const handleRejectClick = async (request, rejectReason) => {
+  const handleRejectClick = async (request, rejectedReason) => {
     try {
-      await api.put(
-        `/Request/sparePart/${request._id}`,
-        {
-          status: "rejected-to-buy",
-        },
-        {
-          rejectReason,
-        }
-      );
+      await api.put(`/Request/sparePart/${request._id}`, {
+        status: "rejected-to-buy",
+        rejectedReason: rejectedReason,
+      });
       const response = await api.get("/Request/sparePart");
       setRequest(response.data.data);
     } catch (error) {

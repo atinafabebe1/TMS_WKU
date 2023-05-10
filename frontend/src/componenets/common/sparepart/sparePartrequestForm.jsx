@@ -12,6 +12,9 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
   const [identificationNumber, setIdentificationNumber] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [unitPrice, setUnitPrice] = useState(0);
+  const [status, setStatus] = useState("");
+  const [rejectedReason, setRejectedReason] = useState(null);
+
   const [totalPrice, setTotalPrice] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
@@ -27,6 +30,8 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
       setQuantity(request.quantity);
       setUnitPrice(request.unitPrice);
       setTotalPrice(request.totalPrice);
+      setStatus("pending");
+      setRejectedReason(null);
     } else {
       setPlateNumber("");
       setType("car");
@@ -34,6 +39,8 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
       setQuantity("");
       setUnitPrice("");
       setTotalPrice("");
+      setStatus("pending");
+      setRejectedReason(null);
     }
   }, [request]);
   //handle validation and confirmation
@@ -67,6 +74,8 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
       quantity,
       unitPrice,
       totalPrice,
+      status,
+      rejectedReason,
     };
     if (request) {
       api
@@ -116,13 +125,13 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
       <div className="row justify-content-center">
         <div className="col-lg-8">
           <h4 className="mb-3 text-center">{title}</h4>
-          {request?.rejectReason && (
+          {request.rejectedReason !== null && (
             <p className="text-danger">
               Kindly be informed that your request has been rejected due to the
-              reason of "{request.rejectReason}". We advise that upon
-              resubmission of your request, you consider modifying the reason to
-              improve your chances of approval. Thank you for your understanding
-              and cooperation.
+              reason of <strong> "{request.rejectedReason}"</strong>. We advise
+              that upon resubmission of your request, you consider modifying the
+              reason to improve your chances of approval. Thank you for your
+              understanding and cooperation.
             </p>
           )}
           <Form
