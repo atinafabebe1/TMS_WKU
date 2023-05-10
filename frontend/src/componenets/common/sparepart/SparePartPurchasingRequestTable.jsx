@@ -1,4 +1,4 @@
-import { Table, Button, Modal, Form, Row, Col } from "react-bootstrap";
+import { Table, Button, Modal, Form, Row, Col, Badge } from "react-bootstrap";
 import Loading from "../Provider/LoadingProvider";
 import { useState } from "react";
 
@@ -12,9 +12,11 @@ const SparePartPurchasingRequestTable = ({
   handleApproveClicked,
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
+  const [rejectedReason, setRejectedReason] = useState(null);
   const [currentRequest, setCurrentRequest] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(false);
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = (request) => {
@@ -22,8 +24,13 @@ const SparePartPurchasingRequestTable = ({
     setShowModal(true);
   };
 
+  const handleCloseDetailModal = () => setShowDetailModal(false);
+  const handleShowDetailModal = (request) => {
+    setSelectedRequest(request);
+    setShowDetailModal(true);
+  };
   const handleRejectAndSend = () => {
-    handleRejectClick(currentRequest, rejectReason);
+    handleRejectClick(currentRequest, rejectedReason);
     handleCloseModal();
   };
 
@@ -61,9 +68,8 @@ const SparePartPurchasingRequestTable = ({
         <thead>
           <tr>
             <th>User</th>
-            <th>Plate Number</th>
             <th>ID </th>
-            <th>Type</th>
+
             <th>Quantity</th>
             <th>Date</th>
             <th>Status</th>
@@ -79,8 +85,7 @@ const SparePartPurchasingRequestTable = ({
                   {request.user?.firstName} {request.user?.lastName}
                 </a>
               </td>
-              <td>{request.plateNumber}</td>
-              <td>{request.type}</td>
+
               <td>{request.identificationNumber}</td>
               <td>{request.quantity}</td>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
@@ -88,6 +93,13 @@ const SparePartPurchasingRequestTable = ({
               <td>
                 {request.status === "approved" && (
                   <>
+                    <Button
+                      className="btn btn-sm"
+                      variant="info"
+                      onClick={() => handleShowDetailModal(request)}
+                    >
+                      More
+                    </Button>{" "}
                     <Button
                       className="btn btn-sm"
                       variant="success"
@@ -115,6 +127,13 @@ const SparePartPurchasingRequestTable = ({
                   <>
                     <Button
                       className="btn btn-sm"
+                      variant="info"
+                      onClick={() => handleShowDetailModal(request)}
+                    >
+                      More
+                    </Button>{" "}
+                    <Button
+                      className="btn btn-sm"
                       variant="warning"
                       disabled
                       onClick={() => handleCompleteClick(request)}
@@ -125,6 +144,13 @@ const SparePartPurchasingRequestTable = ({
                 )}
                 {request.status === "Garage-approved-to-buy" && (
                   <>
+                    <Button
+                      className="btn btn-sm"
+                      variant="info"
+                      onClick={() => handleShowDetailModal(request)}
+                    >
+                      More
+                    </Button>{" "}
                     <Button
                       className="btn btn-sm"
                       variant="success"
@@ -149,8 +175,8 @@ const SparePartPurchasingRequestTable = ({
             <Form.Control
               as="textarea"
               rows={3}
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
+              value={rejectedReason}
+              onChange={(e) => setRejectedReason(e.target.value)}
             />
           </Form.Group>
         </Modal.Body>
@@ -170,6 +196,103 @@ const SparePartPurchasingRequestTable = ({
             Reject and Send
           </Button>
         </Modal.Footer>
+      </Modal>
+      <Modal
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        show={showDetailModal}
+        onHide={handleCloseDetailModal}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Detail Request Information</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedRequest.status === "canceled" && (
+            <>
+              <p className="text-danger">
+                Oops! Kindly be informed that your request has been rejected due
+                to the reason of{" "}
+                <strong>"{selectedRequest.rejectedReason}"</strong>. We advise
+                that upon resubmission of your request, you consider modifying
+                the reason to improve your chances of approval. Thank you for
+                your understanding and cooperation.
+              </p>
+            </>
+          )}
+
+          <Table striped bordered>
+            <tbody>
+              <tr>
+                <td>
+                  <strong>Sender</strong>
+                </td>
+                <td>{selectedRequest?.user}</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Spare Part Id</strong>
+                </td>
+                <td>{selectedRequest?.identificationNumber}</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Plate Number</strong>
+                </td>
+                <td>{selectedRequest?.plateNumber}</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Type</strong>
+                </td>
+                <td>{selectedRequest?.type}</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Quantity</strong>
+                </td>
+                <td>{selectedRequest?.quantity}</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Unit Price</strong>
+                </td>
+                <td>{selectedRequest?.unitPrice}</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Total Price</strong>
+                </td>
+                <td>{selectedRequest?.totalPrice}</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Status</strong>
+                </td>
+                <td>{selectedRequest?.status}</td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Date</strong>
+                </td>
+                <td>
+                  {new Date(selectedRequest?.createdAt).toLocaleDateString()}
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+          <br></br>
+          {selectedRequest.status === "store-approved-to-buy" && (
+            <>
+              <h5 style={{ textAlign: "center" }}>
+                <Badge bg="secondary">
+                  Waiting For Garage Director Approval
+                </Badge>
+              </h5>
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
       </Modal>
     </>
   );
