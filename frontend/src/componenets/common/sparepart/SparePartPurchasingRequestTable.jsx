@@ -12,6 +12,9 @@ const SparePartPurchasingRequestTable = ({
   handleApproveClicked,
 }) => {
   const [showModal, setShowModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showConfirmBuyModal, setShowConfirmBuyModal] = useState(false);
+
   const [rejectedReason, setRejectedReason] = useState(null);
   const [currentRequest, setCurrentRequest] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,12 +26,31 @@ const SparePartPurchasingRequestTable = ({
     setCurrentRequest(request);
     setShowModal(true);
   };
+  const handleCloseConfirmModal = () => setShowConfirmModal(false);
+  const handleShowConfirmModal = (request) => {
+    setCurrentRequest(request);
+    setShowConfirmModal(true);
+  };
+  const handleCloseConfirmBuyModal = () => setShowConfirmBuyModal(false);
+  const handleShowConfirmBuyModal = (request) => {
+    setCurrentRequest(request);
+    setShowConfirmBuyModal(true);
+  };
 
   const handleCloseDetailModal = () => setShowDetailModal(false);
   const handleShowDetailModal = (request) => {
     setSelectedRequest(request);
     setShowDetailModal(true);
   };
+  const handleApproveToBuy = () => {
+    handleApproveClicked(currentRequest);
+    handleCloseConfirmBuyModal();
+  };
+  const handleComplete = () => {
+    handleCompleteClick(currentRequest);
+    handleCloseConfirmModal();
+  };
+
   const handleRejectAndSend = () => {
     handleRejectClick(currentRequest, rejectedReason);
     handleCloseModal();
@@ -82,7 +104,7 @@ const SparePartPurchasingRequestTable = ({
               <td>
                 <a href="#" onClick={() => handleRequestClick(request)}>
                   {console.log(request.user.firstName)}
-                  {request.user?.firstName} {request.user?.lastName}
+                  {request.user} {request.user?.lastName}
                 </a>
               </td>
 
@@ -103,7 +125,7 @@ const SparePartPurchasingRequestTable = ({
                     <Button
                       className="btn btn-sm"
                       variant="success"
-                      onClick={() => handleCompleteClick(request)}
+                      onClick={() => handleShowConfirmModal(request)}
                     >
                       Complete
                     </Button>{" "}
@@ -154,7 +176,7 @@ const SparePartPurchasingRequestTable = ({
                     <Button
                       className="btn btn-sm"
                       variant="success"
-                      onClick={() => handleApproveClicked(request)}
+                      onClick={() => handleShowConfirmBuyModal(request)}
                     >
                       Approve it's Purchased
                     </Button>{" "}
@@ -165,6 +187,54 @@ const SparePartPurchasingRequestTable = ({
           ))}
         </tbody>
       </Table>
+      <Modal show={showConfirmModal} onHide={handleCloseConfirmModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Approval</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are You Sure to Approve This Request</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="btn btn-sm"
+            variant="secondary"
+            onClick={handleCloseModal}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="btn btn-sm"
+            variant="primary"
+            onClick={handleComplete}
+          >
+            Complete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showConfirmBuyModal} onHide={handleCloseConfirmBuyModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Approval</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are You Sure to Approve This To Buy Request</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="btn btn-sm"
+            variant="secondary"
+            onClick={handleCloseModal}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="btn btn-sm"
+            variant="primary"
+            onClick={handleApproveToBuy}
+          >
+            Approve
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Request</Modal.Title>
