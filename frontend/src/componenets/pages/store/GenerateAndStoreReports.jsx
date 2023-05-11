@@ -9,33 +9,12 @@ const SparePartsHomeReport = () => {
   const [season, setSeason] = useState("");
   const [error, setError] = useState("");
 
-  const handleFromDateChange = (event) => {
-    setFromDate(event.target.value);
-  };
-
-  const handleToDateChange = (event) => {
-    setToDate(event.target.value);
-  };
-
-  const handleSeasonChange = (event) => {
-    setSeason(event.target.value);
-  };
-
-  const handleButtonClick = () => {
-    // Convert the from and to dates to Date objects
+  const handlegenerateReport = () => {
     const fromDateObj = new Date(fromDate);
     const toDateObj = new Date(toDate);
-
-    // Calculate the time difference between the from and to dates in milliseconds
     const timeDiff = toDateObj.getTime() - fromDateObj.getTime();
-
-    // Calculate the number of days in the time difference
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-    // Get the selected report option
     const reportOption = season;
-
-    // Determine the minimum and maximum number of days allowed for the selected report option
     let minDays, maxDays;
     switch (reportOption) {
       case "Weekly":
@@ -54,8 +33,6 @@ const SparePartsHomeReport = () => {
         minDays = 0;
         maxDays = Infinity;
     }
-
-    // If the time difference is less than the minimum or greater than the maximum allowed for the selected report option, show an error message
     if (diffDays < minDays) {
       setError(
         `The minimum allowed interval for ${reportOption} report is ${minDays} day(s).`
@@ -87,8 +64,9 @@ const SparePartsHomeReport = () => {
                 </Form.Label>
                 <Form.Control
                   as="select"
+                  required
                   value={season}
-                  onChange={handleSeasonChange}
+                  onChange={(e) => setSeason(e.target.value)}
                 >
                   <option value="">Select Option</option>
                   <option value="Weekly">Weekly</option>
@@ -102,8 +80,9 @@ const SparePartsHomeReport = () => {
                 </Form.Label>
                 <Form.Control
                   type="date"
+                  required
                   value={fromDate}
-                  onChange={handleFromDateChange}
+                  onChange={(e) => setFromDate(e.target.value)}
                 />
               </Form.Group>
               <Form.Group controlId="toDate">
@@ -112,12 +91,17 @@ const SparePartsHomeReport = () => {
                 </Form.Label>
                 <Form.Control
                   type="date"
+                  required
                   value={toDate}
-                  onChange={handleToDateChange}
+                  onChange={(e) => setToDate(e.target.value)}
                 />
               </Form.Group>
               <div style={{ paddingTop: "30px" }}>
-                <Button variant="primary" onClick={handleButtonClick}>
+                <Button
+                  variant="primary"
+                  onClick={handlegenerateReport}
+                  disabled={!fromDate || !toDate || !season}
+                >
                   Generate Report
                 </Button>
               </div>
