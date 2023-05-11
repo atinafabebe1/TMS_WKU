@@ -61,7 +61,7 @@ const MaintenanceRequestSchema = new Schema(
     status: {
       type: String,
       default: "pending",
-      enum: ["pending", "in-progress", "completed", "canceled"],
+      enum: ["pending", "in-progress", "completed", "canceled","UnderMaintenance"],
       validate: {
         validator: function (v) {
           if (this.isNew && v !== "pending") {
@@ -87,7 +87,7 @@ const MaintenanceRequestSchema = new Schema(
 MaintenanceRequestSchema.pre("save", async function (next) {
   const vehicle = await this.model("VehicleRecord").findOne({
     plateNumber: this.plateNumber,
-    isDeleted: false,
+    isDeleted: true,
   });
   if (!vehicle) {
     return next(
