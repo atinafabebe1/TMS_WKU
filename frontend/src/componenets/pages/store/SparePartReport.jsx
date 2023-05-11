@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import api from "../../../api/api";
 import { Button, Form, Table } from "react-bootstrap";
 import html2pdf from "html2pdf.js";
+import { useParams } from "react-router-dom";
 
-const YearlySpareParts = () => {
+const SparePartReports = () => {
   const [requests, setRequests] = useState([]);
-
+  const { fromDate, toDate, season } = useParams();
   useEffect(() => {
     api
       .get("/Request/sparePart")
@@ -18,12 +19,11 @@ const YearlySpareParts = () => {
       );
   }, []);
 
-  const lastMonth = new Date();
-  lastMonth.setDate(lastMonth.getDate() - 365);
-
   const filteredRequests = requests.filter(
     (request) =>
-      request.status === "completed" && new Date(request.createdAt) > lastMonth
+      request.status === "completed" &&
+      new Date(request.createdAt) >= new Date(fromDate) &&
+      new Date(request.createdAt) <= new Date(toDate)
   );
 
   const groupedRequests = filteredRequests.reduce((result, request) => {
@@ -53,8 +53,8 @@ const YearlySpareParts = () => {
   const handlePrint = () => {
     const input = document.getElementById("pdf-container");
     html2pdf(input, {
-      margin: [0, 0, 0, 0],
-      filename: "yearly-spare-parts-report.pdf",
+      margin: [4, 4, 4, 4],
+      filename: "weekly-spare-parts-report.pdf",
       image: { type: "jpeg", quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
@@ -64,7 +64,7 @@ const YearlySpareParts = () => {
   const now = new Date();
   const dateTimeString = now.toLocaleString();
 
-  const thirtyDaysAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+  const thirtyDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
   const thirtyDaysAgoString = thirtyDaysAgo.toLocaleString();
 
   return (
@@ -75,7 +75,7 @@ const YearlySpareParts = () => {
             <h5 style={{ color: "#4682B4", textAlign: "center" }}>
               <strong>Wolkite University</strong>
               <br />
-              Yearly Used Spare Part Report
+              {season} Used Spare Part Report
             </h5>
             <br />
             <h5 style={{ color: "#696969", textAlign: "center" }}>
@@ -86,8 +86,7 @@ const YearlySpareParts = () => {
             </p>
             <p style={{ color: "#696969", padding: "left" }}>
               This Report is Generated For Spare Part Used From{" "}
-              <strong>{thirtyDaysAgoString} </strong>To{" "}
-              <strong>{dateTimeString}</strong>
+              <strong>{fromDate} </strong>To <strong> {toDate}</strong>
             </p>
             <br />
             {Object.keys(groupedRequests).map((plateNumber) => (
@@ -139,14 +138,14 @@ const YearlySpareParts = () => {
             <Table striped bordered hover responsive className="table-sm">
               <thead style={{ backgroundColor: "#4682B4", color: "white" }}>
                 <tr>
-                  <th>Total Price For This Month</th>
-                  <th>Total Quantity Used In This Month</th>
+                  <th>{season} Used SparePart Total Quantity</th>
+                  <th>{season} Used SparePart Total Price</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>{totalPrice}</td>
                   <td>{totalQuantity}</td>
+                  <td>{totalPrice}</td>
                 </tr>
               </tbody>
             </Table>
@@ -165,4 +164,5 @@ const YearlySpareParts = () => {
     </div>
   );
 };
-export default YearlySpareParts;
+
+export default SparePartReports;

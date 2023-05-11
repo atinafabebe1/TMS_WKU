@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ErrorProvider from "../Provider/ErrorProvider";
 import SuccessProvider from "../Provider/SuccessProvider";
 import Loading from "../../common/Provider/LoadingProvider";
+import { useNavigate } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
 import { Form, Button, Modal } from "react-bootstrap";
 import api from "../../../api/api";
@@ -21,7 +22,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [validated, setValidated] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (request) {
       setPlateNumber(request.plateNumber);
@@ -125,7 +126,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
       <div className="row justify-content-center">
         <div className="col-lg-8">
           <h4 className="mb-3 text-center">{title}</h4>
-          {request.rejectedReason !== null && (
+          {request && request.rejectedReason !== null && (
             <p className="text-danger">
               Kindly be informed that your request has been rejected due to the
               reason of <strong> "{request.rejectedReason}"</strong>. We advise
@@ -238,7 +239,12 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
           {success && <SuccessProvider success={success} />}
 
           <div className="d-flex justify-content-end my-4">
-            <Button className="btn-secondary me-2">Cancel</Button>
+            <Button
+              className="btn-secondary me-2"
+              onClick={() => navigate("/mechanic/request/accessory")}
+            >
+              Cancel
+            </Button>
             <Button
               type="reset"
               className="btn-danger me-2"

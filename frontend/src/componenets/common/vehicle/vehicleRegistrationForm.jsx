@@ -19,6 +19,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   const [maxLitres, setMaxLitres] = useState("");
   const [proprietaryIdNumber, setProprietaryIdNumber] = useState("");
   const [driver, setDriver] = useState(null);
+  const [drivers, setDrivers] = useState("");
   const [vehicleImage, setVehicleImage] = useState(null);
   const [assignedTo, setAssignedTo] = useState(null);
   const [onMaintenance, setOnMaintenance] = useState(false);
@@ -177,6 +178,20 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
     newItems.splice(index, 1);
     setItemsWithVehicle(newItems);
   };
+  const fetchDriver = async () => {
+    api
+      .get("/user/getusers?select=role,firstName,lastName,email")
+      .then((response) => {
+        setDrivers(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    fetch();
+    fetchDriver();
+  }, []);
 
   return (
     <div className="p-4">
@@ -437,16 +452,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       Please provide a valid Id.
                     </Form.Control.Feedback>
                   </Form.Group>
-                  <Form.Group as={Col} controlId="driver">
-                    <span> </span>
-                    <Form.Label>Driver</Form.Label>
-                    <Form.Control
-                      type="text"
-                      required
-                      value={driver}
-                      onChange={(e) => setDriver(e.target.value)}
-                    ></Form.Control>
-                  </Form.Group>
+
                   <Form.Group as={Col} controlId="vehicleimage">
                     <span> </span>
                     <Form.Label>Vehicle Image</Form.Label>
@@ -459,6 +465,46 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     />
                   </Form.Group>
                 </Row>
+                <Form.Group as={Col} controlId="role">
+                  <Form.Label className="font-weight-bold">Driver</Form.Label>
+                  <Form.Control
+                    as="select"
+                    type="text"
+                    placeholder="Choose Driver"
+                    required
+                    value={driver}
+                    onChange={(e) => setDriver(e.target.value)}
+                  >
+                    <option value="">Select a Driver</option>
+                    {Array.isArray(drivers) &&
+                      drivers
+                        .filter((driver) => driver.role === "ROLE_DRIVER")
+                        .map((driver) => {
+                          return (
+                            <option
+                              key={driver._id}
+                              value={`${driver.firstName} ${driver.lastName} (${driver.email})`}
+                            >
+                              <span
+                                style={{
+                                  display: "inline-block",
+                                  width: "150px",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                              >{`${driver.firstName} ${driver.lastName}`}</span>
+                              <span
+                                style={{ color: "gray", marginLeft: "1rem" }}
+                              >{`(${driver.email})`}</span>
+                            </option>
+                          );
+                        })}
+                  </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    Please provide a valid Driver.
+                  </Form.Control.Feedback>
+                </Form.Group>
                 <h5>Items With Vehicle</h5>
                 <hr />
                 <Row>
@@ -467,34 +513,41 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       <Form.Label>
                         <strong>Item #{index + 1}</strong>
                       </Form.Label>
-                      <p>Item Detail</p>
-                      <Form.Control
-                        type="text"
-                        value={items.itemDetail}
-                        onChange={(event) =>
-                          handleItemsChange(
-                            index,
-                            "itemDetail",
-                            event.target.value
-                          )
-                        }
-                        required
-                        className="mb-3"
-                      />{" "}
-                      <p>Item Quantity</p>
-                      <Form.Control
-                        type="text"
-                        value={items.quantity}
-                        onChange={(event) =>
-                          handleItemsChange(
-                            index,
-                            "quantity",
-                            event.target.value
-                          )
-                        }
-                        required
-                        className="mb-3"
-                      />
+                      <div style={{ display: "flex" }}>
+                        <div style={{ marginRight: "1rem" }}>
+                          <p>Item Detail</p>
+                          <Form.Control
+                            type="text"
+                            value={items.itemDetail}
+                            onChange={(event) =>
+                              handleItemsChange(
+                                index,
+                                "itemDetail",
+                                event.target.value
+                              )
+                            }
+                            required
+                            className="mb-3"
+                            style={{ width: "500px" }} // Add width here
+                          />
+                        </div>
+                        <div>
+                          <p>Item Quantity</p>
+                          <Form.Control
+                            type="number"
+                            value={items.quantity}
+                            onChange={(event) =>
+                              handleItemsChange(
+                                index,
+                                "quantity",
+                                event.target.value
+                              )
+                            }
+                            required
+                            className="mb-3"
+                          />
+                        </div>
+                      </div>
                       {index !== 0 && (
                         <Button
                           variant="danger"

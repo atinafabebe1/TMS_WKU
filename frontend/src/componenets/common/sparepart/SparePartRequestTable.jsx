@@ -15,11 +15,32 @@ const SparePartRequestTable = ({
   const [currentRequest, setCurrentRequest] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [startIndex, setStartIndex] = useState(0);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showConfirmBuyModal, setShowConfirmBuyModal] = useState(false);
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = (request) => {
     setCurrentRequest(request);
     setShowModal(true);
+  };
+
+  const handleCloseConfirmModal = () => setShowConfirmModal(false);
+  const handleShowConfirmModal = (request) => {
+    setCurrentRequest(request);
+    setShowConfirmModal(true);
+  };
+  const handleCloseConfirmBuyModal = () => setShowConfirmBuyModal(false);
+  const handleShowConfirmBuyModal = (request) => {
+    setCurrentRequest(request);
+    setShowConfirmBuyModal(true);
+  };
+  const handleApproveToBuy = () => {
+    handleCompletedtoBuyClick(currentRequest);
+    handleCloseConfirmBuyModal();
+  };
+  const handleComplete = () => {
+    handleApproveClick(currentRequest);
+    handleCloseConfirmModal();
   };
   //detail information modal
   const handleCloseDetailModal = () => setShowDetailModal(false);
@@ -70,6 +91,7 @@ const SparePartRequestTable = ({
         <thead>
           <tr>
             <th>User</th>
+            <th>Plate Number</th>
             <th>Spare Part ID </th>
             <th>Quantity</th>
             <th>Total price</th>
@@ -84,14 +106,15 @@ const SparePartRequestTable = ({
               <td>
                 <a href="#" onClick={() => handleRequestClick(request)}>
                   {console.log(request.user.firstName)}
-                  {request.user?.firstName} {request.user?.lastName}
+                  {request.user.firstName} {request.user.lastName}
                   <p>{request.user}</p>
                 </a>
               </td>
+              <td>{request.plateNumber}</td>
               <td>{request.identificationNumber}</td>
               <td>{request.quantity}</td>
               <td>{request.totalPrice}</td>
-              <td>{new Date(request.createdAt).toLocaleString()}</td>
+              <td>{new Date(request.createdAt).toLocaleDateString()}</td>
               <td>
                 <Badge>{request.status}</Badge>
               </td>
@@ -108,7 +131,8 @@ const SparePartRequestTable = ({
                     <Button
                       className="btn btn-sm"
                       variant="success"
-                      onClick={() => handleApproveClick(request)}
+                      onClick={() => handleShowConfirmModal(request)}
+                      // onClick={() => handleApproveClick(request)}
                     >
                       Approve
                     </Button>{" "}
@@ -173,7 +197,8 @@ const SparePartRequestTable = ({
                     <Button
                       className="btn btn-sm"
                       variant="success"
-                      onClick={() => handleCompletedtoBuyClick(request)}
+                      onClick={() => handleShowConfirmBuyModal(request)}
+                      // onClick={() => handleCompletedtoBuyClick(request)}
                     >
                       Approve
                     </Button>{" "}
@@ -184,7 +209,10 @@ const SparePartRequestTable = ({
           ))}
         </tbody>
       </Table>
-      <div className="d-flex justify-content-center align-items-center w-100">
+      <div
+        className="d-flex justify-content-center align-items-center w-100"
+        style={{ paddingBottom: "70px" }}
+      >
         <Button
           variant="primary"
           className="btn-sm mx-2"
@@ -204,6 +232,54 @@ const SparePartRequestTable = ({
           Next
         </Button>
       </div>
+      <Modal show={showConfirmModal} onHide={handleCloseConfirmModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Approval</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are You Sure to Approve This Request</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="btn btn-sm"
+            variant="secondary"
+            onClick={handleCloseModal}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="btn btn-sm"
+            variant="primary"
+            onClick={handleComplete}
+          >
+            Approve
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showConfirmBuyModal} onHide={handleCloseConfirmBuyModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Approval</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are You Sure to Approve This To Buy Request</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="btn btn-sm"
+            variant="secondary"
+            onClick={handleCloseModal}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="btn btn-sm"
+            variant="primary"
+            onClick={handleApproveToBuy}
+          >
+            Approve
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Request</Modal.Title>
@@ -250,12 +326,11 @@ const SparePartRequestTable = ({
           {selectedRequest.status === "canceled" && (
             <>
               <p className="text-danger">
-                Oops! Kindly be informed that your request has been rejected due
+                Oops! Kindly be informed that this request has been rejected due
                 to the reason of{" "}
-                <strong>"{selectedRequest.rejectedReason}"</strong>. We advise
-                that upon resubmission of your request, you consider modifying
-                the reason to improve your chances of approval. Thank you for
-                your understanding and cooperation.
+                <strong>"{selectedRequest?.rejectedReason}"</strong>. We advise
+                that upon resubmission of request they have to consider
+                modifying the reason to improve their chances of approval.
               </p>
             </>
           )}
@@ -314,9 +389,7 @@ const SparePartRequestTable = ({
                 <td>
                   <strong>Date</strong>
                 </td>
-                <td>
-                  {new Date(selectedRequest?.createdAt).toLocaleDateString()}
-                </td>
+                <td>{new Date(selectedRequest?.createdAt).toLocaleString()}</td>
               </tr>
             </tbody>
           </Table>

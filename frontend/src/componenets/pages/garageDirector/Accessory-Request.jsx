@@ -135,13 +135,20 @@ const AccessoryRequest = ({ link }) => {
             <SparePartRequestTable
               requests={requestingToBuy}
               handleCompletedtoBuyClick={handleCompletedtoBuyClick}
+              handleRequestClick={handleRequestClick}
             />
           </Tab>
           <Tab eventKey="approved" title="Completed Requests">
-            <SparePartRequestTable requests={completedRequests} />
+            <SparePartRequestTable
+              requests={completedRequests}
+              handleRequestClick={handleRequestClick}
+            />
           </Tab>
           <Tab eventKey="canceled" title="Canceled Requests">
-            <SparePartRequestTable requests={canceledRequests} />
+            <SparePartRequestTable
+              requests={canceledRequests}
+              handleRequestClick={handleRequestClick}
+            />
           </Tab>
         </Tabs>
         {selectedRequest && (
