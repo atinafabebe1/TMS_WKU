@@ -3,6 +3,7 @@ import Navbar from "../../common/header/Navbar";
 import SparePartsHomeReport from "./GenerateAndStoreReports";
 import SparePartPurchasingRequest from "./ApproveSparePartPurchasing";
 import SparePartReports from "./SparePartReport";
+import StoreHome from "./Home";
 import { Routes, Route } from "react-router-dom";
 
 const links = [
@@ -38,6 +39,7 @@ const StorePage = () => {
         <Navbar links={links} title="TMS" />
       </div>
       <Routes>
+        <Route path="/" element={<StoreHome />} />
         <Route
           path="approve/sparePart-purchasing-request"
           element={<SparePartPurchasingRequest />}
