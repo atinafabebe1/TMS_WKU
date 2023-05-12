@@ -19,6 +19,7 @@ import AssignVehicle from "../../common/vehicle/AssignVehicle";
 import HODMaintenanceRequestPage from "./maintenanceRequest";
 import ApproveFuelRequest from "./ApproveFuelRequest";
 import Example from "./Home";
+import VehicleRecordList from "./Vehicles";
 const links = [
   {
     name: "Home",
@@ -114,7 +115,7 @@ const HeadOfDeploymentPage = () => {
         <Route path="report/weekly" element={<WeeklyReport />} />
         <Route path="report/daily" element={<DailyReport />} />
         <Route path="report/monthly" element={<MonthlyReport />} />
-        <Route path="report/emergence" element={<EmmergencyReport />} />
+        <Route path="report/emergence" element={<VehicleRecordList />} />
         <Route path="vehicles" element={<DetailVehicleInfo />} />
         <Route
           path="vehicles/edit-vehicle/:id"
