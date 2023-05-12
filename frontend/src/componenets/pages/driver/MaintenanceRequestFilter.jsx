@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import GDMaintenanceRequestTables from "./maintenanceReqToOrder";
+import MaintenanceRequestPage from "./MaintenanceRequests";
 import {Tabs, Tab } from "react-bootstrap";
 
-const GDmaintenanceRequestPage = () => {
-  const [filter, setFilter] = useState("in-progress");
+const DrivermaintenanceRequestPage = () => {
+  const [filter, setFilter] = useState("all");
 
   const handleFilter = (eventKey) => {
     setFilter(eventKey);
@@ -12,13 +12,15 @@ const GDmaintenanceRequestPage = () => {
   return (
     <>
             <div className="text-center">
-        <h1>Maintenance Orders</h1>
+        <h1>Maintenance Requests</h1>
       </div>
       <Tabs
         activeKey={filter}
         onSelect={handleFilter}
         id="maintenance-request-tabs"
       >
+        <Tab eventKey="pending" title="Pending">
+        </Tab>
         <Tab eventKey="in-progress" title="In Progress">
         </Tab>
         <Tab eventKey="UnderMaintenance" title="Under Maintenance">
@@ -29,9 +31,9 @@ const GDmaintenanceRequestPage = () => {
         </Tab>
       </Tabs>
 
-      <GDMaintenanceRequestTables filter={filter} />
+      <MaintenanceRequestPage filter={filter} />
     </>
   );
 };
 
-export default GDmaintenanceRequestPage;
+export default DrivermaintenanceRequestPage;

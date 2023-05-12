@@ -101,6 +101,10 @@ const SparePartSchema = new Schema(
           `Cannot set status "${props.value}" when creating a new maintenance request.`,
       },
     },
+    rejectedReason: {
+      type: String,
+      default: null,
+    },
     isDeleted: {
       type: Boolean,
       default: false,

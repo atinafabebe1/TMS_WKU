@@ -96,17 +96,12 @@ const AccessoryRequest = ({ link }) => {
     }
   };
 
-  const handleRejectClick = async (request, rejectReason) => {
+  const handleRejectClick = async (request, rejectedReason) => {
     try {
-      await api.put(
-        `/Request/sparePart/${request._id}`,
-        {
-          status: "canceled",
-        },
-        {
-          rejectReason,
-        }
-      );
+      await api.put(`/Request/sparePart/${request._id}`, {
+        status: "canceled",
+        rejectedReason: rejectedReason,
+      });
       const response = await api.get("/Request/sparePart");
       setRequest(response.data.data);
     } catch (error) {
@@ -140,13 +135,20 @@ const AccessoryRequest = ({ link }) => {
             <SparePartRequestTable
               requests={requestingToBuy}
               handleCompletedtoBuyClick={handleCompletedtoBuyClick}
+              handleRequestClick={handleRequestClick}
             />
           </Tab>
           <Tab eventKey="approved" title="Completed Requests">
-            <SparePartRequestTable requests={completedRequests} />
+            <SparePartRequestTable
+              requests={completedRequests}
+              handleRequestClick={handleRequestClick}
+            />
           </Tab>
           <Tab eventKey="canceled" title="Canceled Requests">
-            <SparePartRequestTable requests={canceledRequests} />
+            <SparePartRequestTable
+              requests={canceledRequests}
+              handleRequestClick={handleRequestClick}
+            />
           </Tab>
         </Tabs>
         {selectedRequest && (

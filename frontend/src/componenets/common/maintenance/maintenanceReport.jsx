@@ -114,7 +114,7 @@ const MaintenanceOrderTable = () => {
           {filteredReports.map((report) => (
             <tr key={report._id}>
               <td>{report.plateNumber}</td>
-              <td>{report.createdAt}</td>
+              <td>{new Date(report.createdAt).toLocaleString()}</td>
               <td>{report.status}</td>
               <td>{report.reportStatus}</td>
               <td>

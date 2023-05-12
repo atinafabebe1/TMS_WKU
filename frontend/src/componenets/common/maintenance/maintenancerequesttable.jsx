@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Modal,Row,Col } from "react-bootstrap";
 import api from "../../../api/api";
-import { useAuth } from "../../../context/AuthContext";
-import { ROLE_HEADOFDEPLOYMENT } from "../../../constants/index";
 
 const MaintenanceRequestTables = ({ filter }) => {
   const [requests, setRequests] = useState([]);
@@ -109,7 +107,7 @@ const MaintenanceRequestTables = ({ filter }) => {
           {filteredRequests.map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
-              <td>{request.createdAt}</td>
+              <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
               <td>
 

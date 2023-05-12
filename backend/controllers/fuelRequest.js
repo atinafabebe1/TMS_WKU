@@ -49,15 +49,6 @@ const createFuelRequest = asyncHandler(async (req, res, next) => {
 const updateFuelRequest = asyncHandler(async (req, res, next) => {
   let fuelRequest = await FuelRequest.findById(req.params.id);
 
-  if (!fuelRequest) {
-    return next(
-      new ErrorResponse(
-        `Fuel Request not found with id of ${req.params.id}`,
-        404
-      )
-    );
-  }
-
   // if (fuelRequest.user.toString() !== req.user.id) {
   //   return next(
   //     new ErrorResponse(
@@ -66,21 +57,6 @@ const updateFuelRequest = asyncHandler(async (req, res, next) => {
   //     )
   //   );
   // }
-
-  // const vehicle = await FuelRequest.getVehicleByPlateNumber(
-  //   req.body.plateNumber
-  // );
-
-  // if (!vehicle) {
-  //   return next(
-  //     new ErrorResponse(
-  //       `Vehicle not found with plate number ${req.body.plateNumber} `,
-  //       404
-  //     )
-  //   );
-  // }
-
-  // req.body.vehicle = vehicle._id;
 
   fuelRequest = await FuelRequest.findByIdAndUpdate(req.params.id, req.body, {
     new: true,

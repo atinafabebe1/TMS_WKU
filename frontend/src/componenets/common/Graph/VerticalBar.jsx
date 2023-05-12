@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import api from "../../../api/api";
 import {
   ComposedChart,
   Line,
@@ -11,28 +12,38 @@ import {
 } from "recharts";
 
 const VerticalBarCharts = () => {
-  const data = [
-    {
-      name: "Pick Up",
-      Available: 59,
-      Unavailable: 10,
-    },
-    {
-      name: "Bus",
-      Available: 24,
-      Unavailable: 2,
-    },
-    {
-      name: "Truck",
-      Available: 13,
-      Unavailable: 0,
-    },
-    {
-      name: "Car",
-      Available: 14,
-      Unavailable: 1,
-    },
-  ];
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    api
+      .get(`/Vehiclerecord?isDeleted=false`)
+      .then((response) => {
+        const counts = response.data.data.reduce((acc, vehicle) => {
+          const type = vehicle.type;
+          const assignedTo = vehicle.assignedTo;
+          if (!acc[type]) {
+            acc[type] = { Available: 0, Unavailable: 0 };
+          }
+          if (assignedTo === null) {
+            acc[type].Available++;
+          } else {
+            acc[type].Unavailable++;
+          }
+          return acc;
+        }, {});
+
+        const data = Object.keys(counts).map((key) => ({
+          name: key,
+          Available: counts[key].Available,
+          Unavailable: counts[key].Unavailable,
+        }));
+
+        setData(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <div>

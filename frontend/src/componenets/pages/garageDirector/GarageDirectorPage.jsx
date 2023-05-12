@@ -3,6 +3,7 @@ import Navbar from "../../common/header/Navbar";
 import { Routes, Route } from "react-router-dom";
 import AccessoryRequest from "./Accessory-Request";
 import GDmaintenanceRequestPage from "./maintenanceOrder";
+import GDHome from "./Home";
 const links = [
   {
     name: "Home",
@@ -50,6 +51,8 @@ const GarageDirectorPag = () => {
         <Navbar links={links} title="TMS" />
       </div>
       <Routes>
+        <Route path="/" element={<GDHome />} />
+
         <Route
           path="request/get-accessory-request"
           element={<AccessoryRequest />}

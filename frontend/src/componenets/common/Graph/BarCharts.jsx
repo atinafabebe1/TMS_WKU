@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import api from "../../../api/api";
+
 import {
   Tooltip,
   BarChart,
@@ -10,23 +12,34 @@ import {
 } from "recharts";
 
 const BarCharts = () => {
-  const data = [
-    { name: "Bus", Vehicles: 20 },
-    { name: "Pickup", Vehicles: 15 },
-    { name: "Truck", Vehicles: 10 },
-    { name: "Car", Vehicles: 50 },
-    { name: "Carer", Vehicles: 90 },
-    { name: "sew", Vehicles: 40 },
-    { name: "man", Vehicles: 90 },
-    { name: "ret", Vehicles: 40 },
-  ];
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    api
+      .get(`/Vehiclerecord?isDeleted=false`)
+      .then((response) => {
+        setData(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const groupedData = data.reduce((acc, vehicle) => {
+    const index = acc.findIndex((item) => item.name === vehicle.type);
+    if (index !== -1) {
+      acc[index].Vehicles++;
+    } else {
+      acc.push({ name: vehicle.type, Vehicles: 1 });
+    }
+    return acc;
+  }, []);
 
   return (
     <div className="App">
       <BarChart
         width={1000}
         height={300}
-        data={data}
+        data={groupedData}
         margin={{
           top: 5,
           right: 30,

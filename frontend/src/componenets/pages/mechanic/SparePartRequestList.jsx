@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Table, Button, Row, Col, Form } from "react-bootstrap";
+import { Table, Button, Row, Col, Form, Badge } from "react-bootstrap";
 import Loading from "../../common/Provider/LoadingProvider";
 import api from "../../../api/api";
 
@@ -104,7 +104,9 @@ const SparePartRequestListPage = () => {
               <td>{request.unitPrice}</td>
               <td>{request.totalPrice}</td>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
-              <td>{request.status}</td>
+              <td>
+                <Badge>{request.status}</Badge>
+              </td>
               <td>
                 {request.status === "canceled" && (
                   <Button
