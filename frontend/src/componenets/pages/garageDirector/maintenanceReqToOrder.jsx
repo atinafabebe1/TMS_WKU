@@ -14,7 +14,10 @@ const GDMaintenanceRequestTables = ({ filter }) => {
   const [mechanics,setMechanics]=useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-
+  const [Birr,setBirr]=useState("");
+  const [Coin,setCoin]=useState("");
+  const [paymentPerHour,setPaymentPerHour]=useState("");
+  const [maintenanceWorkHours,setMaintenanceWorkHours]=useState("");
   const [typeOfVehicle,setTypeOfVehicle]=useState(false);
   const [assignedWorkflow,setAssignedWorkflow]=useState(false); 
   const [kilometerOnCounter,setKilometerOncounter]=useState(false);
@@ -347,7 +350,42 @@ const GDMaintenanceRequestTables = ({ filter }) => {
         );
       })}
 </select>
-
+<Form.Group as={Col} controlId="maintenanceWorkHours">
+    <Form.Label>Maintenance Work Hours</Form.Label>
+    <Form.Control
+      type="number"
+      value={maintenanceWorkHours} // Assuming you want to display the maintenance work hours from the first maintenance task
+      onChange={(e) => setMaintenanceWorkHours(e.target.value)}
+      
+    />
+  </Form.Group>
+  <Form.Group as={Col} controlId="paymentPerHour">
+    <Form.Label>Payment Per Hour</Form.Label>
+    <Form.Control
+      type="number"
+      value={paymentPerHour} // Assuming you want to display the payment per hour from the first maintenance task
+      onChange={(e) => setPaymentPerHour(e.target.value)}
+      
+    />
+  </Form.Group>
+  <Form.Group as={Col} controlId="birr">
+    <Form.Label>Birr</Form.Label>
+    <Form.Control
+      type="number"
+      value={Birr} // Assuming you want to display the birr value from the first maintenance task
+      onChange={(e) => setBirr(e.target.value)}
+      
+    />
+  </Form.Group>
+  <Form.Group as={Col} controlId="coin">
+    <Form.Label>Coin</Form.Label>
+    <Form.Control
+      type="number"
+      value={Coin} // Assuming you want to display the coin value from the first maintenance task
+      onChange={(e) => setCoin(e.target.value)}
+      
+    />
+  </Form.Group>
 
 </Form>
   </Modal.Body>
