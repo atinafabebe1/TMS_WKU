@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Table, Button, Row, Col } from "react-bootstrap";
+import { Table, Button, Row, Col, Form } from "react-bootstrap";
 import api from "../../../api/api";
 
 const VehicleRequestListPage = () => {
   const [requests, setRequests] = useState([]);
+  const [startIndex, setStartIndex] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,15 +31,32 @@ const VehicleRequestListPage = () => {
         setRequests(requests.filter((request) => request._id !== id));
       })
       .catch((error) =>
-        console.error(`Error deleting vehicle request with ID ${id}:`, error)
+        console.error(`Error deleting vehicle requests with ID ${id}:`, error)
       );
   };
 
+  const handleNext = () => {
+    setStartIndex((prevIndex) => prevIndex + 7);
+  };
+
+  const handlePrevious = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
+  };
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredRequests = requests.filter((request) => {
+    return (
+      request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.status.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
   return (
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h1>My Vehicle Requests</h1>
+          <h4 style={{ color: "#4682B4" }}>Your Last Vehicle Requests</h4>
         </Col>
         <Col className="text-end">
           <Link to="/employee/vehicle-request">
@@ -45,6 +64,18 @@ const VehicleRequestListPage = () => {
           </Link>
         </Col>
       </Row>
+      <Form>
+        <Row className="mb-3">
+          <Col>
+            <Form.Control
+              type="text"
+              placeholder="Search by plate number or status"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </Col>
+        </Row>
+      </Form>
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
@@ -58,7 +89,7 @@ const VehicleRequestListPage = () => {
           </tr>
         </thead>
         <tbody>
-          {requests?.map((request) => (
+          {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
             <tr key={request._id}>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>
@@ -112,6 +143,26 @@ const VehicleRequestListPage = () => {
           ))}
         </tbody>
       </Table>
+      <div className="d-flex justify-content-center align-items-center w-100">
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handlePrevious}
+          disabled={startIndex === 0}
+          block
+        >
+          Previous
+        </Button>
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handleNext}
+          disabled={startIndex + 7 >= requests.length}
+          block
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };
