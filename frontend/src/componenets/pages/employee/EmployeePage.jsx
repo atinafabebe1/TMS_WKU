@@ -2,8 +2,8 @@ import React from "react";
 import Navbar from "../../common/header/Navbar";
 import VehicleRequestForm from "../../common/vehicle/requestform";
 import { Routes, Route } from "react-router-dom";
-import Complain from "../../common/complain/complainForm";
 import LandingPage from "../home/Home";
+import SendComplain from "../../common/shared/sendComplain";
 import VehicleRequestListPage from "./VehicleRequests";
 import CreateVehicleRequestForm from "./CreateVehicleRequest";
 import EditRequest from "./EditVehicleRequest";
@@ -27,11 +27,10 @@ const EmployeePage = () => {
     <div>
       <Navbar links={links} title="TMS" />
       <Routes>
-        <Route path="" element={<LandingPage />} />
         <Route path="vehicle-request" element={<CreateVehicleRequestForm />} />
         <Route path="edit-vehicle-request/:id" element={<EditRequest />} />
         <Route path="request/vehicle" element={<VehicleRequestListPage />} />
-        <Route path="complain" element={<Complain />} />
+        <Route path="complain" element={<SendComplain />} />
       </Routes>
     </div>
   );

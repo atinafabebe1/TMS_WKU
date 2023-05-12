@@ -11,6 +11,7 @@ import api from "../../../api/api";
 
 const MaintenanceRequestForm = () => {
   const [description, setDescription] = useState("");
+  const [plateNumber, setPlateNumber] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSucces] = useState("");
@@ -27,9 +28,17 @@ const MaintenanceRequestForm = () => {
   };
 
   const handleSubmit = () => {
+    if (!description||!plateNumber) {
+      setError("Description cannot be empty");
+      setSucces(null);
+      return;
+    }
+    
     const result = {
+      plateNumber,
       description,
     };
+    
     api
       .post(`/Request/maintenance?isDeleted=false`, result)
       .then((response) => {
@@ -37,8 +46,9 @@ const MaintenanceRequestForm = () => {
           setSucces(response.data?.message);
           setError(null);
         }
-
+  
         setDescription("");
+        setPlateNumber("");
         setShowModal();
       })
       .catch((err) => {
@@ -47,8 +57,16 @@ const MaintenanceRequestForm = () => {
         setSucces(null);
       });
   };
+  
   const handleClear = () => {
     setDescription("");
+    setPlateNumber("");
+
+  };
+
+  const handleModalClose = () => {
+    
+    setShowModal(false);
   };
 
   return (
@@ -59,6 +77,14 @@ const MaintenanceRequestForm = () => {
 
           <Form onSubmit={handleConfirmation}>
             <FormGroup>
+            <FormLabel>Plate Number</FormLabel>
+              <FormControl
+                type="text"
+                value={plateNumber}
+                onChange={(event) => setPlateNumber(event.target.value)}
+                required
+                className="mb-3"
+              />
               <FormLabel>Description</FormLabel>
               <FormControl
                 type="text"
@@ -67,6 +93,7 @@ const MaintenanceRequestForm = () => {
                 required
                 className="mb-3"
               />
+             
             </FormGroup>
 
             {error && <p className="text-danger">{error}</p>}
@@ -90,6 +117,7 @@ const MaintenanceRequestForm = () => {
               >
                 Submit
               </Button>
+              
               <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
                   <Modal.Title>Confirm Submission</Modal.Title>
@@ -100,7 +128,7 @@ const MaintenanceRequestForm = () => {
                 <Modal.Footer>
                   <Button
                     variant="secondary"
-                    onClick={() => setShowModal(false)}
+                    onClick={handleModalClose}
                   >
                     Cancel
                   </Button>
@@ -116,4 +144,5 @@ const MaintenanceRequestForm = () => {
     </div>
   );
 };
+
 export default MaintenanceRequestForm;

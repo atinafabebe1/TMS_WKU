@@ -2,16 +2,17 @@ import React from "react";
 import Navbar from "../../common/header/Navbar";
 import { Routes, Route } from "react-router-dom";
 import VehiclesRequests from "../../common/vehicle/vehiclerequest";
+import SendComplain from "../../common/shared/sendComplain";
 import { useAuth } from "../../../context/AuthContext";
 
 const links = [
   {
     name: "Home",
-    url: "/director",
+    url: "/vp",
   },
   {
     name: "Requests",
-    url: "/requests",
+    url: "/vp/requests",
     children: [
       {
         name: "Vehicle",
@@ -19,31 +20,31 @@ const links = [
       },
       {
         name: "Fuel",
-        url: "/request/fuel",
-      },
-      {
-        name: "Maintenance",
-        url: "/request/maintenance",
+        url: "/vp/request/fuel",
       },
     ],
   },
   {
     name: "Report",
-    url: "/report",
+    url: "/vp/report",
     children: [
       {
         name: "Monthly",
-        url: "/report/monthly",
+        url: "/vp/report/monthly",
       },
       {
         name: "Weekly",
-        url: "/report/weekly",
+        url: "/vp/report/weekly",
       },
       {
         name: "Emergency",
-        url: "/report/weekly",
+        url: "/vp/report/weekly",
       },
     ],
+  },
+  {
+    name: "Complain",
+    url: "/vp/complain",
   },
 ];
 
@@ -58,6 +59,7 @@ const VicePresidentPage = () => {
           path="request/vehicle"
           element={<VehiclesRequests link={`/Request/vehicle`} />}
         />
+        <Route path="complain" element={<SendComplain />} />
       </Routes>
     </div>
   );

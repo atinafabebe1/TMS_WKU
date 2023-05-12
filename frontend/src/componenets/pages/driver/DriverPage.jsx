@@ -2,7 +2,6 @@ import React from "react";
 import Navbar from "../../common/header/Navbar";
 import MaintenanceRequestPage from "./MaintenanceRequests";
 import MaintenanceRequestForm from "./maintenance-request-form";
-import Complain from "../../common/complain/complainForm";
 import FuelRequest from "./CreateFuelRequest";
 import { Routes, Route } from "react-router-dom";
 const links = [
@@ -71,7 +70,6 @@ const DriverPage = () => {
           path="maintenance-request-form"
           element={<MaintenanceRequestForm />}
         />
-        <Route path="complain" element={<Complain />} />
       </Routes>
     </div>
   );

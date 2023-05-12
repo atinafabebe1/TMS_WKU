@@ -24,7 +24,7 @@ const DailyFuelCostRecordSchema = new Schema(
           if (!props.value) {
             return "Plate number is required";
           }
-          return `${props.value} is not a valid plate number or must be a non-negative number`;
+          return `${props.value} is not a valid plate numbers or must be a non-negative number`;
         },
       },
     },

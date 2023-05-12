@@ -139,14 +139,14 @@ const WeeklySpareParts = () => {
             <Table striped bordered hover responsive className="table-sm">
               <thead style={{ backgroundColor: "#4682B4", color: "white" }}>
                 <tr>
-                  <th>Total Price For This Month</th>
                   <th>Total Quantity Used In This Month</th>
+                  <th>Total Price For This Month</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>{totalPrice}</td>
                   <td>{totalQuantity}</td>
+                  <td>{totalPrice}</td>
                 </tr>
               </tbody>
             </Table>

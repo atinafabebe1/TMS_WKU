@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button, Row, Col, Form, Modal } from "react-bootstrap";
 import Loading from "../../common/Provider/LoadingProvider";
+import SuccessProvider from "../../common/Provider/SuccessProvider";
+import ErrorProvider from "../../common/Provider/ErrorProvider";
 import DaysAgo from "../../common/shared/daysAgoCalculate";
 import api from "../../../api/api";
 import {
@@ -11,7 +13,7 @@ import {
   MDBCardHeader,
   MDBCardFooter,
 } from "mdb-react-ui-kit";
-const Complain = () => {
+const SendComplain = () => {
   const [complains, setComplains] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,9 +22,17 @@ const Complain = () => {
   const [selectedComplain, setSelectedComplain] = useState(null);
   const [response, setResponse] = useState("");
   const [dataCount, setDataCount] = useState(0);
+  const [user, setUser] = useState({});
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [isSent, setIsSent] = useState(false);
+  const [complaints, setComplaints] = useState([]);
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const fetchRequestData = async () => {
-    await api.get(`/Complain?status=Pending`).then((response) => {
+    await api.get(`/Complain?seen=unseen`).then((response) => {
       console.log(response.data.data);
       setComplains(response.data.data);
       setDataCount(response.data.data.length);
@@ -44,21 +54,42 @@ const Complain = () => {
   };
 
   const handleNext = () => {
-    setStartIndex((prevIndex) => prevIndex + 4);
+    setStartIndex((prevIndex) => prevIndex + 7);
   };
 
   const handlePrevious = () => {
-    setStartIndex((prevIndex) => Math.max(prevIndex - 4, 0));
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
+  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsSending(true);
+    try {
+      const response = await api.post("/Complain", {
+        title,
+        content,
+        status: "Pending",
+      });
+      setIsSent(true);
+      setShowModal(false);
+      setTitle("");
+      setContent("");
+      setIsSending(false);
+      setSuccess("Successfully Sent");
+      setComplaints([response.data, ...complaints]); // add new complaint to the top of the list
+    } catch (error) {
+      console.log(error);
+      setIsSending(false);
+      setError("Oops Unable to Send Please Try Again");
+    }
   };
 
-  const handleResolve = async () => {
+  const handleResolve = async (complain) => {
     const updatedComplain = {
-      ...selectedComplain,
-      response: response,
-      status: "Resolved",
+      ...complain,
+      seen: "seen",
     };
     await api
-      .put(`/Complain/${selectedComplain._id}`, updatedComplain)
+      .put(`/Complain/${complain._id}`, updatedComplain)
       .then((response) => {
         selectedComplain(updatedComplain);
         setShowModal(false);
@@ -76,13 +107,28 @@ const Complain = () => {
 
   return (
     <div className="p-4">
+      <div style={{ display: "flex" }}>
+        <Col className="text-end">
+          <Button
+            variant="success"
+            className="btn btn-sm"
+            onClick={() => setShowModal(true)}
+          >
+            New Complaint
+          </Button>
+        </Col>
+      </div>
+      {error && <ErrorProvider error={error} />}
+      {success && <SuccessProvider success={success} />}
       {isLoading && <Loading />}
       {!isLoading && dataCount === 0 ? (
-        <p>No complaints found.</p>
+        <h5 style={{ textAlign: "center", color: "#4682B4" }}>
+          Oops No New complaints Response found.
+        </h5>
       ) : (
         <div>
           <div style={{ textAlign: "center", color: "#4682B4" }}>
-            <h3>Last Sent Complain</h3>
+            <h3>Your Complain</h3>
           </div>
           {complains.slice(startIndex, startIndex + 4).map((complain) => (
             <div className="p-4" style={{ paddingTop: "70px" }}>
@@ -97,55 +143,65 @@ const Complain = () => {
                   <Button
                     href="#"
                     variant="success"
-                    onClick={() => handleShowModal(complain)}
+                    onClick={() => handleResolve(complain)}
                   >
-                    Resolve
+                    Ok
                   </Button>
                 </MDBCardBody>
                 <MDBCardFooter className="text-muted">
-                  <DaysAgo createdAt={complain.createdAt} />
+                  <DaysAgo createdAt={complain.updatedAt} />
                 </MDBCardFooter>
               </MDBCard>
             </div>
           ))}
         </div>
       )}
-
-      <Modal show={showModal} onHide={handleModalClose}>
+      <Modal
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        show={showModal}
+        onHide={handleModalClose}
+      >
         <Modal.Header closeButton>
-          <Modal.Title>Resolve Complain</Modal.Title>
+          <Modal.Title>Create Complain</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group as={Col}>
-              <Form.Label>Response Mesage</Form.Label>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group as={Col} controlId="cc">
+              <Form.Label>Title</Form.Label>
               <Form.Control
-                as={"textarea"}
                 type="text"
-                value={response}
-                onChange={(event) => setResponse(event.target.value)}
+                minLength={3}
+                maxLength={100}
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
                 required
-                className="mb-3"
               />
             </Form.Group>
+            <Form.Group as={Col} controlId="cc">
+              <Form.Label>Content</Form.Label>
+              <Form.Control
+                as={"textarea"}
+                rows={5}
+                type="text"
+                minLength={3}
+                maxLength={700}
+                value={content}
+                onChange={(event) => setContent(event.target.value)}
+                required
+              />
+            </Form.Group>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleModalClose}>
+                Close
+              </Button>
+              <Button variant="primary" type="submit" disabled={isSending}>
+                {isSending ? "Sending..." : "Send"}
+              </Button>
+            </Modal.Footer>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            className="btn btn-sm"
-            onClick={handleModalClose}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="success"
-            className="btn btn-sm"
-            onClick={() => handleResolve(selectedComplain)}
-          >
-            Send Response
-          </Button>
-        </Modal.Footer>
       </Modal>
       <div
         className="d-flex justify-content-center align-items-center w-100"
@@ -164,7 +220,7 @@ const Complain = () => {
           variant="primary"
           className="btn-sm mx-2"
           onClick={handleNext}
-          disabled={startIndex + 4 >= complains.length}
+          disabled={startIndex + 7 >= complains.length}
           block
         >
           Next
@@ -174,4 +230,4 @@ const Complain = () => {
   );
 };
 
-export default Complain;
+export default SendComplain;

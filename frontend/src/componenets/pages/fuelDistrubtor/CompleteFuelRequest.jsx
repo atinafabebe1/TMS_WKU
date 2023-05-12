@@ -58,7 +58,7 @@ const ApproveAndRegisterFuelRequest = () => {
       plateNumber: selectedRequest?.plateNumber,
       typeOfFuel: selectedRequest?.typeOfFuel,
       mode,
-      approvedAmount,
+      approvedAmount: selectedRequest?.approvedAmount,
       price: selectedRequest?.price,
     };
     try {
@@ -181,24 +181,20 @@ const ApproveAndRegisterFuelRequest = () => {
                 onChange={(e) => setPlateNumber(e.target.value)}
               />
             </Form.Group>
-            <Form.Group as={Col}>
+            <Form.Group as={Col} controlId="apprivedAmount">
               <Form.Label>Approved Amount</Form.Label>
               <Form.Control
                 type="number"
                 readOnly
                 value={selectedRequest?.approvedAmount}
-                onChange={(event) => setApprovedAmount(event.target.value)}
-                required
-                className="mb-3"
+                onChange={(e) => setApprovedAmount(e.target.value)}
               />
             </Form.Group>
-            <Form.Group as={Col} controlId="platenumber">
+            <Form.Group as={Col} controlId="price">
               <Form.Label>Price</Form.Label>
               <Form.Control
                 type="string"
                 readOnly
-                minLength={9}
-                maxLength={9}
                 value={selectedRequest?.price}
                 onChange={(e) => setPrice(e.target.value)}
               />
@@ -208,6 +204,7 @@ const ApproveAndRegisterFuelRequest = () => {
               <Form.Control
                 as="select"
                 type="text"
+                autoFocus
                 placeholder="Choose"
                 min={0}
                 minLength={3}
