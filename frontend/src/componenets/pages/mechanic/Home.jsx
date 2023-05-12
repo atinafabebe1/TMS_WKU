@@ -127,36 +127,7 @@ const MechanicHome = () => {
               right: "10px",
               zIndex: "9999",
             }}
-          >
-            <Alert variant="primary">
-              {dataCount !== 0 && (
-                <p>
-                  <Badge bg="danger">{dataCount}</Badge> Approved Spare Part
-                  Request Waiting to Complete{" "}
-                  <Link to="/store/approve/sparePart-purchasing-request">
-                    <Badge bg="info">Complete</Badge>
-                  </Link>
-                </p>
-              )}
-              {dataCount2 !== 0 && (
-                <p>
-                  <Badge bg="danger">{dataCount2} </Badge> Approved to Buy
-                  Request{" "}
-                  <Link to="/store/approve/sparePart-purchasing-request">
-                    <Badge bg="info">See more</Badge>
-                  </Link>
-                </p>
-              )}
-
-              <Button
-                className="ms-auto"
-                variant="primary"
-                onClick={handleDismiss}
-              >
-                Clear
-              </Button>
-            </Alert>
-          </Container>
+          ></Container>
         )}
       </div>
 

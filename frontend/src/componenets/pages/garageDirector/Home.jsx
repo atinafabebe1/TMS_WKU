@@ -158,7 +158,7 @@ const GDHome = () => {
                 <p>
                   <Badge bg="danger">{dataCount}</Badge> SparePart Requests
                   Pending for Your Response{" "}
-                  <Link to="/store/approve/sparePart-purchasing-request">
+                  <Link to="/gd/request/get-accessory-request">
                     <Badge bg="info">see more</Badge>
                   </Link>
                 </p>
@@ -167,7 +167,7 @@ const GDHome = () => {
                 <p>
                   <Badge bg="danger">{dataCount2} </Badge> Store Waiting for
                   your Approval to Buy{" "}
-                  <Link to="/store/approve/sparePart-purchasing-request">
+                  <Link to="/gd/request/get-accessory-request">
                     <Badge bg="info">See more</Badge>
                   </Link>
                 </p>

@@ -59,36 +59,7 @@ const EmployeeHome = () => {
               right: "10px",
               zIndex: "9999",
             }}
-          >
-            <Alert variant="primary">
-              {dataCount !== 0 && (
-                <p>
-                  <Badge bg="danger">{dataCount}</Badge> SparePart Requests
-                  Pending for Your Response{" "}
-                  <Link to="/store/approve/sparePart-purchasing-request">
-                    <Badge bg="info">see more</Badge>
-                  </Link>
-                </p>
-              )}
-              {dataCount2 !== 0 && (
-                <p>
-                  <Badge bg="danger">{dataCount2} </Badge> Store Waiting for
-                  your Approval to Buy{" "}
-                  <Link to="/store/approve/sparePart-purchasing-request">
-                    <Badge bg="info">See more</Badge>
-                  </Link>
-                </p>
-              )}
-
-              <Button
-                className="ms-auto"
-                variant="primary"
-                onClick={handleDismiss}
-              >
-                Clear
-              </Button>
-            </Alert>
-          </Container>
+          ></Container>
         )}
       </div>
 
