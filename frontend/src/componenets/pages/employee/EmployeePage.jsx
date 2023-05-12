@@ -7,6 +7,7 @@ import SendComplain from "../../common/shared/sendComplain";
 import VehicleRequestListPage from "./VehicleRequests";
 import CreateVehicleRequestForm from "./CreateVehicleRequest";
 import EditRequest from "./EditVehicleRequest";
+import EmployeeHome from "./Home";
 const links = [
   {
     name: "Home",
@@ -27,6 +28,7 @@ const EmployeePage = () => {
     <div>
       <Navbar links={links} title="TMS" />
       <Routes>
+        <Route path="/" element={<EmployeeHome />} />
         <Route path="vehicle-request" element={<CreateVehicleRequestForm />} />
         <Route path="edit-vehicle-request/:id" element={<EditRequest />} />
         <Route path="request/vehicle" element={<VehicleRequestListPage />} />
