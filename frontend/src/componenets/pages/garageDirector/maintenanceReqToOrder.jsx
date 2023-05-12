@@ -97,6 +97,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
     try {
       const data = {
         ...selectedRequest,selectedMechanic,
+                birr:Birr,
                 plateNumber: selectedRequest?.plateNumber,
                 typeOfVehicle: typeOfVehicle,
                 assignedWorkflow: assignedWorkflow,
