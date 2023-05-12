@@ -95,22 +95,37 @@ const GDMaintenanceRequestTables = ({ filter }) => {
 
   const handleTransferOrder = async (request) => {
     try {
+      const expertData = {
+        expertId: selectedMechanic.id,
+        maintenanceWorkHours: maintenanceWorkHours,
+        paymentPerHour: paymentPerHour,
+      };
+  
       const data = {
-        ...selectedRequest,selectedMechanic,
-                birr:Birr,
-                plateNumber: selectedRequest?.plateNumber,
-                typeOfVehicle: typeOfVehicle,
-                assignedWorkflow: assignedWorkflow,
-                kilometerOnCounter:parseInt( kilometerOnCounter),
-                crashType: selectedRequest?.description,
-                reciever: selectedMechanic.firstName,
-                maintenanceTasks: [],
-                  };
+        ...selectedRequest,
+        plateNumber: selectedRequest?.plateNumber,
+        typeOfVehicle: typeOfVehicle,
+        assignedWorkflow: assignedWorkflow,
+        kilometerOnCounter: parseInt(kilometerOnCounter),
+        crashType: selectedRequest?.description,
+        reciever: selectedMechanic.firstName,
+        maintenanceTasks: [
+          {
+            made: "some-value", // Replace with the actual value
+            assignedExpert: expertData,
+            birr: Birr, // Assuming you want to use the same Birr value for the maintenance task
+            coin: Coin, // Assuming you want to use the same Coin value for the maintenance task
+          },
+        ],
+      };
+  
       await api.post(`/maintenanceOrder?isDeleted=false`, data);
-      await api.patch(`/Request/maintenance/${request._id}`, { status: "UnderMaintenance" });
+      await api.patch(`/Request/maintenance/${request._id}`, {
+        status: "UnderMaintenance",
+      });
       setTransferModal(false);
       setSuccess("Successfully Order Transferred");
-      
+  
       const response = await api.get("/Request/maintenance");
       setRequests(response.data.data);
     } catch (error) {
@@ -118,6 +133,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
       setError("Error comes");
     }
   };
+  
   const fetch = async () => {
     api
       .get("/VehicleRecord?select=plateNumber,type,assignedTo")
