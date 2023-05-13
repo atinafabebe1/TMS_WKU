@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Tab } from "react-bootstrap";
-import { Table, Button, Form, Row, Col } from "react-bootstrap";
+import { Table, Button, Card, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 import api from "../../../api/api";
@@ -135,6 +135,111 @@ const DetailVehicleInfo = ({ link }) => {
           <VehicleDisplayTable vehicles={deletedVehicles} />
         </Tab>
       </Tabs>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ paddingBottom: "70px" }}
+      >
+        <div className="p-4">
+          <Card>
+            <Card.Header style={{ backgroundColor: "dark" }}>
+              Type of Vehicle
+            </Card.Header>
+            <Card.Body>
+              <Card.Text>
+                <h6 style={{ textAlign: "center", color: "#4682B4" }}>
+                  Get Vehicles Classified By its Type
+                </h6>
+              </Card.Text>
+
+              <div className="text-center">
+                <Link to="/mechanic/maintenance/receive-maintenance-order">
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    style={{ width: "200px" }}
+                  >
+                    Get Vehicles
+                  </Button>
+                </Link>
+              </div>
+            </Card.Body>
+          </Card>
+        </div>
+        <div className="p-4">
+          <Card>
+            <Card.Header style={{ backgroundColor: "dark" }}>
+              Property Type
+            </Card.Header>
+            <Card.Body>
+              <Card.Text>
+                <h6 style={{ textAlign: "center", color: "#4682B4" }}>
+                  Get Vehicles Classified By its Property Type
+                </h6>
+              </Card.Text>
+
+              <div className="text-center">
+                <Link to="/mechanic/maintenance/receive-maintenance-order">
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    style={{ width: "200px" }}
+                  >
+                    Get Vehicles
+                  </Button>
+                </Link>
+              </div>
+            </Card.Body>
+          </Card>
+        </div>
+        <div className="p-4">
+          <Card>
+            <Card.Header>Vehicles Fuel Type</Card.Header>
+            <Card.Body>
+              <Card.Text>
+                <h6 style={{ textAlign: "center", color: "#4682B4" }}>
+                  Vehicles Classified By Fuel Type Its Use
+                </h6>
+              </Card.Text>
+
+              <div className="text-center">
+                <Link to="/mechanic/maintenance/approve-maintenance">
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    style={{ width: "200px" }}
+                  >
+                    Get Vehicles
+                  </Button>
+                </Link>
+              </div>
+            </Card.Body>
+          </Card>
+        </div>
+        <div className="p-4">
+          <Card>
+            <Card.Header>All</Card.Header>
+            <Card.Body>
+              <Card.Text>
+                <h6 style={{ textAlign: "center", color: "#4682B4" }}>
+                  All in One
+                </h6>
+              </Card.Text>
+
+              <div className="text-center">
+                <Link to="/mechanic/maintenance/send-maintenance-report">
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    style={{ width: "200px" }}
+                  >
+                    Get Vehicles
+                  </Button>
+                </Link>
+              </div>
+            </Card.Body>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };

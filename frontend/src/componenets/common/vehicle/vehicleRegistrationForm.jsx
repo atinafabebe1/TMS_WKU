@@ -13,16 +13,18 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   const [plateNumber, setPlateNumber] = useState("");
   const [typeOfFuel, setTypeOfFuel] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
-  const [purchasedDate, setPurchasedDate] = useState("");
   const [maxPerson, setMaxPerson] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
   const [maxLoad, setMaxLoad] = useState("");
   const [maxLitres, setMaxLitres] = useState("");
   const [proprietaryIdNumber, setProprietaryIdNumber] = useState("");
-  const [driver, setDriver] = useState(null);
   const [drivers, setDrivers] = useState("");
   const [vehicleImage, setVehicleImage] = useState(null);
   const [assignedTo, setAssignedTo] = useState(null);
   const [onMaintenance, setOnMaintenance] = useState(false);
+  const [propertyType, setPropertyType] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -41,15 +43,15 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       setPurchasePrice(data.purchasePrice);
       setPlateNumber(data.plateNumber);
       setTypeOfFuel(data.typeOfFuel);
-      setPurchasedDate(data.purchasedDate);
+      setPurchaseDate(data.purchaseDate);
       setMaxPerson(data.maxPerson);
       setMaxLoad(data.maxLoad);
       setMaxLitres(data.maxLitres);
-      setDriver(data.driver);
       setProprietaryIdNumber(data.proprietaryIdNumber);
       setVehicleImage(data.vehicleImage);
       setAssignedTo(data.assignedTo);
       setOnMaintenance(data.onMaintenance);
+      setPropertyType(data.propertyType);
       setItemsWithVehicle(data.itemsWithVehicle);
     } else {
       setModelNo("");
@@ -60,16 +62,16 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       setPurchasePrice("");
       setPlateNumber("");
       setTypeOfFuel("");
-      setPurchasedDate("");
+      setPurchaseDate(new Date().toISOString().slice(0, 10));
       setMaxPerson("");
       setMaxLoad("");
       setMaxLitres("");
-      setDriver("");
       setItemsWithVehicle([{ itemDetail: "", quantity: "" }]);
       setProprietaryIdNumber("");
       setVehicleImage(null);
       setAssignedTo(null);
       setOnMaintenance(false);
+      setPropertyType("");
     }
   }, [data]);
 
@@ -93,15 +95,15 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
     setPurchasePrice("");
     setPlateNumber("");
     setTypeOfFuel("");
-    setPurchasedDate("");
+    setPurchaseDate(new Date().toISOString().slice(0, 10));
     setMaxPerson("");
     setMaxLoad("");
     setMaxLitres("");
-    setDriver("");
     setProprietaryIdNumber("");
     setVehicleImage(null);
     setAssignedTo(null);
     setOnMaintenance(false);
+    setPropertyType("");
   };
 
   const handleSubmit = async () => {
@@ -114,16 +116,16 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       purchasePrice,
       plateNumber,
       typeOfFuel,
-      purchasedDate,
+      purchaseDate,
       maxPerson,
       maxLoad,
       maxLitres,
       itemsWithVehicle,
-      driver,
       proprietaryIdNumber,
       vehicleImage,
       assignedTo,
       onMaintenance,
+      propertyType,
     };
     if (data) {
       api
@@ -362,16 +364,16 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       Please provide a valid Price.
                     </Form.Control.Feedback>
                   </Form.Group>
-                  <Form.Group as={Col} controlId="duedate">
+                  <Form.Group as={Col} controlId="date">
                     <span> </span>
                     <Form.Label>Purchased Date</Form.Label>
 
                     <Form.Control
                       type="date"
-                      name="purchasedDate"
+                      name="purchaseDate"
                       required
-                      value={purchasedDate}
-                      onChange={(e) => setPurchasedDate(e.target.value)}
+                      value={purchaseDate}
+                      onChange={(e) => setPurchaseDate(e.target.value)}
                     />
                     <Form.Control.Feedback type="invalid">
                       Please provide a valid Date.
@@ -464,8 +466,28 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       onChange={(e) => setVehicleImage(e.target.value)}
                     />
                   </Form.Group>
+                  <Form.Group as={Col} controlId="role">
+                    <Form.Label className="font-weight-bold">
+                      Property Type
+                    </Form.Label>
+                    <Form.Control
+                      as="select"
+                      type="text"
+                      placeholder="Choose"
+                      required
+                      value={propertyType}
+                      onChange={(e) => setPropertyType(e.target.value)}
+                    >
+                      <option value="">Choose</option>
+                      <option value="University Owned">University Owned</option>
+                      <option value="Rent">Rent</option>
+                    </Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                      Please provide a valid Fuel Type.
+                    </Form.Control.Feedback>
+                  </Form.Group>
                 </Row>
-                <Form.Group as={Col} controlId="role">
+                {/* <Form.Group as={Col} controlId="role">
                   <Form.Label className="font-weight-bold">Driver</Form.Label>
                   <Form.Control
                     as="select"
@@ -504,7 +526,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Control.Feedback type="invalid">
                     Please provide a valid Driver.
                   </Form.Control.Feedback>
-                </Form.Group>
+                </Form.Group> */}
                 <h5>Items With Vehicle</h5>
                 <hr />
                 <Row>
