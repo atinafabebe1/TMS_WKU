@@ -1,182 +1,219 @@
-import api from "../../../api/api";
-import { Button, Modal, Form } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import { Container, Card, Col } from "react-bootstrap";
-
-const COMPLAIN_ENDPOINT = "/Complain";
-
-const Complain = () => {
-  const [complains, setComplains] = useState([]);
-  const [status, setStatus] = useState("pending");
-  const [isLoading, setIsLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedComplain, setSelectedComplain] = useState(null);
+import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
+import Loading from "../../common/Provider/LoadingProvider";
+import api from "../../../api/api";
+const ApproveFuelRequest = () => {
+  const [requests, setRequests] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [approvedAmount, setApprovedAmount] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [resources, setResources] = useState([]);
 
-  const getSentComplains = async () => {
-    try {
-      const response = await api.get(COMPLAIN_ENDPOINT);
-      setComplains(response.data.data);
+  const fetchReqestData = async () => {
+    await api.get(`/Request/fuel`).then((response) => {
+      console.log(response.data.data);
+      setRequests(response.data.data);
       setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
 
-  const handleResolve = (complain) => {
-    setSelectedComplain(complain);
+  useEffect(() => {
+    fetchReqestData();
+  }, []);
+  const fetchRequestData = async () => {
+    await api.get(`/Resources`).then((response) => {
+      console.log(response.data.data);
+      setResources(response.data.data);
+    });
+  };
+
+  useEffect(() => {
+    fetchRequestData();
+  }, []);
+
+  const handleShowModal = (request) => {
+    setSelectedRequest(request);
     setShowModal(true);
   };
 
   const handleModalClose = () => {
-    setSelectedComplain(null);
+    setSelectedRequest(null);
     setShowModal(false);
   };
 
-  const handleResolved = () => {
-    const updatedComplain = { ...selectedComplain, status: "resolved" };
-    api
-      .put(`/Complain/${selectedComplain.id}`, updatedComplain)
-      .then(() => {
-        setSelectedComplain(null);
+  const handleApprove = async () => {
+    const updatedRequest = {
+      ...selectedRequest,
+      approvedAmount: parseInt(approvedAmount),
+      price: parseInt(price),
+      status: "Approved",
+    };
+    await api
+      .put(`/Request/fuel/${selectedRequest._id}`, updatedRequest)
+      .then((response) => {
+        setSelectedRequest(updatedRequest);
         setShowModal(false);
-        setStatus("resolved");
-        setComplains((prevComplains) =>
-          prevComplains.map((complain) =>
-            complain.id === updatedComplain.id ? updatedComplain : complain
-          )
-        );
       })
       .catch((error) => {
-        console.error("Error updating status:", error);
+        console.log(error);
       });
   };
 
-  const handleNext = () => {
-    setStartIndex((prevIndex) => prevIndex + 3);
-  };
-
-  const handlePrevious = () => {
-    setStartIndex((prevIndex) => Math.max(prevIndex - 3, 0));
-  };
-
-  const handleSearchTermChange = (event) => {
+  const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredComplains = complains.filter((complain) => {
-    if (
-      complain.user &&
-      complain.user.toLowerCase().includes(searchTerm.toLowerCase())
-    ) {
-      return true;
-    }
-    return false;
+  const filteredRequests = requests.filter((request) => {
+    const plateNumber =
+      typeof request.plateNumber === "string" ? request.plateNumber : "";
+    return (
+      plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.status.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
+  const recentResources = resources.reduce((groups, resource) => {
+    const key = resource.type;
+    if (
+      !groups[key] ||
+      new Date(groups[key].createdAt) < new Date(resource.createdAt)
+    ) {
+      groups[key] = {
+        type: key,
+        amount: resource.amount,
+        unitPrice: resource.unitPrice,
+        totalPrice: resource.totalPrice,
+        createdAt: resource.createdAt,
+      };
+    }
+    return groups;
+  }, {});
 
-  useEffect(() => {
-    getSentComplains();
-  }, []);
+  // convert the object back to an array
+  const recentResourcesArray = Object.values(recentResources);
+
+  // sort the array by createdAt date in descending order
+  recentResourcesArray.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
 
   return (
-    <div>
-      <div className="table-responsive p-2 my-3">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2>Complain List</h2>
-        </div>
-        <div style={{ maxWidth: "700px", width: "100%" }}>
-          <input
-            type="text"
-            placeholder="Search by user"
-            value={searchTerm}
-            onChange={handleSearchTermChange}
-            className="form-control my-2"
-          />
-        </div>
-        {isLoading && <h3>Loading...</h3>}
-        {complains.slice(startIndex, startIndex + 3).map((complain) => (
-          <Container className="p-4" key={complain.id}>
-            <h6>
-              <strong>{complain.user}</strong>
-            </h6>
-            <Col style={{ width: "100%" }}>
-              <Card>
-                <Card.Body>
-                  <Card.Title>Title: {complain.title}</Card.Title>
-                  <Card.Text>Description: {complain.content}</Card.Text>
-                  <Card.Text>Status: {complain.status}</Card.Text>
+    <div className="p-4">
+      <Row className="mb-4">
+        <Col>
+          <h3>Fuel Requests</h3>
+        </Col>
+      </Row>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h4>Current Cost Statistics</h4>
+      </div>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Total Amount</th>
+            <th>Unit Price</th>
+            <th>Total Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {recentResourcesArray.map((resource) => (
+            <tr key={resource.type}>
+              <td>{resource.type}</td>
+              <td>{resource.amount}</td>
+              <td>{resource.unitPrice}</td>
+              <td>{resource.totalPrice}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+      <h2>Next</h2>
+      <Table striped bordered hover responsive className="table-sm">
+        <thead>
+          <tr>
+            <th>Plate Number</th>
+            <th>Type of Fuel</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
+            <tr key={request._id}>
+              <td>{request.plateNumber}</td>
+              <td>{request.typeOfFuel}</td>
+              <td>
+                {request.status === "Waiting Approval" && (
                   <Button
-                    variant="success"
-                    className="btn-sm mx-2"
-                    onClick={() => handleResolve(complain)}
-                    disabled={complain.status === "resolved"}
+                    className="btn btn-sm"
+                    variant="primary"
+                    onClick={() => handleShowModal(request)}
                   >
-                    Resolve
+                    Approve
                   </Button>
-                  <Button variant="danger" className="btn-sm">
-                    Reject
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Container>
-        ))}
-      </div>
-      <div className="d-flex justify-content-end align-items-center w-100">
-        <Button
-          variant="primary"
-          className="btn-sm mx-2"
-          onClick={handlePrevious}
-          disabled={startIndex === 0}
-          block
-        >
-          Previous
-        </Button>
-        <Button
-          variant="primary"
-          className="btn-sm mx-2"
-          onClick={handleNext}
-          disabled={startIndex + 3 >= complains.length}
-          block
-        >
-          Next
-        </Button>
-      </div>
-
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title>
-            <h5>
-              <strong>Resolve Complain</strong>
-            </h5>
-          </Modal.Title>
+          <Modal.Title>Approve Fuel Request</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Group as={Col} controlId="cc">
-            <span> </span>
-            <Form.Label>Response Message</Form.Label>
-            <Form.Control
-              as={"textarea"}
-              type="text"
-              minLength={3}
-              maxLength={700}
-            />
-          </Form.Group>
+          <p>
+            <strong>Requested Amount: </strong> {selectedRequest?.requestAmount}{" "}
+            Litres
+          </p>
+          <p>
+            <strong>Type Of Fuel: </strong> {selectedRequest?.typeOfFuel} Litres
+          </p>
+          <Form>
+            <Form.Group as={Col}>
+              <Form.Label>Add Approved Amount</Form.Label>
+              <Form.Control
+                type="number"
+                value={approvedAmount}
+                onChange={(event) => setApprovedAmount(event.target.value)}
+                required
+                className="mb-3"
+              />
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid Amount.
+              </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group as={Col}>
+              <Form.Label>Add Total price</Form.Label>
+              <Form.Control
+                type="number"
+                value={price}
+                onChange={(event) => setPrice(event.target.value)}
+                required
+                className="mb-3"
+              />
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid Quantity.
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="success" className="btn-sm" onClick={handleResolved}>
-            Resolve
-          </Button>
-          <Button variant="danger" className="btn-sm">
-            Reject
+          <Button
+            variant="secondary"
+            className="btn btn-sm"
+            onClick={handleModalClose}
+          >
+            Cancel
           </Button>
           <Button
             variant="secondary"
-            className="btn-sm"
-            onClick={handleModalClose}
+            className="btn btn-sm"
+            onClick={() => handleApprove(selectedRequest)}
           >
-            Close
+            Approve
           </Button>
         </Modal.Footer>
       </Modal>
@@ -184,4 +221,4 @@ const Complain = () => {
   );
 };
 
-export default Complain;
+export default ApproveFuelRequest;
