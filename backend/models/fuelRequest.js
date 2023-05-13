@@ -58,7 +58,13 @@ const FuelRequestSchema = new Schema(
     status: {
       type: String,
       default: "Waiting Approval",
-      enum: ["Waiting Approval", "Rejected", "Approved", "Completed"],
+      enum: [
+        "Waiting Approval",
+        "Rejected",
+        "Approved",
+        "Completed",
+        "Received",
+      ],
     },
     isDeleted: {
       type: Boolean,
