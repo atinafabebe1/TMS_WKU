@@ -3,7 +3,7 @@ import MaintenanceRequestTables from "../../common/maintenance/maintenancereques
 import { Tabs, Tab } from "react-bootstrap";
 
 const HODmaintenanceRequestPage = () => {
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState("pending");
 
   const handleFilter = (eventKey) => {
     setFilter(eventKey);
@@ -19,7 +19,6 @@ const HODmaintenanceRequestPage = () => {
         onSelect={handleFilter}
         id="maintenance-request-tabs"
       >
-        <Tab eventKey="all" title="All"></Tab>
         <Tab eventKey="pending" title="Pending"></Tab>
         <Tab eventKey="in-progress" title="In Progress"></Tab>
         <Tab eventKey="completed" title="Completed"></Tab>

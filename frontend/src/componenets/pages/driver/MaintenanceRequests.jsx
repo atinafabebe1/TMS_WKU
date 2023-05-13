@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ErrorProvider from "../../common/Provider/ErrorProvider";
 import SuccessProvider from "../../common/Provider/SuccessProvider";
+import Loading from "../../common/Provider/LoadingProvider";
 
 import {
   Table,
@@ -19,10 +20,13 @@ import api from "../../../api/api";
 const MaintenanceRequestPage = ({ filter }) => {
   const [requests, setRequests] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [startIndex, setStartIndex] = useState(0);
+
 
 
   useEffect(() => {
@@ -32,12 +36,19 @@ const MaintenanceRequestPage = ({ filter }) => {
       .then((response) => {
         console.log(response.data.data);
         setRequests(response.data.data);
+        setIsLoading(false);
       })
       .catch((error) =>
         console.error("Error fetching vehicle requests:", error)
       );
   }, []);
+  const handleNext = () => {
+    setStartIndex((prevIndex) => prevIndex + 7);
+  };
 
+  const handlePrevious = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
+  };
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -117,6 +128,7 @@ const MaintenanceRequestPage = ({ filter }) => {
         {error && <ErrorProvider error={error} />}
         {success && <SuccessProvider success={success} />}
       </Form>
+      {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
@@ -212,6 +224,26 @@ const MaintenanceRequestPage = ({ filter }) => {
           )}
         </Modal.Footer>
         </Modal>
+        <div className="d-flex justify-content-center align-items-center w-100">
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handlePrevious}
+          disabled={startIndex === 0}
+          block
+        >
+          Previous
+        </Button>
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handleNext}
+          disabled={startIndex + 7 >= requests.length}
+          block
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

@@ -18,6 +18,7 @@ const MaintenanceRequestSchema = new Schema(
     plateNumber: {
       type: String,
       required: true,
+      unique: true,
       maxlength: 10,
       validate: {
         validator: function (v) {
@@ -87,7 +88,7 @@ const MaintenanceRequestSchema = new Schema(
 MaintenanceRequestSchema.pre("save", async function (next) {
   const vehicle = await this.model("VehicleRecord").findOne({
     plateNumber: this.plateNumber,
-    isDeleted: true,
+    isDeleted: false,
   });
   if (!vehicle) {
     return next(

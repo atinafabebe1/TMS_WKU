@@ -129,7 +129,7 @@ const MaintenanceOrderSchema = new Schema(
     },
     crashType: {
       type: String,
-      required: true,
+      //required: true,
       enum: ["collision", "rollover", "fire", "theft"],
     },
     maintenanceTasks: {
@@ -142,7 +142,7 @@ const MaintenanceOrderSchema = new Schema(
     status: {
       type: String,
       default: "pending",
-      enum: ["pending", "in-progress", "completed", "canceled"],
+      enum: ["pending","UnderMaintenance", "in-progress", "completed", "canceled"],
       validate: {
         validator: function (v) {
           if (this.isNew && v !== "pending") {

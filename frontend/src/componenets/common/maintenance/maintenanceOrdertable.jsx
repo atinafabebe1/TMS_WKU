@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import axios from "axios";
 import api from "../../../api/api";
-const MaintenanceOrderTable = () => {
+const MaintenanceOrderTable = (filter) => {
   const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -106,11 +106,6 @@ useEffect(() => {
 
   return (
     <div className="p-4">
-      <Row className="mb-4">
-        <Col>
-          <h1 align="center">Maintenance Orders</h1>
-        </Col>
-      </Row>
       <Form>
         <Row className="mb-3">
           <Col>

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import MaintenanceRequestPage from "./MaintenanceRequests";
+import MaintenanceOrderTable from "../../common/maintenance/maintenanceOrdertable";
 import {Tabs, Tab } from "react-bootstrap";
 
-const DrivermaintenanceRequestPage = () => {
+const MechanicMaintenanceOrder = () => {
   const [filter, setFilter] = useState("all");
 
   const handleFilter = (eventKey) => {
@@ -12,16 +12,14 @@ const DrivermaintenanceRequestPage = () => {
   return (
     <>
             <div className="text-center">
-        <h1>Maintenance Requests</h1>
+        <h1>Maintenance Orders</h1>
       </div>
       <Tabs
         activeKey={filter}
         onSelect={handleFilter}
         id="maintenance-request-tabs"
       >
-        <Tab eventKey="all" title="All">
-        </Tab>
-        <Tab eventKey="pending" title="Pending">
+         <Tab eventKey="pending" title="Pending">
         </Tab>
         <Tab eventKey="in-progress" title="In Progress">
         </Tab>
@@ -33,9 +31,9 @@ const DrivermaintenanceRequestPage = () => {
         </Tab>
       </Tabs>
 
-      <MaintenanceRequestPage filter={filter} />
+      <MaintenanceOrderTable filter={filter} />
     </>
   );
 };
 
-export default DrivermaintenanceRequestPage;
+export default MechanicMaintenanceOrder;

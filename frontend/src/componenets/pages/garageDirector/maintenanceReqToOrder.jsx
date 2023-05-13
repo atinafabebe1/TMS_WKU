@@ -3,8 +3,11 @@ import { Table, Button, Form, Modal,Row,Col,FormControl,FormLabel,FormGroup } fr
 import api from "../../../api/api";
 import ErrorProvider from "../../common/Provider/ErrorProvider";
 import SuccessProvider from "../../common/Provider/SuccessProvider";
+import Loading from "../../common/Provider/LoadingProvider";
 
 const GDMaintenanceRequestTables = ({ filter }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [startIndex, setStartIndex] = useState(0);
   const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -14,10 +17,6 @@ const GDMaintenanceRequestTables = ({ filter }) => {
   const [mechanics,setMechanics]=useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const [Birr,setBirr]=useState("");
-  const [Coin,setCoin]=useState("");
-  const [paymentPerHour,setPaymentPerHour]=useState("");
-  const [maintenanceWorkHours,setMaintenanceWorkHours]=useState("");
   const [typeOfVehicle,setTypeOfVehicle]=useState(false);
   const [assignedWorkflow,setAssignedWorkflow]=useState(false); 
   const [kilometerOnCounter,setKilometerOncounter]=useState(false);
@@ -33,12 +32,19 @@ const GDMaintenanceRequestTables = ({ filter }) => {
       .get("/Request/maintenance")
       .then((response) => {
         setRequests(response.data.data);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching vehicle requests:", error);
       });
   }, []);
+  const handleNext = () => {
+    setStartIndex((prevIndex) => prevIndex + 7);
+  };
 
+  const handlePrevious = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
+  };
   const handleRejectClick = async (request) => {
     const reason = prompt("Please enter a reason for rejection:");
     if (!reason) return; // If the user cancels the prompt, do nothing
@@ -95,12 +101,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
 
   const handleTransferOrder = async (request) => {
     try {
-      const expertData = {
-        expertId: selectedMechanic.id,
-        maintenanceWorkHours: maintenanceWorkHours,
-        paymentPerHour: paymentPerHour,
-      };
-  
+ 
       const data = {
         ...selectedRequest,
         plateNumber: selectedRequest?.plateNumber,
@@ -109,14 +110,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
         kilometerOnCounter: parseInt(kilometerOnCounter),
         crashType: selectedRequest?.description,
         reciever: selectedMechanic.firstName,
-        maintenanceTasks: [
-          {
-            made: "some-value", // Replace with the actual value
-            assignedExpert: expertData,
-            birr: Birr, // Assuming you want to use the same Birr value for the maintenance task
-            coin: Coin, // Assuming you want to use the same Coin value for the maintenance task
-          },
-        ],
+     
       };
   
       await api.post(`/maintenanceOrder?isDeleted=false`, data);
@@ -174,6 +168,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
         {error && <ErrorProvider error={error} />}
         {success && <SuccessProvider success={success} />}
       </Form>
+      {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
@@ -367,42 +362,6 @@ const GDMaintenanceRequestTables = ({ filter }) => {
         );
       })}
 </select>
-<Form.Group as={Col} controlId="maintenanceWorkHours">
-    <Form.Label>Maintenance Work Hours</Form.Label>
-    <Form.Control
-      type="number"
-      value={maintenanceWorkHours} // Assuming you want to display the maintenance work hours from the first maintenance task
-      onChange={(e) => setMaintenanceWorkHours(e.target.value)}
-      
-    />
-  </Form.Group>
-  <Form.Group as={Col} controlId="paymentPerHour">
-    <Form.Label>Payment Per Hour</Form.Label>
-    <Form.Control
-      type="number"
-      value={paymentPerHour} // Assuming you want to display the payment per hour from the first maintenance task
-      onChange={(e) => setPaymentPerHour(e.target.value)}
-      
-    />
-  </Form.Group>
-  <Form.Group as={Col} controlId="birr">
-    <Form.Label>Birr</Form.Label>
-    <Form.Control
-      type="number"
-      value={Birr} // Assuming you want to display the birr value from the first maintenance task
-      onChange={(e) => setBirr(e.target.value)}
-      
-    />
-  </Form.Group>
-  <Form.Group as={Col} controlId="coin">
-    <Form.Label>Coin</Form.Label>
-    <Form.Control
-      type="number"
-      value={Coin} // Assuming you want to display the coin value from the first maintenance task
-      onChange={(e) => setCoin(e.target.value)}
-      
-    />
-  </Form.Group>
 
 </Form>
   </Modal.Body>
@@ -425,7 +384,26 @@ const GDMaintenanceRequestTables = ({ filter }) => {
 </Modal>
 
 
-
+<div className="d-flex justify-content-center align-items-center w-100">
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handlePrevious}
+          disabled={startIndex === 0}
+          block
+        >
+          Previous
+        </Button>
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handleNext}
+          disabled={startIndex + 7 >= requests.length}
+          block
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };
