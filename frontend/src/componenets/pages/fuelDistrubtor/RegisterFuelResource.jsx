@@ -57,6 +57,9 @@ const RegisterResourceForm = () => {
               <option value="Coupon">Coupon</option>
               <option value="Fuel">Fuel</option>
               <option value="Cash">Cash</option>
+              <option value="Benzene">Benzene</option>
+              <option value="Diesel">Diesel</option>
+              <option value="Fren Oil">Fren Oil</option>
             </Form.Control>
           </Form.Group>
           <Form.Group

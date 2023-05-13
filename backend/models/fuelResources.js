@@ -5,7 +5,7 @@ const ResourceSchema = new Schema(
   {
     type: {
       type: String,
-      enum: ["Coupon", "Fuel", "Cash"],
+      enum: ["Coupon", "Fuel", "Cash", "Benzene", "Diesel", "Fren Oil"],
       required: true,
       unique: true,
     },

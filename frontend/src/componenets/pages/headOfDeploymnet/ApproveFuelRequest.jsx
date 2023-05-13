@@ -8,9 +8,13 @@ const ApproveFuelRequest = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showDataModal, setShowDataModal] = useState(false);
   const [approvedAmount, setApprovedAmount] = useState(0);
   const [price, setPrice] = useState(0);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [resources, setResources] = useState([]);
+  const [error, setError] = useState();
+  const [success, setSuccess] = useState();
 
   const fetchReqestData = async () => {
     await api.get(`/Request/fuel`).then((response) => {
@@ -23,7 +27,16 @@ const ApproveFuelRequest = () => {
   useEffect(() => {
     fetchReqestData();
   }, []);
+  const fetchRequestData = async () => {
+    await api.get(`/Resources`).then((response) => {
+      console.log(response.data.data);
+      setResources(response.data.data);
+    });
+  };
 
+  useEffect(() => {
+    fetchRequestData();
+  }, []);
   const handleShowModal = (request) => {
     setSelectedRequest(request);
     setShowModal(true);
@@ -33,7 +46,15 @@ const ApproveFuelRequest = () => {
     setSelectedRequest(null);
     setShowModal(false);
   };
+  const handleShowDataModal = () => {
+    setSelectedRequest();
+    setShowDataModal(true);
+  };
 
+  const handleDataModalClose = () => {
+    setSelectedRequest(null);
+    setShowDataModal(false);
+  };
   const handleNext = () => {
     setStartIndex((prevIndex) => prevIndex + 7);
   };
@@ -61,6 +82,14 @@ const ApproveFuelRequest = () => {
       price: parseInt(price),
       status: "Approved",
     };
+    const data = {
+      ...selectedRequest,
+      type: matchingResource.type,
+      amount: parseInt(approvedAmount),
+      unitPrice: parseInt(matchingResource.unitPrice),
+      totalPrice:
+        parseFloat(approvedAmount) * parseFloat(matchingResource.unitPrice),
+    };
     await api
       .put(`/Request/fuel/${selectedRequest._id}`, updatedRequest)
       .then((response) => {
@@ -70,6 +99,14 @@ const ApproveFuelRequest = () => {
       .catch((error) => {
         console.log(error);
       });
+    try {
+      await api.post("/Resources", data);
+      setSuccess("Resource registered successfully!");
+      console.log("Success");
+    } catch (err) {
+      setError(err.message);
+      console.error(err.message);
+    }
   };
 
   const handleSearch = (event) => {
@@ -85,8 +122,66 @@ const ApproveFuelRequest = () => {
     );
   });
 
+  // group resources by type and calculate the total attributes
+  const groupedResources = resources.reduce((groups, resource) => {
+    const key = resource.type;
+    if (!groups[key]) {
+      groups[key] = {
+        type: key,
+        amount: 0,
+        unitPrice: 0,
+        totalPrice: 0,
+      };
+    }
+    groups[key].amount += resource.amount;
+    groups[key].unitPrice += resource.unitPrice;
+    groups[key].totalPrice += resource.totalPrice;
+    return groups;
+  }, {});
+
+  // convert the object back to an array
+  const groupedResourcesArray = Object.values(groupedResources);
+
+  const recentResources = resources.reduce((groups, resource) => {
+    const key = resource.type;
+    if (
+      !groups[key] ||
+      new Date(groups[key].createdAt) < new Date(resource.createdAt)
+    ) {
+      groups[key] = {
+        type: key,
+        amount: resource.amount,
+        unitPrice: resource.unitPrice,
+        totalPrice: resource.totalPrice,
+        createdAt: resource.createdAt,
+      };
+    }
+    return groups;
+  }, {});
+  const recentResourcesArray = Object.values(recentResources);
+  recentResourcesArray.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
+  const matchingResource = recentResourcesArray.find(
+    (resource) => resource.type === selectedRequest?.typeOfFuel
+  );
+  const matchingResourceAmount = groupedResourcesArray.find(
+    (resource) => resource.type === selectedRequest?.typeOfFuel
+  );
+
   return (
     <div className="p-4">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <Button
+          className="btn btn-sm"
+          variant="primary"
+          onClick={() => handleShowDataModal()}
+        >
+          Show Current Fuel Cost Statistics
+        </Button>
+      </div>
+
       <Row className="mb-4">
         <Col>
           <h3>Fuel Requests</h3>
@@ -166,13 +261,36 @@ const ApproveFuelRequest = () => {
             <strong>Requested Amount: </strong> {selectedRequest?.requestAmount}{" "}
             Litres
           </p>
+          <p>
+            <strong>Type Of Fuel: </strong> {selectedRequest?.typeOfFuel}
+          </p>
+
+          {matchingResource && (
+            <p>
+              <strong>{matchingResource.type} Unit Price: </strong>
+              {matchingResource.unitPrice} Per Litres
+            </p>
+          )}
+
+          {matchingResourceAmount && (
+            <p>
+              <strong>
+                {matchingResourceAmount.type} Available on Stock:{" "}
+              </strong>
+              {matchingResourceAmount.amount} Litres
+            </p>
+          )}
           <Form>
             <Form.Group as={Col}>
               <Form.Label>Add Approved Amount</Form.Label>
               <Form.Control
                 type="number"
                 value={approvedAmount}
-                onChange={(event) => setApprovedAmount(event.target.value)}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setApprovedAmount(value);
+                  setPrice(value * matchingResource.unitPrice);
+                }}
                 required
                 className="mb-3"
               />
@@ -181,10 +299,11 @@ const ApproveFuelRequest = () => {
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col}>
-              <Form.Label>Add Total price</Form.Label>
+              <Form.Label>Total price</Form.Label>
               <Form.Control
                 type="number"
                 value={price}
+                disabled
                 onChange={(event) => setPrice(event.target.value)}
                 required
                 className="mb-3"
@@ -212,7 +331,46 @@ const ApproveFuelRequest = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <div className="d-flex justify-content-center align-items-center w-100">
+      <Modal show={showDataModal} onHide={handleDataModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {" "}
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h4>Current Cost Statistics</h4>
+            </div>
+          </Modal.Title>
+        </Modal.Header>
+
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Unit Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {recentResourcesArray.map((resource) => (
+              <tr key={resource.type}>
+                <td>{resource.type}</td>
+                <td>{resource.unitPrice}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            className="btn btn-sm"
+            onClick={handleDataModalClose}
+          >
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <div
+        className="d-flex justify-content-center align-items-center w-100"
+        style={{ paddingBottom: "70px" }}
+      >
         <Button
           variant="primary"
           className="btn-sm mx-2"
