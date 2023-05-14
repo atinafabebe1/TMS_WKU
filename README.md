@@ -9,7 +9,7 @@ WKU-TMS is a Transport Management System for College that is built with MongoDB,
 ## Installation
 To run this app locally, you need to have Node.js and MongoDB installed on your machine. Then follow these steps:
 
-- Clone this repository: git clone https://github.com/atinafabebe1/WKU-TMS.git
+- Clone this repository: git clone https://github.com/atinafabebe1/TMS_WKU.git
 - Navigate to the project folder: cd TMS_WkU
 - Navigate to the backend folder: cd backend
 - Install the dependencies: npm install
