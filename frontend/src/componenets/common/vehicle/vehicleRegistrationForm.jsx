@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Container, Modal } from "react-bootstrap";
 import SuccessProvider from "../Provider/SuccessProvider";
 import ErrorProvider from "../Provider/ErrorProvider";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../../../api/api";
 
 const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
@@ -32,6 +33,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   const [itemsWithVehicle, setItemsWithVehicle] = useState([
     { itemDetail: "", quantity: "" },
   ]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data) {
@@ -596,7 +598,12 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             {success && <SuccessProvider success={success} />}
 
             <div className="d-flex justify-content-end my-4">
-              <Button className="btn-secondary me-2">Cancel</Button>
+              <Button
+                className="btn-secondary me-2"
+                onClick={() => navigate(`/hd/vehicles`)}
+              >
+                Cancel
+              </Button>
               <Button
                 type="reset"
                 className="btn-danger me-2"
