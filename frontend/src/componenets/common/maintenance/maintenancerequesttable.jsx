@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Modal,Row,Col } from "react-bootstrap";
 import api from "../../../api/api";
-
+import Loading from "../Provider/LoadingProvider";
 const MaintenanceRequestTables = ({ filter }) => {
+  const [startIndex, setStartIndex] = useState(0);
+  const [isLoading, setIsLoading]=useState(true);
   const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -13,12 +15,19 @@ const MaintenanceRequestTables = ({ filter }) => {
       .get("/Request/maintenance")
       .then((response) => {
         setRequests(response.data.data);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching vehicle requests:", error);
       });
   }, []);
-
+  const handleNext = () => {
+    setStartIndex((prevIndex) => Math.min(prevIndex + 7, requests.length - 7));
+  };
+  const handlePrevious = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
+  };
+  
   const handleRejectClick = async (request) => {
     const reason = prompt("Please enter a reason for rejection:");
     if (!reason) return; // If the user cancels the prompt, do nothing
@@ -94,6 +103,7 @@ const MaintenanceRequestTables = ({ filter }) => {
 
         </Row>
       </Form>
+      {isLoading && <Loading/> }
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
@@ -104,7 +114,7 @@ const MaintenanceRequestTables = ({ filter }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredRequests.map((request) => (
+          {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
@@ -181,7 +191,27 @@ const MaintenanceRequestTables = ({ filter }) => {
     )}
   </Modal.Footer>
 </Modal>
+<div className="d-flex justify-content-center align-items-center w-100">
+<Button
+  variant="primary"
+  className="btn-sm mx-2"
+  onClick={handlePrevious}
+  disabled={startIndex === 0}
+  block
+>
+  Previous
+</Button>
+<Button
+  variant="primary"
+  className="btn-sm mx-2"
+  onClick={handleNext}
+  disabled={startIndex + 7 >= filteredRequests.length}
+  block
+>
+  Next
+</Button>
 
+      </div>
     </div>
   );
 };
