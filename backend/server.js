@@ -32,6 +32,7 @@ const monthlyReport = require("./routes/monthlyReport");
 const Complain = require("./routes/complains");
 const DailyFuelCost = require("./routes/dailyFuelCost");
 const WorkdayScehdule = require("./routes/serviceSchedule");
+const FuelResource = require("./routes/fuelResource");
 const { generateMonthlyReport } = require("./controllers/monthlyReport");
 
 const mongoose = require("mongoose");
@@ -93,6 +94,7 @@ app.use("/MaintenanceReport", MaintenanceReport);
 app.use("/Report", monthlyReport, DailyFuelCost);
 app.use("/Complain", Complain);
 app.use("/Schedule", WorkdayScehdule);
+app.use("/Resources", FuelResource);
 
 app.use(errorHandler);
 

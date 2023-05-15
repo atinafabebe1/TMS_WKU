@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Table, Button, Row, Col, Form } from "react-bootstrap";
+import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import Loading from "../../common/Provider/LoadingProvider";
 import api from "../../../api/api";
 
@@ -9,6 +9,9 @@ const FuelRequestListPage = () => {
   const [startIndex, setStartIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
   const navigate = useNavigate();
 
   const fetchReqestData = async () => {
@@ -23,6 +26,16 @@ const FuelRequestListPage = () => {
     fetchReqestData();
   }, []);
 
+  const handleShowModal = (request) => {
+    setSelectedRequest(request);
+    setShowModal(true);
+  };
+
+  const handleModalClose = () => {
+    setSelectedRequest(null);
+    setShowModal(false);
+  };
+
   const handleNext = () => {
     setStartIndex((prevIndex) => prevIndex + 7);
   };
@@ -31,17 +44,21 @@ const FuelRequestListPage = () => {
     setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
   };
 
-  const handleDeleteRequest = (id) => {
-    // Delete the SparePart request with the specified ID from your server API
-    api
-      .delete(`/Request/fuel/${id}`)
-      .then(() => {
-        // Filter out the deleted request from the local state
-        setRequests(requests);
+  const handleApprove = async () => {
+    const updatedRequest = {
+      ...selectedRequest,
+      status: "Received",
+    };
+
+    await api
+      .put(`/Request/fuel/${selectedRequest._id}`, updatedRequest)
+      .then((response) => {
+        setSelectedRequest(updatedRequest);
+        setShowModal(false);
       })
-      .catch((error) =>
-        console.error(`Error deleting spare Part request with ID ${id}:`, error)
-      );
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const handleSearch = (event) => {
@@ -62,7 +79,7 @@ const FuelRequestListPage = () => {
           <h3>Fuel Requests</h3>
         </Col>
         <Col className="text-end">
-          <Link to="/mechanic/request/create-accessory">
+          <Link to="/driver/request/create-fuel-request">
             <Button variant="primary">New Request</Button>
           </Link>
         </Col>
@@ -98,70 +115,78 @@ const FuelRequestListPage = () => {
               <td>{request.currentRecordOnCounter}</td>
               <td>{request.status}</td>
               <td>
-                {request.status === "canceled" && (
+                {request.status === "Canceled" && (
                   <Button
                     className="btn btn-sm"
                     variant="secondary"
                     onClick={() =>
                       navigate(
-                        `/mechanic/request/edit-vehicle-request/${request._id}`
+                        `/driver/request/edit-vehicle-request/${request._id}`
                       )
                     }
                   >
                     Resubmit
                   </Button>
                 )}
-                {request.status === "completed" && (
+                {request.status === "Completed" && (
                   <Button
                     className="btn btn-sm"
                     variant="success"
-                    disabled
-                    onClick={() =>
-                      navigate(
-                        `/mechanic/request/edit-vehicle-request/${request._id}`
-                      )
-                    }
+                    onClick={() => handleShowModal(request)}
                   >
-                    Completed
+                    Receive
                   </Button>
                 )}
-                {request.status === "in-progress" && (
-                  <Button className="btn btn-sm" variant="success" disabled>
-                    Waiting for Store
+                {request.status === "Waiting Approval" && (
+                  <Button className="btn btn-sm" variant="warning" disabled>
+                    Waiting for Approval
                   </Button>
                 )}
-                {request.status === "approved" && (
+                {request.status === "Approved" && (
                   <Button className="btn btn-sm" variant="success" disabled>
                     Approved
                   </Button>
                 )}
-                {request.status === "pending" && (
-                  <div>
-                    <Button
-                      className="btn btn-sm"
-                      variant="primary"
-                      onClick={() =>
-                        navigate(
-                          `/mechanic/request/edit-vehicle-request/${request._id}`
-                        )
-                      }
-                    >
-                      Edit
-                    </Button>{" "}
-                    <Button
-                      className="btn btn-sm"
-                      variant="danger"
-                      onClick={() => handleDeleteRequest(request._id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
+                {request.status === "Received" && (
+                  <Button className="btn btn-sm" variant="success" disabled>
+                    Received
+                  </Button>
+                )}
+                {request.status === "Rejected" && (
+                  <Button className="btn btn-sm" variant="danger" disabled>
+                    Request Rejected
+                  </Button>
                 )}
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+      <Modal show={showModal} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Approve You Have Received Fuel, Are You Sure?</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            className="btn btn-sm"
+            onClick={handleModalClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="success"
+            className="btn btn-sm"
+            onClick={() => handleApprove(selectedRequest)}
+          >
+            Approve
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <div className="d-flex justify-content-center align-items-center w-100">
         <Button
           variant="primary"

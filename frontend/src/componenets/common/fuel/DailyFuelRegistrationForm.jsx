@@ -9,6 +9,7 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
   const [mode, setMode] = useState("");
   const [typeOfFuel, setTypeOfFuel] = useState("");
   const [ammount, setAmmount] = useState("");
+  const [status, setStatus] = useState("Completed");
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -20,6 +21,7 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
       setTypeOfFuel(data.typeOfFuel);
       setMode(data.mode);
       setAmmount(data.ammount);
+      setAmmount(data.status);
     } else {
       setPlateNumber("");
       setTypeOfFuel("");
@@ -53,6 +55,7 @@ const DailyFuelRegistrationForm = ({ title, data, onSubmit }) => {
       typeOfFuel,
       mode,
       ammount,
+      status,
     };
     if (data) {
       try {
