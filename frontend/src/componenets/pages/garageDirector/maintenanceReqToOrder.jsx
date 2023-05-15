@@ -99,23 +99,22 @@ const GDMaintenanceRequestTables = ({ filter }) => {
     return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const handleTransferOrder = async (request) => {
+  const handleTransferOrder = async () => {
     try {
-      const data = {
-        ...selectedRequest,selectedMechanic,
-                plateNumber: selectedRequest?.plateNumber,
-                typeOfVehicle: typeOfVehicle,
-                assignedWorkflow: assignedWorkflow,
-                kilometerOnCounter:parseInt( kilometerOnCounter),
-                crashType: selectedRequest?.description,
-                reciever: selectedMechanic.firstName,
-                maintenanceTasks: [],
-                  };
-      await api.post(`/maintenanceOrder?isDeleted=false`, data);
-      await api.patch(`/Request/maintenance/${request._id}`, { status: "UnderMaintenance" });
-      setTransferModal(false);
-      setSuccess("Successfully Order Transferred");
-      
+      console.log(selectedRequest?.typeOfVehicle);
+    const data = {
+    selectedMechanic,
+    plateNumber: selectedRequest?.plateNumber,
+    typeOfVehicle: selectedRequest?.typeOfVehicle,
+    assignedWorkflow: selectedRequest?.assignedWorkflow,
+    kilometerOnCounter: selectedRequest?.kilometerOnCounter,
+    crashType: selectedRequest?.description,
+    reciever: selectedMechanic.firstName,
+    };
+    await api.post(`/maintenanceOrder?isDeleted=false`, data);
+    await api.patch(`/Request/maintenance/${selectedRequest?._id}`, { status: "UnderMaintenance" });
+    setTransferModal(false);
+    setSuccess("Successfully Order Transferred");
       const response = await api.get("/Request/maintenance");
       setRequests(response.data.data);
     } catch (error) {

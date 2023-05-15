@@ -17,7 +17,7 @@ const MaintenanceRequestSchema = new Schema(
     },
     kilometerOnCounter: {
       type: Number,
-      required:true,
+      //required:true,
       default:null,
     },
     plateNumber: {
