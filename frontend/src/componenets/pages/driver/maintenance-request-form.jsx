@@ -15,6 +15,7 @@ const MaintenanceRequestForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSucces] = useState("");
+  const [kilometerOnCounter,setKilometerOncounter]=useState("");
   const fetch = async () => {};
 
   useEffect(() => {
@@ -36,6 +37,7 @@ const MaintenanceRequestForm = () => {
     
     const result = {
       plateNumber,
+      kilometerOnCounter,
       description,
     };
     
@@ -85,6 +87,19 @@ const MaintenanceRequestForm = () => {
                 required
                 className="mb-3"
               />
+        <Form.Label>Kilometer Reading</Form.Label>
+        <Form.Control
+          type="number"
+           value={kilometerOnCounter}
+           onChange={(event) => setKilometerOncounter(event.target.value)}
+          required
+          className="mb-3"
+        />
+        <Form.Control.Feedback type="invalid">
+          Please provide a valid Amount.
+        </Form.Control.Feedback>
+
+     
               <FormLabel>Description</FormLabel>
               <FormControl
                 type="text"

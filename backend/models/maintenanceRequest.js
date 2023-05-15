@@ -15,6 +15,11 @@ const MaintenanceRequestSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "VehicleRecord",
     },
+    kilometerOnCounter: {
+      type: Number,
+      required:true,
+      default:null,
+    },
     plateNumber: {
       type: String,
       required: true,
@@ -87,7 +92,7 @@ const MaintenanceRequestSchema = new Schema(
 MaintenanceRequestSchema.pre("save", async function (next) {
   const vehicle = await this.model("VehicleRecord").findOne({
     plateNumber: this.plateNumber,
-    isDeleted: true,
+    isDeleted: false,
   });
   if (!vehicle) {
     return next(

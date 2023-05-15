@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ErrorProvider from "../../common/Provider/ErrorProvider";
 import SuccessProvider from "../../common/Provider/SuccessProvider";
-
+import Loading from "../../common/Provider/LoadingProvider";
 import {
   Table,
   Button,
@@ -17,12 +17,14 @@ import {
 import api from "../../../api/api";
 
 const MaintenanceRequestPage = ({ filter }) => {
+  const [startIndex, setStartIndex] = useState(0);
   const [requests, setRequests] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading]=useState(true);
 
 
   useEffect(() => {
@@ -32,12 +34,18 @@ const MaintenanceRequestPage = ({ filter }) => {
       .then((response) => {
         console.log(response.data.data);
         setRequests(response.data.data);
+        setIsLoading(false);
       })
       .catch((error) =>
         console.error("Error fetching vehicle requests:", error)
       );
   }, []);
-
+  const handleNext = () => {
+    setStartIndex((prevIndex) => Math.min(prevIndex + 7, requests.length - 7));
+  };
+  const handlePrevious = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
+  };
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -117,6 +125,7 @@ const MaintenanceRequestPage = ({ filter }) => {
         {error && <ErrorProvider error={error} />}
         {success && <SuccessProvider success={success} />}
       </Form>
+      {isLoading && <Loading/>}
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
@@ -127,7 +136,7 @@ const MaintenanceRequestPage = ({ filter }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredRequests.map((request) => (
+          {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
@@ -212,7 +221,30 @@ const MaintenanceRequestPage = ({ filter }) => {
           )}
         </Modal.Footer>
         </Modal>
+        <div className="d-flex justify-content-center align-items-center w-100">
+<Button
+  variant="primary"
+  className="btn-sm mx-2"
+  onClick={handlePrevious}
+  disabled={startIndex === 0}
+  block
+>
+  Previous
+</Button>
+<Button
+  variant="primary"
+  className="btn-sm mx-2"
+  onClick={handleNext}
+  disabled={startIndex + 7 >= filteredRequests.length}
+  block
+>
+  Next
+</Button>
+
+      </div>
     </div>
+    
+    
   );
 };
 
