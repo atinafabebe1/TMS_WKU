@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Table, Modal, Button } from "react-bootstrap";
-import { FaPlus } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import api from "../../../api/api";
+import React, { useState, useEffect } from 'react';
+import { Table, Modal, Button } from 'react-bootstrap';
+import { FaPlus } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import api from '../../../api/api';
 
 const ScheduleTable = () => {
   const [schedules, setSchedules] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   let count = 1;
@@ -13,7 +14,7 @@ const ScheduleTable = () => {
   useEffect(() => {
     // Fetch schedules from the server and update state
     const fetch = async () => {
-      const response = await api.get("/schedule/work-day").then((res) => {
+      const response = await api.get('/schedule/work-day').then((res) => {
         console.log(res);
         setSchedules(res.data?.data);
       });
@@ -31,28 +32,53 @@ const ScheduleTable = () => {
   };
 
   const handleConfirmCreateNewSchedule = () => {
-    navigate("/hd/schedule/workday-new");
+    navigate('/hd/schedule/workday-new');
     handleCloseModal();
+  };
+  const handleEdit = (rowIndex) => {
+    setIsEditing(rowIndex);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
+  const handleSave = () => {
+    setIsEditing(false);
+    // Save schedules to the server or update the original data in the parent component
+    console.log(schedules);
+  };
+
+  const handleChange = (e, rowIndex, key) => {
+    const updatedData = [...schedules];
+    if (key === 'departingAddress') {
+      updatedData[rowIndex].departing.address = e.target.value;
+    } else if (key === 'departingTime') {
+      updatedData[rowIndex].departing.time = e.target.value;
+    } else if (key === 'destinationAddress') {
+      updatedData[rowIndex].destination.address = e.target.value;
+    } else if (key === 'destinationTime') {
+      updatedData[rowIndex].destination.time = e.target.value;
+    } else {
+      updatedData[rowIndex].vehicles = [{ plateNumber: e.target.value }];
+    }
+    setSchedules(updatedData);
+    console.log(schedules);
   };
 
   return (
     <div className="container d-flex flex-column justify-content-center align-items-center">
-      <h3 style={{ marginBottom: "20px" }}>Schedules</h3>
-  
-  <button
-    onClick={handleCreateNewSchedule}
-    className="btn btn-primary d-flex align-items-center"
-  >
-    <FaPlus style={{ marginRight: "5px", fontSize: "1.1rem" }} />
-    Create New Schedule
-  </button>
-      <Table
-        striped
-        bordered
-        hover
-        responsive
-        style={{ width: "100%", marginTop: "20px" }}
-      >
+      <h3 style={{ marginBottom: '20px' }}>Schedules</h3>
+
+      <button onClick={handleCreateNewSchedule} className="btn btn-primary d-flex align-items-center">
+        <FaPlus style={{ marginRight: '5px', fontSize: '1.1rem' }} />
+        Create New Schedule
+      </button>
+      <p style={{ color: 'red', fontWeight: 'bold', marginTop: '20px' }}>
+        WARNING: Editing the schedule may break certain constraints. Please be careful when making changes.
+      </p>
+
+      <Table striped bordered hover responsive style={{ width: '100%', marginTop: '20px' }}>
         <thead>
           <tr>
             <th>#</th>
@@ -61,20 +87,66 @@ const ScheduleTable = () => {
             <th>Destination Address</th>
             <th>Destination Time</th>
             <th>Vehicles Assigned</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {schedules.map((schedule) => (
-            <tr key={schedule._id}>
+          {schedules.map((row, rowIndex) => (
+            <tr key={row._id}>
               <td>{count++}</td>
-              <td>{schedule.departing?.address}</td>
-              <td>{schedule.departing?.time}</td>
-              <td>{schedule.destination?.address}</td>
-              <td>{schedule.destination?.time}</td>
               <td>
-                {schedule.vehicles
-                  .map((vehicle) => vehicle.plateNumber)
-                  .join(", ")}
+                {isEditing === rowIndex ? (
+                  <input type="text" value={row.departing.address} onChange={(e) => handleChange(e, rowIndex, 'departingAddress')} />
+                ) : (
+                  row.departing.address
+                )}
+              </td>
+              <td>
+                {isEditing === rowIndex ? (
+                  <input type="text" value={row.departing.time} onChange={(e) => handleChange(e, rowIndex, 'departingTime')} />
+                ) : (
+                  row.departing.time
+                )}
+              </td>
+              <td>
+                {isEditing === rowIndex ? (
+                  <input type="text" value={row.destination.address} onChange={(e) => handleChange(e, rowIndex, 'destinationAddress')} />
+                ) : (
+                  row.destination.address
+                )}
+              </td>
+              <td>
+                {isEditing === rowIndex ? (
+                  <input type="text" value={row.destination.time} onChange={(e) => handleChange(e, rowIndex, 'destinationTime')} />
+                ) : (
+                  row.destination.time
+                )}
+              </td>
+              <td>
+                {isEditing === rowIndex ? (
+                  <input
+                    type="text"
+                    value={row.vehicles.map((vehicle) => vehicle.plateNumber).join(', ')}
+                    onChange={(e) => handleChange(e, rowIndex, 'vehicles')}
+                  />
+                ) : (
+                  row.vehicles.map((vehicle) => vehicle.plateNumber).join(', ')
+                )}
+              </td>
+
+              <td>
+                {isEditing === rowIndex ? (
+                  <>
+                    <Button onClick={handleCancel} variant="danger">
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSave}>Save</Button>
+                  </>
+                ) : (
+                  <Button onClick={() => handleEdit(rowIndex)} disabled={isEditing !== false}>
+                    Edit
+                  </Button>
+                )}
               </td>
             </tr>
           ))}
@@ -85,8 +157,7 @@ const ScheduleTable = () => {
           <Modal.Title>Create New Schedule</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Before you create a new schedule, please note that any previous
-          schedules will be removed. Are you sure you want to proceed?
+          Before you create a new schedule, please note that any previous schedules will be removed. Are you sure you want to proceed?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>

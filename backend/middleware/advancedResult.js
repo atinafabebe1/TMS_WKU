@@ -1,19 +1,17 @@
-const { ROLE_HEADOFDEPLOYMENT, ROLE_DIRECTOR } = require("../constants");
-const asyncHandler = require("./async");
-const NodeCache = require("node-cache");
-const queryString = require("querystring");
+const { ROLE_HEADOFDEPLOYMENT, ROLE_DIRECTOR } = require('../constants');
+const asyncHandler = require('./async');
+const NodeCache = require('node-cache');
+const queryString = require('querystring');
 
 // Create a new cache instance
 const cache = new NodeCache();
 
 const advancedResults = (model, populate, cacheDuration = 30 * 60) =>
   asyncHandler(async (req, res, next) => {
-    const lastUpdated = await model.findOne().sort("-updatedAt");
+    const lastUpdated = await model.findOne().sort('-updatedAt');
     // Get the cache key from the request URL
     console.log(req.url);
-    const cacheKey = `${
-      req.originalUrl || req.url
-    }-${lastUpdated.updatedAt?.getTime()}`;
+    const cacheKey = `${req.originalUrl || req.url}-${lastUpdated.updatedAt?.getTime()}`;
 
     // Check if the data is already cached
     const cachedData = cache.get(cacheKey);
@@ -27,18 +25,15 @@ const advancedResults = (model, populate, cacheDuration = 30 * 60) =>
     // Copy req.query
     const reqQuery = { ...req.query };
     // Fields to exclude
-    const removeFields = ["select", "sort", "page", "limit"];
+    const removeFields = ['select', 'sort', 'page', 'limit'];
 
     // Loop over removeFields and delete them from reqQuery
     removeFields.forEach((param) => delete reqQuery[param]);
 
     // Create query string
     let queryStr = JSON.stringify(reqQuery);
-    console.log("queryStr:", queryStr);
-    queryStr = queryStr.replace(
-      /\b(gt|gte|lt|lte|in)\b/g,
-      (match) => `$${match}`
-    );
+    console.log('queryStr:', queryStr);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => `$${match}`);
     // // Create operators ($gt, $gte, etc)
     // queryStr = queryStr.replace(
     //   /\b(gt|gte|lt|lte|in)\b/g,
@@ -50,16 +45,16 @@ const advancedResults = (model, populate, cacheDuration = 30 * 60) =>
 
     // Select Fields
     if (req.query.select) {
-      const fields = req.query.select.split(",").join(" ");
+      const fields = req.query.select.split(',').join(' ');
       query = query.select(fields);
     }
 
     // Sort
     if (req.query.sort) {
-      const sortBy = req.query.sort.split(",").join(" ");
+      const sortBy = req.query.sort.split(',').join(' ');
       query = query.sort(sortBy);
     } else {
-      query = query.sort("-createdAt");
+      query = query.sort('-createdAt');
     }
 
     // Pagination
@@ -93,14 +88,14 @@ const advancedResults = (model, populate, cacheDuration = 30 * 60) =>
     if (endIndex < total) {
       pagination.next = {
         page: page + 1,
-        limit,
+        limit
       };
     }
 
     if (startIndex > 0) {
       pagination.prev = {
         page: page - 1,
-        limit,
+        limit
       };
     }
 
@@ -108,7 +103,7 @@ const advancedResults = (model, populate, cacheDuration = 30 * 60) =>
       success: true,
       count: results.length,
       pagination,
-      data: results,
+      data: results
     };
 
     // Cache the response data

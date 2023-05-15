@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Modal,Row,Col,FormControl,FormLabel,FormGroup } from "react-bootstrap";
 import api from "../../../api/api";
+import ErrorProvider from "../../common/Provider/ErrorProvider";
+import SuccessProvider from "../../common/Provider/SuccessProvider";
 
 const GDMaintenanceRequestTables = ({ filter }) => {
   const [requests, setRequests] = useState([]);
@@ -10,6 +12,16 @@ const GDMaintenanceRequestTables = ({ filter }) => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [vehicless,setVehicles]=useState("");
   const [mechanics,setMechanics]=useState("");
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [Birr,setBirr]=useState("");
+  const [Coin,setCoin]=useState("");
+  const [paymentPerHour,setPaymentPerHour]=useState("");
+  const [maintenanceWorkHours,setMaintenanceWorkHours]=useState("");
+  const [typeOfVehicle,setTypeOfVehicle]=useState(false);
+  const [assignedWorkflow,setAssignedWorkflow]=useState(false); 
+  const [kilometerOnCounter,setKilometerOncounter]=useState(false);
+  const [description, setCrashType]=useState(false);
   const [plateNumber,setPlateNumber]=useState("");
   const [selectedMechanic, setSelectedMechanic] = useState("");
 
@@ -33,7 +45,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
     try {
       await api.patch(`/Request/maintenance/${request._id}`, {
         status: "canceled",
-        rejectReason: reason, // Add the reason to the patch request
+        rejectReason: reason,
       });
       const response = await api.get("/Request/maintenance");
       setRequests(response.data.data);
@@ -83,12 +95,27 @@ const GDMaintenanceRequestTables = ({ filter }) => {
 
   const handleTransferOrder = async (request) => {
     try {
-      await api.patch(`/Request/maintenance/${request._id}`, { status: "in-progress" });
-
+      const data = {
+        ...selectedRequest,selectedMechanic,
+                birr:Birr,
+                plateNumber: selectedRequest?.plateNumber,
+                typeOfVehicle: typeOfVehicle,
+                assignedWorkflow: assignedWorkflow,
+                kilometerOnCounter:parseInt( kilometerOnCounter),
+                crashType: selectedRequest?.description,
+                reciever: selectedMechanic.firstName,
+                maintenanceTasks: [],
+                  };
+      await api.post(`/maintenanceOrder?isDeleted=false`, data);
+      await api.patch(`/Request/maintenance/${request._id}`, { status: "UnderMaintenance" });
+      setTransferModal(false);
+      setSuccess("Successfully Order Transferred");
+      
       const response = await api.get("/Request/maintenance");
       setRequests(response.data.data);
     } catch (error) {
       console.log(error);
+      setError("Error comes");
     }
   };
   const fetch = async () => {
@@ -128,6 +155,8 @@ const GDMaintenanceRequestTables = ({ filter }) => {
             />
           </Col>
         </Row>
+        {error && <ErrorProvider error={error} />}
+        {success && <SuccessProvider success={success} />}
       </Form>
       <Table striped bordered hover responsive className="table-sm">
         <thead>
@@ -209,7 +238,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
       <Button
         variant="primary"
         className="btn btn-sm"
-        onClick={() => handleTransferOrder(selectedRequest)}
+        onClick={() => handleTransferModal(selectedRequest)}
       >
         Transfer Order
       </Button>
@@ -226,42 +255,66 @@ const GDMaintenanceRequestTables = ({ filter }) => {
     <Modal.Title>Transfer to Mechanic Order</Modal.Title>
   </Modal.Header>
   <Modal.Body>
-    <p>
-      <strong>Plate Number: </strong> {selectedRequest?.plateNumber}
-    </p>
+  <Form>
+  <Form.Group as={Col} controlId="platenumber">
+    <Form.Label>Plate Number</Form.Label>
+    <Form.Control
+      type="string"
+      readOnly
+      minLength={9}
+      maxLength={9}
+      value={selectedRequest?.plateNumber}
+      onChange={(e) => setPlateNumber(e.target.value)}
+    />
+  </Form.Group>
+  <Form.Group as={Col} controlId="vehicletype">
+    <Form.Label>Vehicle Type</Form.Label>
+    <Form.Control
+      type="text"
+      readOnly
+      value={
+        Array.isArray(vehicless) &&
+        vehicless
+          .filter((vehicle) => vehicle.plateNumber === selectedRequest?.plateNumber)
+          .map((vehicle) => {
+            if (vehicle.type !== null) return vehicle.type;
+            else return "Not Assigned";
+          })
+          .join(", ")
+      }
+      onChange={(e) => setTypeOfVehicle(e.target.value)}
+    />
+  </Form.Group>
+  <Form.Group as={Col} controlId="assignedto">
+    <Form.Label>Assigned To</Form.Label>
+    <Form.Control
+      type="text"
+      readOnly
+      value={
+        Array.isArray(vehicless) &&
+        vehicless
+          .filter((vehicle) => vehicle.plateNumber === selectedRequest?.plateNumber)
+          .map((vehicle) => {
+            if (vehicle.assignedTo !== null) return vehicle.assignedTo;
+            else return "Not Assigned";
+          })
+          .join(", ")
+      }
+      onChange={(e) => setAssignedWorkflow(e.target.value)}
+    />
+  </Form.Group>
+</Form>
 
-    <p>
-      <strong>Vehicle Type: </strong>
-      {Array.isArray(vehicless) &&
-        vehicless.map((vehicle) => {
-          if (vehicle.plateNumber === selectedRequest?.plateNumber) {
-            return vehicle.type;
-          } else {
-            return null;
-          }
-        })}
-    </p>
 
-    <p>
-      <strong>Assigned Work flow: </strong>{" "}
-      {Array.isArray(vehicless) &&
-        vehicless.map((vehicle) => {
-          if (vehicle.plateNumber === selectedRequest?.plateNumber) {
-            return vehicle.assignedTo;
-          } else {
-            return null;
-          }
-        })}
-    </p>
 
     <Form>
       <Form.Group as={Col}>
         <Form.Label>Kilometer Reading</Form.Label>
         <Form.Control
           type="number"
-          // value={approvedAmount}
-          // onChange={(event) => setApprovedAmount(event.target.value)}
-          // required
+           value={kilometerOnCounter}
+           onChange={(event) => setKilometerOncounter(event.target.value)}
+          required
           className="mb-3"
         />
         <Form.Control.Feedback type="invalid">
@@ -269,22 +322,24 @@ const GDMaintenanceRequestTables = ({ filter }) => {
         </Form.Control.Feedback>
       </Form.Group>
      
-    </Form>
-    <p>
-  <strong>Description:</strong> {selectedRequest?.description}
-</p>
+    
+    <Form.Group as={Col} controlId="platenumber">
+    <Form.Label>Description</Form.Label>
+    <Form.Control
+      type="string"
+      readOnly
+      required
+      minLength={9}
+      maxLength={9}
+      value={selectedRequest?.description}
+      onChange={(e) => setCrashType(e.target.value)}
+    />
+  </Form.Group>
+ 
 
-    <ul>
-  {Array.isArray(mechanics) &&
-    mechanics
-      .filter((mechanic) => mechanic.role === "ROLE_MECHANIC")
-      .map((mechanic) => {
-        return <li key={mechanic.role}>{mechanic.name}</li>;
-      })}
-</ul>
-
-<select value={selectedMechanic} onChange={handleMechanicChange}>
+<select value={selectedMechanic} required onChange={handleMechanicChange}>
   <option value="">Select a Mechanic</option>
+  
   {Array.isArray(mechanics) &&
     mechanics
       .filter((mechanic) => mechanic.role === "ROLE_MECHANIC")
@@ -296,9 +351,44 @@ const GDMaintenanceRequestTables = ({ filter }) => {
         );
       })}
 </select>
+<Form.Group as={Col} controlId="maintenanceWorkHours">
+    <Form.Label>Maintenance Work Hours</Form.Label>
+    <Form.Control
+      type="number"
+      value={maintenanceWorkHours} // Assuming you want to display the maintenance work hours from the first maintenance task
+      onChange={(e) => setMaintenanceWorkHours(e.target.value)}
+      
+    />
+  </Form.Group>
+  <Form.Group as={Col} controlId="paymentPerHour">
+    <Form.Label>Payment Per Hour</Form.Label>
+    <Form.Control
+      type="number"
+      value={paymentPerHour} // Assuming you want to display the payment per hour from the first maintenance task
+      onChange={(e) => setPaymentPerHour(e.target.value)}
+      
+    />
+  </Form.Group>
+  <Form.Group as={Col} controlId="birr">
+    <Form.Label>Birr</Form.Label>
+    <Form.Control
+      type="number"
+      value={Birr} // Assuming you want to display the birr value from the first maintenance task
+      onChange={(e) => setBirr(e.target.value)}
+      
+    />
+  </Form.Group>
+  <Form.Group as={Col} controlId="coin">
+    <Form.Label>Coin</Form.Label>
+    <Form.Control
+      type="number"
+      value={Coin} // Assuming you want to display the coin value from the first maintenance task
+      onChange={(e) => setCoin(e.target.value)}
+      
+    />
+  </Form.Group>
 
-
-  
+</Form>
   </Modal.Body>
   <Modal.Footer>
     <Button
@@ -309,11 +399,11 @@ const GDMaintenanceRequestTables = ({ filter }) => {
       Cancel
     </Button>
     <Button
-      variant="secondary"
+      variant="success"
       className="btn btn-sm"
-      // onClick={() => handleApprove(selectedRequest)}
+      onClick={() => handleTransferOrder(selectedRequest ,selectedMechanic)}
     >
-      Approve
+      Transfer
     </Button>
   </Modal.Footer>
 </Modal>
