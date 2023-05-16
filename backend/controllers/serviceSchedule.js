@@ -21,6 +21,7 @@ const deleteServiceSchedule = async (req, res, next) => {};
 //create a service schedule
 const createServiceSchedule = asyncHandler(async (req, res, next) => {
   const { vehicles, trips } = req.body;
+  console.log(req.body);
 
   //sort a trips by their departing time
   trips.sort((a, b) => {
@@ -56,7 +57,7 @@ const assignVehiclesToTrips = asyncHandler(async (vehicles, trips) => {
         throw new ErrorResponse(`Could not find enough vehicles for trip departing address: ${trip.departing?.address}`, 500);
       }
 
-      trip.vehicles = selectedVehicles.map((vehicle) => vehicle.id);
+      trip.vehicles = selectedVehicles.map((vehicle) => vehicle.plateNumber);
 
       const destinationTime = new Date(`${dateString}T${trip.destination?.time ?? '00:00'}:00`);
       const departingTime = new Date(`${dateString}T${trip.departing?.time ?? '00:00'}:00`);

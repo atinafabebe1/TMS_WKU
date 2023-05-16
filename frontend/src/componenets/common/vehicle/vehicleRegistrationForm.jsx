@@ -1,38 +1,34 @@
-import React, { useState, useEffect } from "react";
-import { Form, Button, Row, Col, Container, Modal } from "react-bootstrap";
-import SuccessProvider from "../Provider/SuccessProvider";
-import ErrorProvider from "../Provider/ErrorProvider";
-import { Link, useNavigate } from "react-router-dom";
-import api from "../../../api/api";
+import React, { useState, useEffect } from 'react';
+import { Form, Button, Row, Col, Container, Modal } from 'react-bootstrap';
+import SuccessProvider from '../Provider/SuccessProvider';
+import ErrorProvider from '../Provider/ErrorProvider';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../../../api/api';
 
 const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
-  const [modelNo, setModelNo] = useState("");
-  const [chassisNo, setChassisNo] = useState("");
-  const [motorNo, setMotorNo] = useState("");
-  const [type, setType] = useState("");
-  const [cC, setCC] = useState("");
-  const [plateNumber, setPlateNumber] = useState("");
-  const [typeOfFuel, setTypeOfFuel] = useState("");
-  const [purchasePrice, setPurchasePrice] = useState("");
-  const [maxPerson, setMaxPerson] = useState("");
-  const [purchaseDate, setPurchaseDate] = useState(
-    new Date().toISOString().slice(0, 10)
-  );
-  const [maxLoad, setMaxLoad] = useState("");
-  const [maxLitres, setMaxLitres] = useState("");
-  const [proprietaryIdNumber, setProprietaryIdNumber] = useState("");
-  const [drivers, setDrivers] = useState("");
+  const [modelNo, setModelNo] = useState('');
+  const [chassisNo, setChassisNo] = useState('');
+  const [motorNo, setMotorNo] = useState('');
+  const [type, setType] = useState('');
+  const [cC, setCC] = useState('');
+  const [plateNumber, setPlateNumber] = useState('');
+  const [typeOfFuel, setTypeOfFuel] = useState('');
+  const [purchasePrice, setPurchasePrice] = useState('');
+  const [maxPerson, setMaxPerson] = useState('');
+  const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().slice(0, 10));
+  const [maxLoad, setMaxLoad] = useState('');
+  const [maxLitres, setMaxLitres] = useState('');
+  const [proprietaryIdNumber, setProprietaryIdNumber] = useState('');
+  const [drivers, setDrivers] = useState('');
   const [vehicleImage, setVehicleImage] = useState(null);
   const [assignedTo, setAssignedTo] = useState(null);
   const [onMaintenance, setOnMaintenance] = useState(false);
-  const [propertyType, setPropertyType] = useState("");
+  const [propertyType, setPropertyType] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [validated, setValidated] = useState(false);
-  const [itemsWithVehicle, setItemsWithVehicle] = useState([
-    { itemDetail: "", quantity: "" },
-  ]);
+  const [itemsWithVehicle, setItemsWithVehicle] = useState([{ itemDetail: '', quantity: '' }]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,24 +52,24 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       setPropertyType(data.propertyType);
       setItemsWithVehicle(data.itemsWithVehicle);
     } else {
-      setModelNo("");
-      setChassisNo("");
-      setMotorNo("");
-      setType("");
-      setCC("");
-      setPurchasePrice("");
-      setPlateNumber("");
-      setTypeOfFuel("");
+      setModelNo('');
+      setChassisNo('');
+      setMotorNo('');
+      setType('');
+      setCC('');
+      setPurchasePrice('');
+      setPlateNumber('');
+      setTypeOfFuel('');
       setPurchaseDate(new Date().toISOString().slice(0, 10));
-      setMaxPerson("");
-      setMaxLoad("");
-      setMaxLitres("");
-      setItemsWithVehicle([{ itemDetail: "", quantity: "" }]);
-      setProprietaryIdNumber("");
+      setMaxPerson('');
+      setMaxLoad('');
+      setMaxLitres('');
+      setItemsWithVehicle([{ itemDetail: '', quantity: '' }]);
+      setProprietaryIdNumber('');
       setVehicleImage(null);
       setAssignedTo(null);
       setOnMaintenance(false);
-      setPropertyType("");
+      setPropertyType('');
     }
   }, [data]);
 
@@ -89,23 +85,23 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
     handleSubmit();
   };
   const handleClear = (event) => {
-    setModelNo("");
-    setChassisNo("");
-    setMotorNo("");
-    setType("");
-    setCC("");
-    setPurchasePrice("");
-    setPlateNumber("");
-    setTypeOfFuel("");
+    setModelNo('');
+    setChassisNo('');
+    setMotorNo('');
+    setType('');
+    setCC('');
+    setPurchasePrice('');
+    setPlateNumber('');
+    setTypeOfFuel('');
     setPurchaseDate(new Date().toISOString().slice(0, 10));
-    setMaxPerson("");
-    setMaxLoad("");
-    setMaxLitres("");
-    setProprietaryIdNumber("");
+    setMaxPerson('');
+    setMaxLoad('');
+    setMaxLitres('');
+    setProprietaryIdNumber('');
     setVehicleImage(null);
     setAssignedTo(null);
     setOnMaintenance(false);
-    setPropertyType("");
+    setPropertyType('');
   };
 
   const handleSubmit = async () => {
@@ -127,7 +123,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       vehicleImage,
       assignedTo,
       onMaintenance,
-      propertyType,
+      propertyType
     };
     if (data) {
       api
@@ -138,27 +134,22 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
           onSubmit();
         })
         .catch((err) => {
-          console.log(err.response.data);
-          setError("Please Provide Valid Data and Try Again");
+          setError('Please Provide Valid Data and Try Again');
           setSuccess(null);
         });
       try {
         await api.put(`/VehicleRecord/${data._id}`);
-        const response = await api.get("/VehicleRecord");
-        console.log(response.data.data);
-      } catch (error) {
-        console.log(error);
-      }
+        const response = await api.get('/VehicleRecord');
+      } catch (error) {}
     } else {
       api
         .post(`/VehicleRecord?isDeleted=false`, result)
         .then((response) => {
-          setSuccess("Successfully Registered");
+          setSuccess('Successfully Registered');
           setError(null);
         })
         .catch((err) => {
-          console.log(err.response.data);
-          setError("Please Provide Valid Data and Try Again");
+          setError('Please Provide Valid Data and Try Again');
           setSuccess(null);
         });
     }
@@ -171,10 +162,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   };
 
   const handleAddItem = () => {
-    setItemsWithVehicle([
-      ...itemsWithVehicle,
-      { itemDetail: "", quantity: "" },
-    ]);
+    setItemsWithVehicle([...itemsWithVehicle, { itemDetail: '', quantity: '' }]);
   };
 
   const handleRemoveItem = (index) => {
@@ -184,13 +172,11 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   };
   const fetchDriver = async () => {
     api
-      .get("/user/getusers?select=role,firstName,lastName,email")
+      .get('/user/getusers?select=role,firstName,lastName,email')
       .then((response) => {
         setDrivers(response.data.data);
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => {});
   };
   useEffect(() => {
     fetch();
@@ -205,12 +191,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             <h3 className="mb-3 text-center">{title}</h3>
 
             <Container breakpoint="lg">
-              <Form
-                className="form"
-                noValidate
-                validated={validated}
-                onSubmit={handleConfirmation}
-              >
+              <Form className="form" noValidate validated={validated} onSubmit={handleConfirmation}>
                 <Row className="mb-3">
                   <h5>Vehicle Information</h5>
                   <hr></hr>
@@ -218,48 +199,21 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Group as={Col} controlId="modelnumber">
                     <Form.Label>Model Number</Form.Label>
                     <span> </span>
-                    <Form.Control
-                      type="number"
-                      required
-                      min={1000}
-                      max={9999}
-                      value={modelNo}
-                      onChange={(e) => setModelNo(e.target.value)}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Model Number.
-                    </Form.Control.Feedback>
+                    <Form.Control type="number" required min={1000} max={9999} value={modelNo} onChange={(e) => setModelNo(e.target.value)} />
+                    <Form.Control.Feedback type="invalid">Please provide a valid Model Number.</Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group as={Col} controlId="chassisnumber">
                     <span> </span>
                     <Form.Label>Chassis Number</Form.Label>
 
-                    <Form.Control
-                      type="number"
-                      required
-                      min={100000}
-                      max={999999}
-                      value={chassisNo}
-                      onChange={(e) => setChassisNo(e.target.value)}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Chassis Number.
-                    </Form.Control.Feedback>
+                    <Form.Control type="number" required min={100000} max={999999} value={chassisNo} onChange={(e) => setChassisNo(e.target.value)} />
+                    <Form.Control.Feedback type="invalid">Please provide a valid Chassis Number.</Form.Control.Feedback>
                   </Form.Group>
                 </Row>
                 <Row>
                   <Form.Group as={Col} controlId="role">
-                    <Form.Label className="font-weight-bold">
-                      Type Of Vehicle
-                    </Form.Label>
-                    <Form.Control
-                      as="select"
-                      type="text"
-                      placeholder="Choose"
-                      required
-                      value={type}
-                      onChange={(e) => setType(e.target.value)}
-                    >
+                    <Form.Label className="font-weight-bold">Type Of Vehicle</Form.Label>
+                    <Form.Control as="select" type="text" placeholder="Choose" required value={type} onChange={(e) => setType(e.target.value)}>
                       <option value="">Choose</option>
                       <option value="Bus">Bus</option>
                       <option value="Truck">Truck</option>
@@ -267,14 +221,13 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       <option value="Ambulace">Ambulace</option>
                       <option value="Automobile">Automobile</option>
                     </Form.Control>
-                    <Form.Control.Feedback type="invalid">
-                      Please Select Valid Type.
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Please Select Valid Type.</Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group as={Col} controlId="motornumber">
                     <span> </span>
                     <Form.Label>Motor Number</Form.Label>
                     <Form.Control
+                      min={0}
                       type="number"
                       required
                       minLength={3}
@@ -282,9 +235,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       value={motorNo}
                       onChange={(e) => setMotorNo(e.target.value)}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Motor Number.
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Please provide a valid Motor Number.</Form.Control.Feedback>
                   </Form.Group>
                 </Row>
                 <br />
@@ -292,21 +243,12 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                   <Form.Group as={Col} controlId="cc">
                     <span> </span>
                     <Form.Label>CC</Form.Label>
-                    <Form.Control
-                      type="number"
-                      required
-                      minLength={3}
-                      maxLength={25}
-                      value={cC}
-                      onChange={(e) => setCC(e.target.value)}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid CC.
-                    </Form.Control.Feedback>
+                    <Form.Control type="number" required minLength={3} maxLength={25} value={cC} onChange={(e) => setCC(e.target.value)} />
+                    <Form.Control.Feedback type="invalid">Please provide a valid CC.</Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group as={Col} controlId="platenumber">
                     <span> </span>
-                    <Form.Label>plate Number</Form.Label>
+                    <Form.Label>Plate Number</Form.Label>
                     <Form.Control
                       type="string"
                       required
@@ -316,15 +258,11 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       value={plateNumber}
                       onChange={(e) => setPlateNumber(e.target.value)}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Plate Number.
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Please provide a valid Plate Number.</Form.Control.Feedback>
                   </Form.Group>
 
                   <Form.Group as={Col} controlId="role">
-                    <Form.Label className="font-weight-bold">
-                      Type Of Fuel
-                    </Form.Label>
+                    <Form.Label className="font-weight-bold">Type Of Fuel</Form.Label>
                     <Form.Control
                       as="select"
                       type="text"
@@ -341,9 +279,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       <option value="grease">Grease</option>
                       <option value="otherOil">Other Oil</option>
                     </Form.Control>
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Fuel Type.
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Please provide a valid Fuel Type.</Form.Control.Feedback>
                   </Form.Group>
                 </Row>
                 <br></br>
@@ -362,24 +298,14 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       value={purchasePrice}
                       onChange={(e) => setPurchasePrice(e.target.value)}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Price.
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Please provide a valid Price.</Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group as={Col} controlId="date">
                     <span> </span>
                     <Form.Label>Purchased Date</Form.Label>
 
-                    <Form.Control
-                      type="date"
-                      name="purchaseDate"
-                      required
-                      value={purchaseDate}
-                      onChange={(e) => setPurchaseDate(e.target.value)}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Date.
-                    </Form.Control.Feedback>
+                    <Form.Control type="date" name="purchaseDate" required value={purchaseDate} onChange={(e) => setPurchaseDate(e.target.value)} />
+                    <Form.Control.Feedback type="invalid">Please provide a valid Date.</Form.Control.Feedback>
                   </Form.Group>
                 </Row>
 
@@ -399,9 +325,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       value={maxPerson}
                       onChange={(e) => setMaxPerson(e.target.value)}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Ammount.
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Please provide a valid Ammount.</Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group as={Col} controlId="person">
                     <span> </span>
@@ -415,9 +339,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       value={maxLoad}
                       onChange={(e) => setMaxLoad(e.target.value)}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Ammount.
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Please provide a valid Ammount.</Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group as={Col} controlId="Adress">
                     <span> </span>
@@ -431,9 +353,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       value={maxLitres}
                       onChange={(e) => setMaxLitres(e.target.value)}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Ammount.
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Please provide a valid Ammount.</Form.Control.Feedback>
                   </Form.Group>
                 </Row>
 
@@ -452,9 +372,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       value={proprietaryIdNumber}
                       onChange={(e) => setProprietaryIdNumber(e.target.value)}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Id.
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Please provide a valid Id.</Form.Control.Feedback>
                   </Form.Group>
 
                   <Form.Group as={Col} controlId="vehicleimage">
@@ -469,9 +387,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                     />
                   </Form.Group>
                   <Form.Group as={Col} controlId="role">
-                    <Form.Label className="font-weight-bold">
-                      Property Type
-                    </Form.Label>
+                    <Form.Label className="font-weight-bold">Property Type</Form.Label>
                     <Form.Control
                       as="select"
                       type="text"
@@ -484,9 +400,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       <option value="University Owned">University Owned</option>
                       <option value="Rent">Rent</option>
                     </Form.Control>
-                    <Form.Control.Feedback type="invalid">
-                      Please provide a valid Fuel Type.
-                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type="invalid">Please provide a valid Fuel Type.</Form.Control.Feedback>
                   </Form.Group>
                 </Row>
                 {/* <Form.Group as={Col} controlId="role">
@@ -537,22 +451,15 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                       <Form.Label>
                         <strong>Item #{index + 1}</strong>
                       </Form.Label>
-                      <div style={{ display: "flex" }}>
-                        <div style={{ marginRight: "1rem" }}>
+                      <div style={{ display: 'flex' }}>
+                        <div style={{ marginRight: '1rem' }}>
                           <p>Item Detail</p>
                           <Form.Control
                             type="text"
                             value={items.itemDetail}
-                            onChange={(event) =>
-                              handleItemsChange(
-                                index,
-                                "itemDetail",
-                                event.target.value
-                              )
-                            }
-                            required
+                            onChange={(event) => handleItemsChange(index, 'itemDetail', event.target.value)}
                             className="mb-3"
-                            style={{ width: "500px" }} // Add width here
+                            style={{ width: '500px' }} // Add width here
                           />
                         </div>
                         <div>
@@ -560,34 +467,20 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                           <Form.Control
                             type="number"
                             value={items.quantity}
-                            onChange={(event) =>
-                              handleItemsChange(
-                                index,
-                                "quantity",
-                                event.target.value
-                              )
-                            }
-                            required
+                            onChange={(event) => handleItemsChange(index, 'quantity', event.target.value)}
                             className="mb-3"
+                            min={0}
                           />
                         </div>
                       </div>
                       {index !== 0 && (
-                        <Button
-                          variant="danger"
-                          onClick={() => handleRemoveItem(index)}
-                          className="mb-3 btn-sm"
-                        >
+                        <Button variant="danger" onClick={() => handleRemoveItem(index)} className="mb-3 btn-sm">
                           Remove Item
                         </Button>
                       )}
                     </Form.Group>
                   ))}
-                  <Button
-                    variant="success"
-                    onClick={handleAddItem}
-                    className="mb-3 btn-sm"
-                  >
+                  <Button variant="success" onClick={handleAddItem} className="mb-3 btn-sm">
                     Add Item
                   </Button>
                 </Row>
@@ -598,17 +491,10 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             {success && <SuccessProvider success={success} />}
 
             <div className="d-flex justify-content-end my-4">
-              <Button
-                className="btn-secondary me-2"
-                onClick={() => navigate(`/hd/vehicles`)}
-              >
+              <Button className="btn-secondary me-2" onClick={() => navigate(`/hd/vehicles`)}>
                 Cancel
               </Button>
-              <Button
-                type="reset"
-                className="btn-danger me-2"
-                onClick={handleClear}
-              >
+              <Button type="reset" className="btn-danger me-2" onClick={handleClear}>
                 Clear
               </Button>
               <Button
@@ -624,14 +510,9 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                 <Modal.Header closeButton>
                   <Modal.Title>Confirm Submission</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                  Are you sure you want to submit this request?
-                </Modal.Body>
+                <Modal.Body>Are you sure you want to submit this request?</Modal.Body>
                 <Modal.Footer>
-                  <Button
-                    variant="secondary"
-                    onClick={() => setShowModal(false)}
-                  >
+                  <Button variant="secondary" onClick={() => setShowModal(false)}>
                     Cancel
                   </Button>
                   <Button variant="primary" onClick={handleConfirmation}>
