@@ -6,6 +6,7 @@ import FuelRequest from "./CreateFuelRequest";
 import FuelRequestListPage from "./FuelRequestList";
 import SendComplain from "../../common/shared/sendComplain";
 import EmergencyReport from "./EmmergencyReport";
+import TransferVehiclePage from "./transferVehicle";
 import { Routes, Route } from "react-router-dom";
 const links = [
   {
@@ -74,6 +75,10 @@ const DriverPage = () => {
         <Route
           path="maintenance-request-form"
           element={<MaintenanceRequestForm />}
+        />
+          <Route
+          path="vehicles/transfer"
+          element={<TransferVehiclePage />}
         />
       </Routes>
     </div>
