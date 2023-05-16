@@ -8,6 +8,8 @@ const ScheduleTable = () => {
   const [schedules, setSchedules] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [editedRowData, setEditedRowData] = useState(null);
+
   const navigate = useNavigate();
   let count = 1;
 
@@ -15,10 +17,8 @@ const ScheduleTable = () => {
     // Fetch schedules from the server and update state
     const fetch = async () => {
       const response = await api.get('/schedule/work-day').then((res) => {
-        console.log(res);
         setSchedules(res.data?.data);
       });
-      console.log(response.data?.data?.vehicles);
     };
     fetch();
   }, []);
@@ -43,14 +43,16 @@ const ScheduleTable = () => {
     setIsEditing(false);
   };
 
-  const handleSave = () => {
+  const handleSave = async (editedRowData) => {
     setIsEditing(false);
-    // Save schedules to the server or update the original data in the parent component
-    console.log(schedules);
+    console.log(editedRowData);
+    //get edited row and update on database
+    await api.put('/schedule/work-day', editedRowData);
   };
 
   const handleChange = (e, rowIndex, key) => {
     const updatedData = [...schedules];
+    //update the row data
     if (key === 'departingAddress') {
       updatedData[rowIndex].departing.address = e.target.value;
     } else if (key === 'departingTime') {
@@ -62,8 +64,9 @@ const ScheduleTable = () => {
     } else {
       updatedData[rowIndex].vehicles = [{ plateNumber: e.target.value }];
     }
+    //store the edited row data in state
+    setEditedRowData(updatedData[rowIndex]);
     setSchedules(updatedData);
-    console.log(schedules);
   };
 
   return (
@@ -126,11 +129,11 @@ const ScheduleTable = () => {
                 {isEditing === rowIndex ? (
                   <input
                     type="text"
-                    value={row.vehicles.map((vehicle) => vehicle.plateNumber).join(', ')}
+                    value={row.vehicles.map((vehicle) => vehicle.plateNumber)}
                     onChange={(e) => handleChange(e, rowIndex, 'vehicles')}
                   />
                 ) : (
-                  row.vehicles.map((vehicle) => vehicle.plateNumber).join(', ')
+                  row.vehicles.map((vehicle) => vehicle.plateNumber)
                 )}
               </td>
 
@@ -140,7 +143,7 @@ const ScheduleTable = () => {
                     <Button onClick={handleCancel} variant="danger">
                       Cancel
                     </Button>
-                    <Button onClick={handleSave}>Save</Button>
+                    <Button onClick={() => handleSave(editedRowData)}>Save</Button>
                   </>
                 ) : (
                   <Button onClick={() => handleEdit(rowIndex)} disabled={isEditing !== false}>

@@ -10,6 +10,13 @@ const dateString = '1997-03-25';
 const getServiceSchedule = async (req, res, next) => {
   res.status(200).json(res.advancedResults);
 };
+//update service schedules
+const updateServiceSchedule = async (req, res, next) => {
+  const schedule = await Trip.findById(req.body._id);
+  console.log(req.body);
+};
+//delete service schedules
+const deleteServiceSchedule = async (req, res, next) => {};
 
 //create a service schedule
 const createServiceSchedule = asyncHandler(async (req, res, next) => {
@@ -157,14 +164,12 @@ const getVehicles = async (vehicles, trip) => {
         const assignedDestinationTime = new Date(`${dateString}T${assignedTrip.destination?.time ?? '00:00'}:00`);
 
         const tripOverlapDuration = Math.min(assignedDestinationTime, tripDestinationTime) - Math.max(assignedDepartingTime, tripDepartingTime);
-        console.log('trip overlaps' + tripOverlapDuration);
         if (tripOverlapDuration > 0) {
           return true;
         }
         return false;
       });
       if (overlap) {
-        console.log('Ovelaps');
         return false;
       }
       return true;
@@ -174,7 +179,6 @@ const getVehicles = async (vehicles, trip) => {
     .filter((vehicle, index) => filteredVehicles[index])
     .sort((a, b) => a.duration - b.duration)
     .slice(0, trip.numVehiclesRequired);
-  console.log(selectedVehicles);
   return selectedVehicles;
 };
 
@@ -198,5 +202,7 @@ const validateTrips = (trips) => {
 
 module.exports = {
   createServiceSchedule,
-  getServiceSchedule
+  getServiceSchedule,
+  updateServiceSchedule,
+  deleteServiceSchedule
 };
