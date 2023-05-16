@@ -57,6 +57,11 @@ const DailyFuelCostRecordSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    status: {
+      type: String,
+      default: "Completed",
+      enum: ["Completed", "Received"],
+    },
   },
   { timestamps: true }
 );

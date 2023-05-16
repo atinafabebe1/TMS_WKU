@@ -3,8 +3,11 @@ import { Table, Button, Form, Modal,Row,Col,FormControl,FormLabel,FormGroup } fr
 import api from "../../../api/api";
 import ErrorProvider from "../../common/Provider/ErrorProvider";
 import SuccessProvider from "../../common/Provider/SuccessProvider";
+import Loading from "../../common/Provider/LoadingProvider";
 
 const GDMaintenanceRequestTables = ({ filter }) => {
+  const [startIndex, setStartIndex] = useState(0);
+  const [isLoading,setIsLoading]=useState(true);
   const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -14,10 +17,6 @@ const GDMaintenanceRequestTables = ({ filter }) => {
   const [mechanics,setMechanics]=useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const [Birr,setBirr]=useState("");
-  const [Coin,setCoin]=useState("");
-  const [paymentPerHour,setPaymentPerHour]=useState("");
-  const [maintenanceWorkHours,setMaintenanceWorkHours]=useState("");
   const [typeOfVehicle,setTypeOfVehicle]=useState(false);
   const [assignedWorkflow,setAssignedWorkflow]=useState(false); 
   const [kilometerOnCounter,setKilometerOncounter]=useState(false);
@@ -33,12 +32,19 @@ const GDMaintenanceRequestTables = ({ filter }) => {
       .get("/Request/maintenance")
       .then((response) => {
         setRequests(response.data.data);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching vehicle requests:", error);
       });
   }, []);
-
+  const handleNext = () => {
+    setStartIndex((prevIndex) => Math.min(prevIndex + 7, requests.length - 7));
+  };
+  const handlePrevious = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
+  };
+  
   const handleRejectClick = async (request) => {
     const reason = prompt("Please enter a reason for rejection:");
     if (!reason) return; // If the user cancels the prompt, do nothing
@@ -93,24 +99,22 @@ const GDMaintenanceRequestTables = ({ filter }) => {
     return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const handleTransferOrder = async (request) => {
+  const handleTransferOrder = async () => {
     try {
-      const data = {
-        ...selectedRequest,selectedMechanic,
-                birr:Birr,
-                plateNumber: selectedRequest?.plateNumber,
-                typeOfVehicle: typeOfVehicle,
-                assignedWorkflow: assignedWorkflow,
-                kilometerOnCounter:parseInt( kilometerOnCounter),
-                crashType: selectedRequest?.description,
-                reciever: selectedMechanic.firstName,
-                maintenanceTasks: [],
-                  };
-      await api.post(`/maintenanceOrder?isDeleted=false`, data);
-      await api.patch(`/Request/maintenance/${request._id}`, { status: "UnderMaintenance" });
-      setTransferModal(false);
-      setSuccess("Successfully Order Transferred");
-      
+      console.log(selectedRequest?.typeOfVehicle);
+    const data = {
+    selectedMechanic,
+    plateNumber: selectedRequest?.plateNumber,
+    typeOfVehicle: selectedRequest?.typeOfVehicle,
+    assignedWorkflow: selectedRequest?.assignedWorkflow,
+    kilometerOnCounter: selectedRequest?.kilometerOnCounter,
+    crashType: selectedRequest?.description,
+    reciever: selectedMechanic.firstName,
+    };
+    await api.post(`/maintenanceOrder?isDeleted=false`, data);
+    await api.patch(`/Request/maintenance/${selectedRequest?._id}`, { status: "UnderMaintenance" });
+    setTransferModal(false);
+    setSuccess("Successfully Order Transferred");
       const response = await api.get("/Request/maintenance");
       setRequests(response.data.data);
     } catch (error) {
@@ -157,6 +161,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
         </Row>
         {error && <ErrorProvider error={error} />}
         {success && <SuccessProvider success={success} />}
+        {isLoading && <Loading /> }
       </Form>
       <Table striped bordered hover responsive className="table-sm">
         <thead>
@@ -168,7 +173,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
           </tr>
         </thead>
         <tbody>
-          {filteredRequests.map((request) => (
+          {filteredRequests.slice(startIndex, startIndex + 7).map((request)  => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
@@ -312,8 +317,9 @@ const GDMaintenanceRequestTables = ({ filter }) => {
         <Form.Label>Kilometer Reading</Form.Label>
         <Form.Control
           type="number"
-           value={kilometerOnCounter}
+           value={selectedRequest?.kilometerOnCounter}
            onChange={(event) => setKilometerOncounter(event.target.value)}
+           readOnly
           required
           className="mb-3"
         />
@@ -351,42 +357,6 @@ const GDMaintenanceRequestTables = ({ filter }) => {
         );
       })}
 </select>
-<Form.Group as={Col} controlId="maintenanceWorkHours">
-    <Form.Label>Maintenance Work Hours</Form.Label>
-    <Form.Control
-      type="number"
-      value={maintenanceWorkHours} // Assuming you want to display the maintenance work hours from the first maintenance task
-      onChange={(e) => setMaintenanceWorkHours(e.target.value)}
-      
-    />
-  </Form.Group>
-  <Form.Group as={Col} controlId="paymentPerHour">
-    <Form.Label>Payment Per Hour</Form.Label>
-    <Form.Control
-      type="number"
-      value={paymentPerHour} // Assuming you want to display the payment per hour from the first maintenance task
-      onChange={(e) => setPaymentPerHour(e.target.value)}
-      
-    />
-  </Form.Group>
-  <Form.Group as={Col} controlId="birr">
-    <Form.Label>Birr</Form.Label>
-    <Form.Control
-      type="number"
-      value={Birr} // Assuming you want to display the birr value from the first maintenance task
-      onChange={(e) => setBirr(e.target.value)}
-      
-    />
-  </Form.Group>
-  <Form.Group as={Col} controlId="coin">
-    <Form.Label>Coin</Form.Label>
-    <Form.Control
-      type="number"
-      value={Coin} // Assuming you want to display the coin value from the first maintenance task
-      onChange={(e) => setCoin(e.target.value)}
-      
-    />
-  </Form.Group>
 
 </Form>
   </Modal.Body>
@@ -407,7 +377,27 @@ const GDMaintenanceRequestTables = ({ filter }) => {
     </Button>
   </Modal.Footer>
 </Modal>
+<div className="d-flex justify-content-center align-items-center w-100">
+<Button
+  variant="primary"
+  className="btn-sm mx-2"
+  onClick={handlePrevious}
+  disabled={startIndex === 0}
+  block
+>
+  Previous
+</Button>
+<Button
+  variant="primary"
+  className="btn-sm mx-2"
+  onClick={handleNext}
+  disabled={startIndex + 7 >= filteredRequests.length}
+  block
+>
+  Next
+</Button>
 
+      </div>
 
 
     </div>

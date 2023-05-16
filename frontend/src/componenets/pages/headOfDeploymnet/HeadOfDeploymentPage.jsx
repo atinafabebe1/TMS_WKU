@@ -19,6 +19,9 @@ import AssignVehicle from "../../common/vehicle/AssignVehicle";
 import HODMaintenanceRequestPage from "./maintenanceRequest";
 import ApproveFuelRequest from "./ApproveFuelRequest";
 import Example from "./Home";
+import PropertyTypeList from "./VehicleClassification/PropertyType";
+import ClassTypeVehicleList from "./VehicleClassification/ClassType";
+import FuelTypeList from "./VehicleClassification/ClassFuel";
 const links = [
   {
     name: "Home",
@@ -121,8 +124,13 @@ const HeadOfDeploymentPage = () => {
           element={<EditVehicleRecord />}
         />
         <Route path="vehicles/assign-vehicle/:id" element={<AssignVehicle />} />
-        <Route path="vehicles/Receive" element={<RegisterVehicle />} />
+        <Route path="vehicles/type" element={<ClassTypeVehicleList />} />
+        <Route path="vehicles/propertyType" element={<PropertyTypeList />} />
+        <Route path="vehicles/propertyType" element={<PropertyTypeList />} />
+        <Route path="vehicles/fuelTypeList" element={<FuelTypeList />} />
         <Route path="vehicles/Transfer" element={<TransferVehicle />} />
+        <Route path="vehicles/Receive" element={<RegisterVehicle />} />
+
         <Route
           path="request/vehicle"
           element={<VehiclesRequests link={`/Request/vehicle`} />}

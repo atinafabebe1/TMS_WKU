@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Tab } from "react-bootstrap";
-import { Table, Button, Form, Row, Col } from "react-bootstrap";
+import { Table, Button, Card, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 import api from "../../../api/api";
@@ -10,7 +10,7 @@ const DetailVehicleInfo = ({ link }) => {
   const [vehicles, setVehicles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("pending");
-
+  const navigate = useNavigate();
   useEffect(() => {
     api
       .get("/VehicleRecord")
@@ -88,7 +88,11 @@ const DetailVehicleInfo = ({ link }) => {
       console.log(error);
     }
   };
+  const [groupByParam, setGroupByParam] = useState("");
 
+  const handleButtonClick = (param) => {
+    setGroupByParam(param);
+  };
   return (
     <div className="p-4">
       <Row className="mb-4">
@@ -135,6 +139,84 @@ const DetailVehicleInfo = ({ link }) => {
           <VehicleDisplayTable vehicles={deletedVehicles} />
         </Tab>
       </Tabs>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ paddingBottom: "70px" }}
+      >
+        <div className="p-4">
+          <Card>
+            <Card.Header style={{ backgroundColor: "dark" }}>
+              Type of Vehicle
+            </Card.Header>
+            <Card.Body>
+              <Card.Text>
+                <h6 style={{ textAlign: "center", color: "#4682B4" }}>
+                  Vehicles Categorized Based on Their Type.
+                </h6>
+              </Card.Text>
+
+              <div className="text-center">
+                <Button
+                  variant="success"
+                  size="sm"
+                  style={{ width: "200px" }}
+                  onClick={(e) => navigate(`/hd/vehicles/type`)}
+                >
+                  Get Vehicles
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
+        </div>
+        <div className="p-4">
+          <Card>
+            <Card.Header style={{ backgroundColor: "dark" }}>
+              Property Type
+            </Card.Header>
+            <Card.Body>
+              <Card.Text>
+                <h6 style={{ textAlign: "center", color: "#4682B4" }}>
+                  Vehicles Categorized Based on Their Property Types.
+                </h6>
+              </Card.Text>
+
+              <div className="text-center">
+                <Button
+                  variant="success"
+                  size="sm"
+                  style={{ width: "200px" }}
+                  onClick={(e) => navigate(`/hd/vehicles/propertyType`)}
+                >
+                  Get Vehicles
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
+        </div>
+        <div className="p-4">
+          <Card>
+            <Card.Header>Vehicles Fuel Type</Card.Header>
+            <Card.Body>
+              <Card.Text>
+                <h6 style={{ textAlign: "center", color: "#4682B4" }}>
+                  Vehicles Categorized Based on the Fuel Used
+                </h6>
+              </Card.Text>
+
+              <div className="text-center">
+                <Button
+                  variant="success"
+                  size="sm"
+                  style={{ width: "200px" }}
+                  onClick={(e) => navigate(`/hd/vehicles/fuelTypeList`)}
+                >
+                  Get Vehicles
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };

@@ -89,6 +89,7 @@ const RegisteredFuel = ({ fuels }) => {
             <th>Mode </th>
             <th>Ammount</th>
             <th>Price</th>
+            <th>Status</th>
             <th>Registered Date </th>
             <th>Last Edited Date </th>
             <th>Action</th>
@@ -102,6 +103,7 @@ const RegisteredFuel = ({ fuels }) => {
               <td>{fuel.mode}</td>
               <td>{fuel.approvedAmount}</td>
               <td>{fuel.price}</td>
+              <td>{fuel.status}</td>
               <td>{new Date(fuel.createdAt).toLocaleString()}</td>
               <td>
                 {fuel.createdAt !== fuel.updatedAt && (
@@ -122,10 +124,11 @@ const RegisteredFuel = ({ fuels }) => {
                     <Button
                       className="btn btn-sm"
                       variant="warning"
+                      disabled={fuel.status === "Received"}
                       onClick={() => handleShowModal(fuel)}
                     >
                       Edit
-                    </Button>{" "}
+                    </Button>
                   </>
                 )}
               </td>
