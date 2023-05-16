@@ -5,6 +5,7 @@ import Loading from "../../common/Provider/LoadingProvider";
 import { Row, Col } from "react-bootstrap";
 import { Form, Button, Modal } from "react-bootstrap";
 import api from "../../../api/api";
+import "../css/formStyles.css";
 
 const FuelRequestingForm = ({ title, request, onSubmit }) => {
   const [plateNumber, setPlateNumber] = useState("");
@@ -112,7 +113,9 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
           >
             <Row className="mb-3">
               <Form.Group as={Col}>
-                <Form.Label>Vehicle Plate Number</Form.Label>
+                <Form.Label className="form-control-custom">
+                  Vehicle Plate Number
+                </Form.Label>
                 <Form.Control
                   name="plateNumber"
                   value={plateNumber}
@@ -125,7 +128,7 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group as={Col} className="mb-3" controlId="type">
-                <Form.Label className="font-weight-bold">
+                <Form.Label className="form-control-custom">
                   Type of Fuel
                 </Form.Label>
                 <Form.Control
@@ -147,7 +150,10 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
             </Row>
             <Row>
               <Form.Group as={Col}>
-                <Form.Label> Current Record on Counter</Form.Label>
+                <Form.Label className="form-control-custom">
+                  {" "}
+                  Current Record on Counter
+                </Form.Label>
                 <Form.Control
                   type="number"
                   value={currentRecordOnCounter}
@@ -162,7 +168,9 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group as={Col}>
-                <Form.Label>Request Amount</Form.Label>
+                <Form.Label className="form-control-custom">
+                  Request Amount
+                </Form.Label>
                 <Form.Control
                   type="number"
                   value={requestAmount}

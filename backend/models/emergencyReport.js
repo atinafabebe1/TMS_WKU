@@ -24,118 +24,7 @@ const WitnessSchema = new Schema({
     },
   },
 });
-const DriverLicenseStatusSchema = new Schema({
-  number: {
-    type: String,
-    required: true,
-  },
-  level: {
-    type: String,
-    required: true,
-  },
-  renewedDate: {
-    type: Date,
-    required: true,
-    validate: {
-      validator: function (v) {
-        return v <= new Date();
-      },
-      message: (props) => `${props.value} cannot be a future date`,
-    },
-  },
-});
-const AccidentDetailsSchema = new Schema({
-  date: {
-    type: Date,
-    required: true,
-  },
-  time: {
-    type: String,
-    required: true,
-  },
-  address: {
-    type: String,
-    required: true,
-  },
-});
-const AccidentVehicleSchema = new Schema({
-  plateNumber: {
-    type: String,
-    required: true,
-    maxlength: 10,
-    validate: {
-      validator: function (v) {
-        const pattern = /^[1-5][A-Z][0-9]{7}$/i;
-        return pattern.test(v);
-      },
-      message: (props) => `${props.value} is not a valid plate number`,
-    },
-  },
-  address: {
-    type: String,
-    required: true,
-  },
-  phoneNumber: {
-    type: String,
-    required: true,
-    validate: {
-      validator: function (v) {
-        const pattern = /^\d{10}$/;
-        return pattern.test(v);
-      },
-      message: (props) => `${props.value} is not a valid phone number`,
-    },
-  },
-  driverName: {
-    type: String,
-    required: true,
-  },
-  work: {
-    type: String,
-    required: true,
-  },
-  Address: {
-    type: String,
-    required: true,
-  },
-  insurance: {
-    type: String,
-    required: true,
-  },
-});
 
-const damageCausedByAccidentSchema = new Schema({
-  injuries: {
-    type: Number,
-    required: true,
-    validate: {
-      validator: function (v) {
-        return v >= 0;
-      },
-      message: (props) => `${props.value} must be a non-negative number`,
-    },
-  },
-  death: {
-    type: Number,
-    required: true,
-    validate: {
-      validator: function (v) {
-        return v >= 0;
-      },
-      message: (props) => `${props.value} must be a non-negative number`,
-    },
-  },
-  damagedProperties: {
-    type: Number,
-    required: true,
-    validate: {
-      validator: function (v) {
-        return v >= 0;
-      },
-      message: (props) => `${props.value} must be a non-negative number`,
-    },
-  },
-});
 const EmergencyReportSchema = new Schema(
   {
     user: {
@@ -147,18 +36,6 @@ const EmergencyReportSchema = new Schema(
     vehicle: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "VehicleRecord",
-      required: true,
-    },
-    driverLicenseStatus: {
-      type: DriverLicenseStatusSchema,
-      required: true,
-    },
-    accidentDetails: {
-      type: AccidentDetailsSchema,
-      required: true,
-    },
-    accidentVehicleSchema: {
-      type: AccidentVehicleSchema,
       required: true,
     },
     plateNumber: {
@@ -173,10 +50,6 @@ const EmergencyReportSchema = new Schema(
         message: (props) => `${props.value} is not a valid plate number`,
       },
     },
-    damageCausedByAccident: {
-      type: damageCausedByAccidentSchema,
-      require: true,
-    },
     type: {
       type: String,
       required: true,
@@ -185,6 +58,48 @@ const EmergencyReportSchema = new Schema(
     detailedDescription: {
       type: String,
       required: true,
+    },
+    injuries: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: function (v) {
+          return v >= 0;
+        },
+        message: (props) => `${props.value} must be a non-negative number`,
+      },
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    time: {
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
+    death: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: function (v) {
+          return v >= 0;
+        },
+        message: (props) => `${props.value} must be a non-negative number`,
+      },
+    },
+    damagedProperties: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: function (v) {
+          return v >= 0;
+        },
+        message: (props) => `${props.value} must be a non-negative number`,
+      },
     },
     witnesses: {
       type: [WitnessSchema],
