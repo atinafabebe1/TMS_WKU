@@ -119,8 +119,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
       setRequests(response.data.data);
     } catch (error) {
       console.log(error);
-      setError("Error comes");
-    }
+        }
   };
   const fetch = async () => {
     api
