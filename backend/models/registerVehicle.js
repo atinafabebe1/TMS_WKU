@@ -100,13 +100,17 @@ const VehicleRecordSchema = new Schema(
       itemDetail: { type: String },
       quantity: { type: Number }
     },
+    driver:{
+      type: mongoose.Schema.Types.ObjectId,
+      default:null,
+    },
     assignedTo: {
       type: String,
       default: null
     },
     location: {
       type: String,
-      required: true
+      //required: true
     },
     serviceLocation: {
       type: String

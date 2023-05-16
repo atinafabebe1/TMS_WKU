@@ -43,7 +43,7 @@ router.get("/logout", logoutUser);
 router.get("/loginStatus", Auth, loginStatus);
 router.post("/forgotpassword", Auth, forgotPassword);
 router.put("/resetpassword/:resettoken", resetPassword);
-router.get("/me", Auth, getMe);
+router.get("/me", getMe);
 router.get("/refereshToken", referesh);
 router.put("/:id/image", Auth, upload.single("photo"), uploadUserPhoto);
 router.get("/:id/image", Auth, getUserPhoto);
