@@ -12,13 +12,17 @@ const createResources = asyncHandler(async (req, res, next) => {
 });
 
 const updateResources = asyncHandler(async (req, res, next) => {
-  const resource = await Resource.findById(req.params.id, {
-    new: true,
-    runValidators: true,
-  });
-  resource.amount += req.body.amount;
-  await resource.save();
-  res.json(resource);
+  try {
+    const resource = await Resource.createOrUpdate({
+      type: req.body.type,
+      amount: req.body.amount,
+      unitPrice: req.body.unitPrice,
+      totalPrice: req.body.totalPrice,
+    });
+    res.json(resource);
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = {

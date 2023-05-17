@@ -4,7 +4,6 @@ import Navbar from "../../common/header/Navbar";
 import WeeklyReport from "../../common/report/weeklyReport";
 import DailyReport from "../../common/report/dailyReport";
 import MonthlyReport from "../../common/report/monthlyReport";
-import EmmergencyReport from "../../common/report/emmergencyReport";
 import ServiceScheduleForm from "./ServiceScheduleForm";
 import TransferVehicle from "./TransferVehicle";
 import TrackVehicle from "../../common/vehicle/TrackVehicle";
@@ -22,6 +21,8 @@ import Example from "./Home";
 import PropertyTypeList from "./VehicleClassification/PropertyType";
 import ClassTypeVehicleList from "./VehicleClassification/ClassType";
 import FuelTypeList from "./VehicleClassification/ClassFuel";
+import EmmergencyReport from "./EmmergencyReportList";
+import DetailEmmergecy from "./DetailEmergency";
 const links = [
   {
     name: "Home",
@@ -118,6 +119,7 @@ const HeadOfDeploymentPage = () => {
         <Route path="report/daily" element={<DailyReport />} />
         <Route path="report/monthly" element={<MonthlyReport />} />
         <Route path="report/emergence" element={<EmmergencyReport />} />
+        <Route path="report/detail/:id" element={<DetailEmmergecy />} />
         <Route path="vehicles" element={<DetailVehicleInfo />} />
         <Route
           path="vehicles/edit-vehicle/:id"
