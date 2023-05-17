@@ -76,15 +76,7 @@ const updateEmergencyReport = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Request not found with id of ${req.params.id}`, 404)
     );
   }
-  //Make sure user is vehicle owner
-  if (emergenceReport.user.toString() !== req.user.id) {
-    return next(
-      new ErrorResponse(
-        `User ${req.params.id} is not authorized to update this vehicle`,
-        404
-      )
-    );
-  }
+
   emergenceReport = await EmergencyReport.findByIdAndUpdate(
     req.params.id,
     req.body,

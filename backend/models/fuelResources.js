@@ -6,8 +6,6 @@ const ResourceSchema = new Schema(
     type: {
       type: String,
       enum: ["Coupon", "Fuel", "Cash", "Benzene", "Diesel", "Fren Oil"],
-      required: true,
-      unique: true,
     },
     amount: {
       type: Number,
@@ -26,12 +24,16 @@ const ResourceSchema = new Schema(
 );
 
 ResourceSchema.statics.createOrUpdate = async function (resource) {
-  const existingResource = await this.findOne({ type: resource.type });
-  if (existingResource) {
-    existingResource.amount += resource.amount;
-    return existingResource.save();
-  } else {
-    return this.create(resource);
+  try {
+    const existingResource = await this.findOne({ type: resource.type });
+    if (existingResource) {
+      existingResource.amount += resource.amount;
+      return existingResource.save();
+    } else {
+      return this.create(resource);
+    }
+  } catch (error) {
+    throw new ErrorResponse("Error creating or updating resource.", 500);
   }
 };
 

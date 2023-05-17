@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { Form, Row, Col, Button } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Form, Button } from "react-bootstrap";
 import api from "../../../api/api";
 import "../../common/css/formStyles.css";
-const EmergencyReport = () => {
+const DetailEmergencyReport = ({ title, data }) => {
   const [reportData, setReportData] = useState({
     plateNumber: "",
     type: "",
     date: "",
     time: "",
-    work: "",
     address: "",
     injuries: "",
     death: "",
@@ -22,6 +21,31 @@ const EmergencyReport = () => {
       address: "",
     },
   });
+
+  useEffect(() => {
+    if (data) {
+      setReportData(data);
+    } else {
+      setReportData({
+        plateNumber: "",
+        type: "",
+        date: "",
+        time: "",
+        address: "",
+        injuries: "",
+        death: "",
+        damagedProperties: "",
+        detailedDescription: "",
+        witnesses: [{ name: "", address: "", phoneNumber: "" }],
+        passengersPresentDuringAccident: [{ name: "", address: "" }],
+        traffic: {
+          name: "",
+          site: "",
+          address: "",
+        },
+      });
+    }
+  }, [data]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,14 +64,6 @@ const EmergencyReport = () => {
     });
   };
 
-  const handleRemoveWitness = (index) => {
-    setReportData((prevData) => {
-      const witnesses = [...prevData.witnesses];
-      witnesses.splice(index, 1);
-      return { ...prevData, witnesses };
-    });
-  };
-
   const handlePassengerChange = (e, index) => {
     const { name, value } = e.target;
     setReportData((prevData) => {
@@ -59,53 +75,27 @@ const EmergencyReport = () => {
     });
   };
 
-  const handleRemovePassenger = (index) => {
-    setReportData((prevData) => {
-      const passengers = [...prevData.passengersPresentDuringAccident];
-      passengers.splice(index, 1);
-      return { ...prevData, passengersPresentDuringAccident: passengers };
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await api.post("/EmergencyReport", reportData);
-      console.log(response.data);
-      setReportData({
-        plateNumber: "",
-        type: "",
-        date: "",
-        time: "",
-        work: "",
-        address: "",
-        injuries: "",
-        death: "",
-        damagedProperties: "",
-        detailedDescription: "",
-        witnesses: [],
-        passengersPresentDuringAccident: [],
-        traffic: {
-          name: "",
-          site: "",
-          address: "",
-        },
-      });
-    } catch (error) {
-      console.error(error);
+    let response;
+    if (data) {
+      response = await api.put(`/EmergencyReport/${data._id}`, reportData);
+    } else {
+      response = await api.post("/EmergencyReport", reportData);
     }
   };
 
   const renderWitnessFields = () => {
     return reportData.witnesses.map((witness, index) => (
       <div key={index}>
+        <h6 className="form-control-custom">Witness #{index + 1}</h6>
         <Form.Group className="mb-3">
           <Form.Label className="form-control-custom">Name</Form.Label>
 
           <Form.Control
             type="text"
             name="name"
+            disabled
             value={witness.name}
             onChange={(e) => handleWitnessChange(e, index)}
             required
@@ -117,6 +107,7 @@ const EmergencyReport = () => {
           <Form.Control
             type="text"
             name="address"
+            disabled
             value={witness.address}
             onChange={(e) => handleWitnessChange(e, index)}
             required
@@ -128,18 +119,12 @@ const EmergencyReport = () => {
           <Form.Control
             type="text"
             name="phoneNumber"
+            disabled
             value={witness.phoneNumber}
             onChange={(e) => handleWitnessChange(e, index)}
             required
           />
         </Form.Group>
-        <Button
-          variant="danger"
-          size="sm"
-          onClick={() => handleRemoveWitness(index)}
-        >
-          Remove Witness
-        </Button>
       </div>
     ));
   };
@@ -148,12 +133,14 @@ const EmergencyReport = () => {
     return reportData.passengersPresentDuringAccident.map(
       (passenger, index) => (
         <div key={index}>
+          <h6 className="form-control-custom">Passenger #{index + 1}</h6>
           <Form.Group className="mb-3">
             <Form.Label className="form-control-custom">Name</Form.Label>
 
             <Form.Control
               type="text"
               name="name"
+              disabled
               value={passenger.name}
               onChange={(e) => handlePassengerChange(e, index)}
               required
@@ -165,18 +152,12 @@ const EmergencyReport = () => {
             <Form.Control
               type="text"
               name="address"
+              disabled
               value={passenger.address}
               onChange={(e) => handlePassengerChange(e, index)}
               required
             />
           </Form.Group>
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={() => handleRemovePassenger(index)}
-          >
-            Remove Passenger
-          </Button>
         </div>
       )
     );
@@ -186,7 +167,7 @@ const EmergencyReport = () => {
     <div className="p-4 d-flex justify-content-center">
       <Form onSubmit={handleSubmit} className="w-50">
         <h3 style={{ textAlign: "center", color: "#4682B4", padding: "10px" }}>
-          Emergency Reporting Form.
+          Report Detail
         </h3>
         <Form.Group className="mb-3">
           <Form.Label className="form-control-custom">
@@ -195,6 +176,7 @@ const EmergencyReport = () => {
           <Form.Control
             type="text"
             name="plateNumber"
+            disabled
             value={reportData.plateNumber}
             onChange={handleInputChange}
             required
@@ -205,6 +187,7 @@ const EmergencyReport = () => {
           <Form.Control
             type="date"
             name="date"
+            disabled
             value={reportData.date}
             onChange={handleInputChange}
             required
@@ -216,6 +199,7 @@ const EmergencyReport = () => {
           <Form.Control
             type="time"
             name="time"
+            disabled
             value={reportData.time}
             onChange={handleInputChange}
             required
@@ -227,6 +211,7 @@ const EmergencyReport = () => {
           <Form.Control
             type="text"
             name="address"
+            disabled
             value={reportData.address}
             onChange={handleInputChange}
             required
@@ -238,39 +223,32 @@ const EmergencyReport = () => {
           <Form.Control
             type="text"
             name="type"
+            disabled
             value={reportData.type}
             onChange={handleInputChange}
             required
           />
         </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">Work</Form.Label>
 
-          <Form.Control
-            type="text"
-            name="work"
-            value={reportData.work}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label className="form-control-custom">Injuries</Form.Label>
 
           <Form.Control
             type="number"
             name="injuries"
+            disabled
             value={reportData.injuries}
             onChange={handleInputChange}
             required
           />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">Injuries</Form.Label>
+          <Form.Label className="form-control-custom">Death</Form.Label>
 
           <Form.Control
             type="number"
             name="death"
+            disabled
             value={reportData.death}
             onChange={handleInputChange}
             required
@@ -284,6 +262,7 @@ const EmergencyReport = () => {
           <Form.Control
             type="number"
             name="damagedProperties"
+            disabled
             value={reportData.damagedProperties}
             onChange={handleInputChange}
             required
@@ -297,6 +276,7 @@ const EmergencyReport = () => {
           <Form.Control
             as="textarea"
             name="detailedDescription"
+            disabled
             value={reportData.detailedDescription}
             onChange={handleInputChange}
             rows={3}
@@ -307,7 +287,7 @@ const EmergencyReport = () => {
         <h5 style={{ color: "#4682B4" }}>Witnesses</h5>
         {renderWitnessFields()}
         <div style={{ paddingTop: "10px" }}>
-          <Button
+          {/* <Button
             variant="secondary"
             size="sm"
             onClick={() =>
@@ -318,12 +298,12 @@ const EmergencyReport = () => {
             }
           >
             Add Witness
-          </Button>
+          </Button> */}
         </div>
         <h5 style={{ color: "#4682B4" }}>Passengers Present During Accident</h5>
         {renderPassengerFields()}
         <div style={{ paddingTop: "10px" }}>
-          <Button
+          {/* <Button
             variant="secondary"
             size="sm"
             onClick={() =>
@@ -337,7 +317,7 @@ const EmergencyReport = () => {
             }
           >
             Add Passenger
-          </Button>
+          </Button> */}
         </div>
         <h4>Traffic</h4>
         <Form.Group className="mb-3">
@@ -346,6 +326,7 @@ const EmergencyReport = () => {
           <Form.Control
             type="text"
             name="name"
+            disabled
             value={reportData.traffic.name}
             onChange={(e) =>
               setReportData((prevData) => ({
@@ -365,6 +346,7 @@ const EmergencyReport = () => {
           <Form.Control
             type="text"
             name="site"
+            disabled
             value={reportData.traffic.site}
             onChange={(e) =>
               setReportData((prevData) => ({
@@ -384,6 +366,7 @@ const EmergencyReport = () => {
           <Form.Control
             type="text"
             name="address"
+            disabled
             value={reportData.traffic.address}
             onChange={(e) =>
               setReportData((prevData) => ({
@@ -397,13 +380,9 @@ const EmergencyReport = () => {
             required
           />
         </Form.Group>
-        <div style={{ paddingBottom: "70px" }}>
-          {" "}
-          <Button type="submit">Submit</Button>
-        </div>
       </Form>
     </div>
   );
 };
 
-export default EmergencyReport;
+export default DetailEmergencyReport;

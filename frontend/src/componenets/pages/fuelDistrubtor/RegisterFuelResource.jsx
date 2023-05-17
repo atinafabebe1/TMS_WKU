@@ -16,9 +16,9 @@ const RegisterResourceForm = () => {
       const res = await api.get(`/Resources?type=${type}`);
       const existingResource = res.data[0];
       if (existingResource) {
+        const updatedAmount = existingResource.amount + parseInt(amount);
         await api.put(`/Resources/${existingResource._id}`, {
-          type,
-          amount: existingResource.amount + amount,
+          amount: updatedAmount,
         });
         setSuccessMessage("Resource updated successfully!");
       } else {

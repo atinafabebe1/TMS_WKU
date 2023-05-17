@@ -5,8 +5,10 @@ import MaintenanceRequestForm from "./maintenance-request-form";
 import FuelRequest from "./CreateFuelRequest";
 import FuelRequestListPage from "./FuelRequestList";
 import SendComplain from "../../common/shared/sendComplain";
-import EmergencyReport from "./EmmergencyReport";
+import CreateEmergencyReport from "../../common/report/createEmmergencyReport";
+import EmmergencyReport from "../../common/report/emmergencyReport";
 import TransferVehiclePage from "./transferVehicle";
+import EditEmergencyReport from "./EditEmergencyReport";
 import UserPage from "./test";
 import { Routes, Route } from "react-router-dom";
 const links = [
@@ -62,7 +64,15 @@ const DriverPage = () => {
     <div>
       <Navbar links={links} title="TMS" />
       <Routes>
-        <Route path="report/emmergency" element={<UserPage />} />
+        <Route path="report/emmergency" element={<EmmergencyReport />} />
+        <Route
+          path="report/emmergency/create"
+          element={<CreateEmergencyReport />}
+        />
+        <Route
+          path="report/emmergency/edit/:id"
+          element={<EditEmergencyReport />}
+        />
         <Route path="complain" element={<SendComplain />} />
         <Route path="request/fuel" element={<FuelRequestListPage />}></Route>
         <Route
@@ -71,16 +81,15 @@ const DriverPage = () => {
         ></Route>
         <Route
           path="request/maintenance"
-          element={<DrivermaintenanceRequestPage link={`/Request/maintenance`} />}
+          element={
+            <DrivermaintenanceRequestPage link={`/Request/maintenance`} />
+          }
         ></Route>
         <Route
           path="maintenance-request-form"
           element={<MaintenanceRequestForm />}
         />
-          <Route
-          path="vehicles/transfer"
-          element={<TransferVehiclePage />}
-        />
+        <Route path="vehicles/transfer" element={<TransferVehiclePage />} />
       </Routes>
     </div>
   );

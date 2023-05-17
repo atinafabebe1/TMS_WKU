@@ -131,6 +131,11 @@ const EmergencyReportSchema = new Schema(
         required: true,
       },
     },
+    status: {
+      type: String,
+      enum: ["Received", "Pending"],
+      default: "Pending",
+    },
     isDeleted: {
       type: Boolean,
       default: false,
