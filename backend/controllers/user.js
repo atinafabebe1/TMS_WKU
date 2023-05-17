@@ -1,13 +1,13 @@
-const User = require("../models/user");
-const crypto = require("crypto");
-const validator = require("validator");
-const bcrpyt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const asyncHandler = require("../middleware/async");
-const sendEmail = require("../utils/sendEmail");
-const ErrorResponse = require("../utils/errorResponse");
-const path = require("path");
-const fs = require("fs");
+const User = require('../models/user');
+const crypto = require('crypto');
+const validator = require('validator');
+const bcrpyt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const asyncHandler = require('../middleware/async');
+const sendEmail = require('../utils/sendEmail');
+const ErrorResponse = require('../utils/errorResponse');
+const path = require('path');
+const fs = require('fs');
 
 //@desc  Login
 //@route Post /user/login
@@ -17,15 +17,13 @@ const LoginUser = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return next(new ErrorResponse("Please provide email and password", 400));
+    return next(new ErrorResponse('Please provide email and password', 400));
   }
 
-  const user = await User.findOne({ email, isActive: true }).select(
-    "+password"
-  );
+  const user = await User.findOne({ email, isActive: true }).select('+password');
 
   if (!user) {
-    return next(new ErrorResponse("Invalid Credentials", 401));
+    return next(new ErrorResponse('Invalid Credentials', 401));
   }
 
   //check if password matches
@@ -36,9 +34,7 @@ const LoginUser = asyncHandler(async (req, res, next) => {
     const accessToken = user.getSignedJwtAccessToken();
     const newRefreshToken = user.getSignedJwtRefreshToken();
 
-    let newRefreshTokenArray = !cookies?.token
-      ? user.refreshToken
-      : user.refreshToken.filter((rt) => rt !== cookies.token);
+    let newRefreshTokenArray = !cookies?.token ? user.refreshToken : user.refreshToken.filter((rt) => rt !== cookies.token);
 
     if (cookies?.token) {
       const refreshToken = cookies.token;
@@ -50,10 +46,10 @@ const LoginUser = asyncHandler(async (req, res, next) => {
         newRefreshTokenArray = [];
       }
 
-      res.clearCookie("token", {
+      res.clearCookie('token', {
         httpOnly: true,
-        sameSite: "lax",
-        secure: false,
+        sameSite: 'lax',
+        secure: false
       });
     }
 
@@ -62,17 +58,17 @@ const LoginUser = asyncHandler(async (req, res, next) => {
     await user.save();
 
     // Creates Secure Cookie with refresh token
-    res.cookie("token", newRefreshToken, {
+    res.cookie('token', newRefreshToken, {
       httpOnly: true,
       secure: false,
-      sameSite: "lax",
-      maxAge: 5 * 60 * 60 * 1000, // set maxAge to 5 hours
+      sameSite: 'lax',
+      maxAge: 5 * 60 * 60 * 1000 // set maxAge to 5 hours
     });
 
     // Send authorization roles and access token to user
-    res.json({ message: "Successfully Logged In", accessToken });
+    res.json({ message: 'Successfully Logged In', accessToken });
   } else {
-    return next(new ErrorResponse("Invalid Credentials", 401));
+    return next(new ErrorResponse('Invalid Credentials', 401));
   }
 });
 
@@ -88,10 +84,10 @@ const logoutUser = async (req, res, next) => {
   // Is refreshToken in db?
   const user = await User.findOne({ refreshToken }).exec();
   if (!user) {
-    res.clearCookie("token", {
+    res.clearCookie('token', {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
+      sameSite: 'lax',
+      secure: false
     });
     return res.sendStatus(204);
   }
@@ -100,7 +96,7 @@ const logoutUser = async (req, res, next) => {
   user.refreshToken = user.refreshToken.filter((rt) => rt !== refreshToken);
   await user.save();
 
-  res.clearCookie("token", { httpOnly: true, sameSite: "lax", secure: false });
+  res.clearCookie('token', { httpOnly: true, sameSite: 'lax', secure: false });
   res.sendStatus(204);
 };
 
@@ -118,9 +114,7 @@ const getMe = asyncHandler(async (req, res, next) => {
 const forgotPassword = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
-    return next(
-      new ErrorResponse(`There is no user with ${req.body.email}`, 404)
-    );
+    return next(new ErrorResponse(`There is no user with ${req.body.email}`, 404));
   }
 
   //Get reset token
@@ -129,9 +123,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 
   //Create reset url
 
-  const resetUrl = `${req.protocol}://${req.get(
-    "host"
-  )}/user/resetpassword/${resetToken}`;
+  const resetUrl = `${req.protocol}://${req.get('host')}/user/resetpassword/${resetToken}`;
 
   const message = `<p>You are receiving this email because you have requested a password reset.</p>
       <p>Please click the following link or copy and paste it into your browser to reset your password:</p>
@@ -140,10 +132,10 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   try {
     await sendEmail({
       email: user.email,
-      subject: "Password reset token",
-      message,
+      subject: 'Password reset token',
+      message
     });
-    res.status(200).json({ data: "Email Sent" });
+    res.status(200).json({ data: 'Email Sent' });
   } catch (error) {
     user.resetPassowrdExpire = undefined;
     user.resetPasswordToken = undefined;
@@ -158,17 +150,14 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 //@access Private
 const resetPassword = asyncHandler(async (req, res, next) => {
   // Get hashed token
-  const resetPasswordToken = crypto
-    .createHash("sha256")
-    .update(req.params.resettoken)
-    .digest("hex");
+  const resetPasswordToken = crypto.createHash('sha256').update(req.params.resettoken).digest('hex');
 
   const user = await User.findOne({
     resetPasswordToken,
-    resetPasswordExpire: { $gt: Date.now() },
+    resetPasswordExpire: { $gt: Date.now() }
   });
   if (!user) {
-    return next(new ErrorResponse("Invalid token", 400));
+    return next(new ErrorResponse('Invalid token', 400));
   }
 
   // Set new password
@@ -184,21 +173,21 @@ const resetPassword = asyncHandler(async (req, res, next) => {
 //@route PATCH /user/updatepassword
 //@access Private
 const updatePassword = asyncHandler(async (req, res, next) => {
-  let user = await User.findById(req.user.id).select("+password");
+  let user = await User.findById(req.user.id).select('+password');
   console.log(req.body);
   //Check current password
   const match = await user.matchPassword(req.body.currentPassword);
 
   if (!match) {
-    return next(new ErrorResponse("Password is incorrect", 401));
+    return next(new ErrorResponse('Password is incorrect', 401));
   }
   if (!validator.isStrongPassword(req.body.newPassword)) {
-    return res.status(400).json({ error: "weak Password" });
+    return res.status(400).json({ error: 'weak Password' });
   }
 
   const hashedPassword = await bcrpyt.hash(req.body.newPassword, 11);
   user = await User.findByIdAndUpdate(req.user.id, {
-    password: hashedPassword,
+    password: hashedPassword
   });
 
   sendTokenResponse(user, 200, res);
@@ -220,73 +209,63 @@ const loginStatus = asyncHandler(async (req, res) => {
   return res.json(false);
 });
 
-const referesh = asyncHandler(async (req, res, next) => {
+const refresh = asyncHandler(async (req, res, next) => {
   const cookies = req.cookies;
   if (!cookies?.token) return res.sendStatus(401);
   const refreshToken = cookies.token;
   console.log(refreshToken);
-  res.clearCookie("token", { httpOnly: true, sameSite: "lax", secure: false });
-  console.log("after cookie cleared " + req.cookie?.token);
+  res.clearCookie('token', { httpOnly: true, sameSite: 'lax', secure: false });
+  console.log('after cookie cleared ' + req.cookies?.token);
   const foundUser = await User.findOne({ refreshToken });
 
   // Detected refresh token reuse!
   if (!foundUser) {
-    jwt.verify(
-      refreshToken,
-      process.env.REFERESH_JWT_SECRET,
-      async (err, decoded) => {
-        if (err) return res.status(403).json({ error: "Forbidden" });
-        console.log("attempted refresh token reuse!");
-        const hackedUser = await User.findOne({
-          userName: decoded.Username,
-        }).exec();
-        hackedUser.refreshToken = [];
-        await hackedUser.save();
-        console.log(hackedUser);
-      }
-    );
-    return res.status(403);
+    jwt.verify(refreshToken, process.env.REFERESH_JWT_SECRET, async (err, decoded) => {
+      if (err) return res.status(403).json({ error: 'Forbidden' });
+      console.log('attempted refresh token reuse!');
+      const hackedUser = await User.findOne({ userName: decoded.Username }).exec();
+      hackedUser.refreshToken = [];
+      await hackedUser.save();
+      console.log(hackedUser);
+    });
+    return res.sendStatus(403);
   }
 
-  const newRefreshTokenArray = foundUser.refreshToken.filter(
-    (rt) => rt !== refreshToken
-  );
+  const newRefreshTokenArray = foundUser.refreshToken.filter((rt) => rt !== refreshToken);
 
-  // evaluate jwt
-  jwt.verify(
-    refreshToken,
-    process.env.REFERESH_JWT_SECRET,
-    async (err, decoded) => {
-      if (err) {
-        console.log("expired refresh token");
-        foundUser.refreshToken = [...newRefreshTokenArray];
-        await foundUser.save();
-      }
-      console.log(foundUser);
-      console.log(decoded);
-
-      if (err || foundUser.userName !== decoded.Username) {
-        return res.sendStatus(403);
-      }
-      // Refresh token was still valid
-      const accessToken = foundUser.getSignedJwtAccessToken();
-
-      const newRefreshToken = foundUser.getSignedJwtRefreshToken();
-      // Saving refreshToken with current user
-      foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
+  // Verify jwt
+  jwt.verify(refreshToken, process.env.REFERESH_JWT_SECRET, async (err, decoded) => {
+    if (err) {
+      console.log('expired refresh token');
+      foundUser.refreshToken = [...newRefreshTokenArray];
       await foundUser.save();
-
-      // Creates Secure Cookie with refresh token
-      res.cookie("token", newRefreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        maxAge: 24 * 60 * 60 * 1000,
-      });
-
-      res.json({ accessToken });
+      return res.sendStatus(403);
     }
-  );
+    console.log(foundUser);
+    console.log(decoded);
+
+    if (foundUser.userName !== decoded.Username) {
+      return res.sendStatus(403);
+    }
+
+    // Refresh token is still valid
+    const accessToken = foundUser.getSignedJwtAccessToken();
+
+    const newRefreshToken = foundUser.getSignedJwtRefreshToken();
+    // Saving refreshToken with the current user
+    foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
+    await foundUser.save();
+
+    // Create a secure cookie with the new refresh token
+    res.cookie('token', newRefreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 24 * 60 * 60 * 1000
+    });
+
+    res.json({ accessToken });
+  });
 });
 
 //Get token from model,create cookie and send response
@@ -297,18 +276,13 @@ const sendTokenResponse = async (user, statusCode, res) => {
   user.refreshToken = refereshtoken;
   await user.save();
   const options = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRE * 1 * 60 * 60 * 1000
-    ),
+    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 1 * 60 * 60 * 1000),
     httpOnly: true,
-    sameSite: "lax",
-    secure: false,
+    sameSite: 'lax',
+    secure: false
   };
 
-  res
-    .status(statusCode)
-    .cookie("token", refereshtoken, options)
-    .json({ data: accesstoken });
+  res.status(statusCode).cookie('token', refereshtoken, options).json({ data: accesstoken });
 };
 
 const uploadUserPhoto = async (req, res, next) => {
@@ -323,24 +297,24 @@ const uploadUserPhoto = async (req, res, next) => {
 
     // Check if file is too large
     if (photo.length > sizeLimit) {
-      throw new Error("File size too large");
+      throw new Error('File size too large');
     }
     console.log(photo.filename);
     const user = await User.findByIdAndUpdate(id, {
       image: {
         photo: photo?.filename,
-        description,
-      },
+        description
+      }
     });
     if (!user) {
-      console.log("user not found");
+      console.log('user not found');
     } else {
       console.log(user);
     }
-    console.log("sdjkfsdfsdfkksdjf");
+    console.log('sdjkfsdfsdfkksdjf');
     console.log(user.image); // Return success response
     res.status(201).json({
-      message: "Image uploaded successfully",
+      message: 'Image uploaded successfully'
     });
   } catch (error) {
     // Log error and return error response
@@ -350,15 +324,15 @@ const uploadUserPhoto = async (req, res, next) => {
 };
 
 const getUserPhoto = async (req, res, next) => {
-  const imagePath = path.join(__dirname, "../images", req.params.id);
+  const imagePath = path.join(__dirname, '../images', req.params.id);
 
   fs.readFile(imagePath, (err, data) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: "Failed to read image file" });
+      return res.status(500).json({ error: 'Failed to read image file' });
     }
 
-    res.setHeader("Content-Type", "image/jpeg"); // set the response content type
+    res.setHeader('Content-Type', 'image/jpeg'); // set the response content type
     res.status(200).send(data); // send the image data in the response
   });
 };
@@ -373,5 +347,5 @@ module.exports = {
   uploadUserPhoto,
   getUserPhoto,
   resetPassword,
-  referesh,
+  refresh
 };

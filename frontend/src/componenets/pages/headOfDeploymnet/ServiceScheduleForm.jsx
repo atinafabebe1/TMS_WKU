@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Container, Row, Col, Card, Modal, Table } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Card, Modal, Table, ListGroup, FormControl } from 'react-bootstrap';
 import api from '../../../api/api';
 
 function Servicescheduleform() {
   const [vehicles, setVehicles] = useState([]);
   const [selectedPlateNumber, setSelectedPlateNumber] = useState('');
+  const [error, setError] = useState('');
+
   const [trips, setTrips] = useState({
     departing: {
       address: '',
@@ -72,16 +74,23 @@ function Servicescheduleform() {
   };
 
   const handleAddTrip = () => {
+    const { departing, destination } = trips;
+
+    if (departing.time >= destination.time) {
+      setError("Departing time can't be greater than or equal to the destination time.");
+      return;
+    }
+
     setSchedule([
       ...schedule,
       {
         departing: {
-          address: trips.departing?.address,
-          time: trips.departing?.time
+          address: departing?.address,
+          time: departing?.time
         },
         destination: {
-          address: trips.destination?.address,
-          time: trips.destination?.time
+          address: destination?.address,
+          time: destination?.time
         },
         numVehiclesRequired: trips.numVehiclesRequired
       }
@@ -97,6 +106,7 @@ function Servicescheduleform() {
       },
       numVehiclesRequired: 1
     });
+    setError('');
     setShowModal(false);
   };
 
@@ -198,21 +208,44 @@ function Servicescheduleform() {
                       </Button>
                     </Modal.Footer>
                   </Modal>
+                  {selectedVehicles.length == 0 && (
+                    <div className="mt-3">
+                      <h6 className="text-center mb-3">Selected Vehicles:</h6>
+                      <p className="text-center text-muted">No vehicles selected</p>
+                    </div>
+                  )}
                   {selectedVehicles.length > 0 && (
-                    <div className="mt-2">
-                      <strong>Selected Vehicles:</strong>
-                      <ul>
-                        {selectedVehicles.map((vehicle) => (
-                          <li key={vehicle._id}>
-                            <input
-                              type="text"
-                              value={vehicle.plateNumber}
-                              onChange={(event) => handleSelectedPlateNumberChange(event, vehicle._id)}
-                            />
-                            <button onClick={() => handleDeleteSelectedVehicle(vehicle._id)}>Delete</button>
-                          </li>
-                        ))}
-                      </ul>
+                    <div className="mt-3">
+                      <h6 className="text-center mb-3">Selected Vehicles:</h6>
+                      <div>
+                        <ListGroup>
+                          <Row>
+                            {selectedVehicles.map((vehicle, index) => (
+                              <Col key={vehicle._id} xs={12} sm={6} md={4}>
+                                <ListGroup.Item>
+                                  <Row>
+                                    <Col xs={9}>
+                                      <FormControl
+                                        size="sm"
+                                        type="text"
+                                        disabled
+                                        value={vehicle.plateNumber}
+                                        onChange={(event) => handleSelectedPlateNumberChange(event, vehicle._id)}
+                                        placeholder="Enter Plate Number"
+                                      />
+                                    </Col>
+                                    <Col xs={3} className="text-right">
+                                      <Button size="sm" variant="danger" onClick={() => handleDeleteSelectedVehicle(vehicle._id)}>
+                                        Delete
+                                      </Button>
+                                    </Col>
+                                  </Row>
+                                </ListGroup.Item>
+                              </Col>
+                            ))}
+                          </Row>
+                        </ListGroup>
+                      </div>
                     </div>
                   )}
                 </Form.Group>
@@ -227,6 +260,7 @@ function Servicescheduleform() {
                       <Modal.Title>{editRowIndex !== null ? 'Edit Trip' : 'Add Trip'}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                      {error && <div className="text-danger">{error}</div>} {/* Display error message in red */}
                       <Form.Group>
                         <Form.Label>Departing Address:</Form.Label>
                         <Form.Control
@@ -267,7 +301,6 @@ function Servicescheduleform() {
                           onChange={(event) => handleTripChange(event, 'destination')}
                         />
                       </Form.Group>
-
                       <Form.Group>
                         <Form.Label>Number of Vehicles:</Form.Label>
                         <Form.Control

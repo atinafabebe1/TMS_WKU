@@ -30,7 +30,6 @@ const createServiceSchedule = asyncHandler(async (req, res, next) => {
 
   validateVehicles(vehicles);
   validateTrips(trips);
-  sortTrips(trips);
 
   const createdTrips = await assignVehiclesToTrips(vehicles, trips);
   res.status(201).json({
