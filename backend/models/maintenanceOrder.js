@@ -97,35 +97,35 @@ const MaintenanceOrderSchema = new Schema(
     },
     typeOfVehicle: {
       type: String,
-      required: true,
+      //required: true,
     },
     assignedWorkflow: {
       type: String,
-      required: true,
+     // required: true,
     },
     kilometerOnCounter: {
       type: Number,
       required: true,
-      validate: {
-        validator: async function (value) {
-          const lastMaintenanceOrder = await this.constructor
-            .findOne({
-              vehicle: this.vehicle,
-            })
-            .sort({ createdAt: -1 });
+      // validate: {
+      //   validator: async function (value) {
+      //     const lastMaintenanceOrder = await this.constructor
+      //       .findOne({
+      //         vehicle: this.vehicle,
+      //       })
+      //       .sort({ createdAt: -1 });
 
-          if (
-            lastMaintenanceOrder &&
-            lastMaintenanceOrder.kilometerOnCounter >= value
-          ) {
-            return false;
-          }
+      //     if (
+      //       lastMaintenanceOrder &&
+      //       lastMaintenanceOrder.kilometerOnCounter >= value
+      //     ) {
+      //       return false;
+      //     }
 
-          return true;
-        },
-        message:
-          "Kilometer on counter value must be greater than the previous value for the same vehicle",
-      },
+      //     return true;
+      //   },
+      //   message:
+      //     "Kilometer on counter value must be greater than the previous value for the same vehicle",
+      // },
     },
     crashType: {
       type: String,
@@ -134,7 +134,7 @@ const MaintenanceOrderSchema = new Schema(
     },
     maintenanceTasks: {
       type: [maintenanceTaskSchema],
-      required: true,
+      //  required: true,
     },
     totalCost: {
       type: Number,
@@ -156,11 +156,11 @@ const MaintenanceOrderSchema = new Schema(
     },
     reportStatus: {
       type: String,
-      default: "not reported",
+      default: "not-reported",
       enum: ["reported", "not-reported", "cancelled"],
       validate: {
         validator: function (v) {
-          if (this.isNew && v !== "not reported") {
+          if (this.isNew && v !== "not-reported") {
             return false;
           }
           return true;
@@ -200,27 +200,27 @@ MaintenanceOrderSchema.pre("save", async function (next) {
 
   next();
 });
-MaintenanceOrderSchema.statics.calculateTotalCost = function (
-  maintenanceTasks
-) {
-  let totalBirr = 0;
-  let totalCoin = 0;
+// MaintenanceOrderSchema.statics.calculateTotalCost = function (
+//   maintenanceTasks
+// ) {
+//   let totalBirr = 0;
+//   let totalCoin = 0;
 
-  for (let i = 0; i < maintenanceTasks.length; i++) {
-    const { maintenanceWorkHours, paymentPerHour } =
-      maintenanceTasks[i].assignedExpert;
-    let birr = maintenanceWorkHours * paymentPerHour;
-    let coin = birr - Math.floor(birr);
-    birr = Math.floor(birr);
-    totalBirr += birr;
-    totalCoin += coin;
+//   for (let i = 0; i < maintenanceTasks.length; i++) {
+//     const { maintenanceWorkHours, paymentPerHour } =
+//       maintenanceTasks[i].assignedExpert;
+//     let birr = maintenanceWorkHours * paymentPerHour;
+//     let coin = birr - Math.floor(birr);
+//     birr = Math.floor(birr);
+//     totalBirr += birr;
+//     totalCoin += coin;
 
-    maintenanceTasks[i].birr = birr;
-    maintenanceTasks[i].coin = coin;
-  }
+//     maintenanceTasks[i].birr = birr;
+//     maintenanceTasks[i].coin = coin;
+//   }
 
-  return { totalBirr, totalCoin, maintenanceTasks };
-};
+//   return { totalBirr, totalCoin, maintenanceTasks };
+// };
 
 MaintenanceOrderSchema.statics.getVehicleByPlateNumber = async function (
   plateNumber

@@ -18,9 +18,9 @@ const advancedResult = require("../middleware/advancedResult");
 const router = express.Router({ mergeParams: true });
 router.use(Auth);
 
-router.post("/maintenanceOrder", createMaintenanceOrder);
+router.post("/", createMaintenanceOrder);
 router.get(
-  "/maintenanceOrder",
+  "/",
   advancedResult(MaintenanceOrder, "vehicle"),
   getMaintenanceOrders
 );

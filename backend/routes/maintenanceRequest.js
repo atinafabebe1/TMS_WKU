@@ -42,7 +42,7 @@ router.delete(
 );
 router.patch(
   "/maintenance/:id",
-  Authorize("ROLE_HEADOFDEPLOYMENT"),
+  Authorize("ROLE_HEADOFDEPLOYMENT","ROLE_GARAGEDIRECTOR"),
   updateMaintenanaceStatus
 );
 router.patch(

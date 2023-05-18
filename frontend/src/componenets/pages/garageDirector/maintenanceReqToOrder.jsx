@@ -13,19 +13,20 @@ const GDMaintenanceRequestTables = ({ filter }) => {
   const [showModal, setShowModal] = useState(false);
   const [transferModal,setTransferModal]=useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [vehicless,setVehicles]=useState("");
-  const [mechanics,setMechanics]=useState("");
+  const [vehicless,setVehicles]=useState([]);
+  const [mechanics,setMechanics]=useState([]);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const [typeOfVehicle,setTypeOfVehicle]=useState(false);
-  const [assignedWorkflow,setAssignedWorkflow]=useState(false); 
-  const [kilometerOnCounter,setKilometerOncounter]=useState(false);
-  const [description, setCrashType]=useState(false);
+  const [typeOfVehicle,setTypeOfVehicle]=useState("");
+  const [assignedWorkflow,setAssignedWorkflow]=useState(""); 
+  const [kilometerOnCounter,setKilometerOncounter]=useState("");
+  const [description, setCrashType]=useState("");
   const [plateNumber,setPlateNumber]=useState("");
-  const [selectedMechanic, setSelectedMechanic] = useState("");
+  const [selectedMechanic, setSelectedMechanic] = useState();
 
   function handleMechanicChange(event) {
     setSelectedMechanic(event.target.value);
+    console.log(selectedMechanic);
   }
   useEffect(() => {
     api
@@ -101,17 +102,16 @@ const GDMaintenanceRequestTables = ({ filter }) => {
 
   const handleTransferOrder = async () => {
     try {
-      console.log(selectedRequest?.typeOfVehicle);
     const data = {
-    selectedMechanic,
+    ...selectedRequest,selectedMechanic,
     plateNumber: selectedRequest?.plateNumber,
-    typeOfVehicle: selectedRequest?.typeOfVehicle,
-    assignedWorkflow: selectedRequest?.assignedWorkflow,
-    kilometerOnCounter: selectedRequest?.kilometerOnCounter,
+    typeOfVehicle: typeOfVehicle,
+    assignedWorkflow: assignedWorkflow,
+    kilometerOnCounter: parseInt(selectedRequest?.kilometerOnCounter),
     crashType: selectedRequest?.description,
-    reciever: selectedMechanic.firstName,
+    reciever: selectedMechanic,
     };
-    await api.post(`/maintenanceOrder?isDeleted=false`, data);
+    await api.post(`/MaintenanceOrder?isDeleted=false`, data);
     await api.patch(`/Request/maintenance/${selectedRequest?._id}`, { status: "UnderMaintenance" });
     setTransferModal(false);
     setSuccess("Successfully Order Transferred");
@@ -281,12 +281,15 @@ const GDMaintenanceRequestTables = ({ filter }) => {
         vehicless
           .filter((vehicle) => vehicle.plateNumber === selectedRequest?.plateNumber)
           .map((vehicle) => {
-            if (vehicle.type !== null) return vehicle.type;
-            else return "Not Assigned";
+            if (vehicle.type !== null) {
+              return vehicle.type;
+            }
+
+            else return null;
           })
           .join(", ")
       }
-      onChange={(e) => setTypeOfVehicle(e.target.value)}
+      onChange={(e) => setTypeOfVehicle(e.vehicle.type)}
     />
   </Form.Group>
   <Form.Group as={Col} controlId="assignedto">
@@ -300,7 +303,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
           .filter((vehicle) => vehicle.plateNumber === selectedRequest?.plateNumber)
           .map((vehicle) => {
             if (vehicle.assignedTo !== null) return vehicle.assignedTo;
-            else return "Not Assigned";
+            else return null;
           })
           .join(", ")
       }
@@ -350,7 +353,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
       .filter((mechanic) => mechanic.role === "ROLE_MECHANIC")
       .map((mechanic) => {
         return (
-          <option key={mechanic.id} value={mechanic.firstName}>
+          <option key={mechanic.id} value={mechanic.id}>
             {mechanic.firstName}
           </option>
         );
@@ -370,7 +373,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
     <Button
       variant="success"
       className="btn btn-sm"
-      onClick={() => handleTransferOrder(selectedRequest ,selectedMechanic)}
+      onClick={() => handleTransferOrder(selectedRequest)}
     >
       Transfer
     </Button>
@@ -400,8 +403,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
 
 
     </div>
-  );
+ );
 };
-
 export default GDMaintenanceRequestTables;
 
