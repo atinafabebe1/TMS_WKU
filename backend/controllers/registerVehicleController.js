@@ -17,13 +17,18 @@ const getRegisteredVehicles = asyncHandler(async (req, res, next) => {
 // @access    Private/Admin/HeadOfDeployment/Director/GeneralDirector
 const getRegisteredVehicle = asyncHandler(async (req, res, next) => {
   const plateNumber = req.params.plateNumber;
-  const vehicle = await RegisterVehicle.findOne({ plateNumber });
-  if (!vehicle) {
-    return res.status(404).json({ error: "Vehicle not found" });
+  try {
+    const vehicle = await RegisterVehicle.findOne({ plateNumber });
+    if (!vehicle) {
+      return res.status(404).json({ error: "Vehicle not found" });
+    }
+    console.log(vehicle);
+    res.status(200).json(vehicle);
+  } catch (error) {
+    console.error("Error fetching vehicle:", error);
+    res.status(500).json({ error: "Server error" });
   }
-  res.status(200).json(vehicle);
 });
-
 // @desc      Create a vehicle record
 // @route     Post /RegisteredVehicle
 // @access    Private/HeadOfDeployment/
