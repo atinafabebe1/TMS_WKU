@@ -23,12 +23,9 @@ const registerUser = asyncHanlder(async (req, res, next) => {
     req.body.driverinfo = undefined;
   } else {
     console.log(req.body.driverinfo);
-    const vehicle = await VehicleRecord.findOne({
-      plateNumber: req.body.driverinfo.plateNumber,
-    });
-    console.log(vehicle);
-
-    req.body.vehicle = vehicle._id;
+    // const vehicle = await VehicleRecord.findOne({
+    //   plateNumber: req.body.driverinfo.plateNumber,
+    // });
   }
 
   const user = await User.create(req.body);
@@ -42,6 +39,16 @@ const registerUser = asyncHanlder(async (req, res, next) => {
 //@access private/Admin
 const getUsers = asyncHanlder(async (req, res, next) => {
   res.status(200).json(res.advancedResults);
+});
+
+//get single user
+const getUser = asyncHanlder(async (req, res, next) => {
+  const userId = req.params.id;
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  res.status(200).json(user);
 });
 
 //@desc  Update User
@@ -99,4 +106,5 @@ module.exports = {
   updateUser,
   getUsers,
   removeUser,
+  getUser,
 };

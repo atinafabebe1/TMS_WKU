@@ -7,6 +7,7 @@ const {
   deleteVehicle,
   uploadVehicleImage,
   getVehicleImage,
+  getRegisteredVehicle,
 } = require("../controllers/registerVehicleController");
 const backupDeletedDocument = require("../middleware/backupdeleted");
 const { Auth, Authorize } = require("../middleware/auth");
@@ -51,6 +52,11 @@ router.get(
   "/",
   advancedResult(RegisteredVehicle, "VehicleRequest"),
   getRegisteredVehicles
+);
+router.get(
+  "/:plateNumber",
+  advancedResult(RegisteredVehicle, "VehicleRequest"),
+  getRegisteredVehicle
 );
 router.put("/:id", updateVehicleRecord);
 router.delete("/:id", deleteVehicle);
