@@ -35,11 +35,11 @@ const createMaintenanceOrder = asyncHandler(async (req, res, next) => {
 
   req.body.vehicle = vehicle._id;
 
-  const totalCost = MaintenanceOrder.calculateTotalCost(
-    req.body.maintenanceTasks
-  );
+  // const totalCost = MaintenanceOrder.calculateTotalCost(
+  //   req.body.maintenanceTasks
+  // );
 
-  const { totalBirr, totalCoin, maintenanceTasks } = totalCost;
+  // const { totalBirr, totalCoin, maintenanceTasks } = totalCost;
 
   const order = new MaintenanceOrder({
     user: req.user.id,
@@ -50,15 +50,15 @@ const createMaintenanceOrder = asyncHandler(async (req, res, next) => {
     assignedWorkflow,
     kilometerOnCounter,
     crashType,
-    maintenanceTasks,
-    totalCost: totalBirr + totalCoin,
+    // maintenanceTasks,
+    // totalCost: totalBirr + totalCoin,
   });
 
   await order.save();
 
   res.status(200).json({
     id: order._id,
-    totalCost: order.totalCost,
+   // totalCost: order.totalCost,
   });
 });
 

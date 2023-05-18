@@ -100,7 +100,7 @@ const updateMaintenanaceStatus = asyncHandler(async (req, res, next) => {
   const { status } = req.body;
 
   // check if the status is valid
-  const validStatuses = ["pending", "in-progress", "completed", "canceled"];
+  const validStatuses = ["pending", "in-progress", "completed", "UnderMaintenance","canceled"];
   if (!validStatuses.includes(status)) {
     return next(new ErrorResponse(`Invalid status: ${status}`, 400));
   }
