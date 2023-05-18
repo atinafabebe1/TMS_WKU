@@ -3,12 +3,12 @@ import ErrorProvider from "../Provider/ErrorProvider";
 import SuccessProvider from "../Provider/SuccessProvider";
 import Loading from "../../common/Provider/LoadingProvider";
 import { Row, Col } from "react-bootstrap";
-import { Form, Button, Modal } from "react-bootstrap";
+import { Form, Button, Modal, Alert } from "react-bootstrap";
 import api from "../../../api/api";
+import { useAuth } from "../../../context/AuthContext";
 import "../css/formStyles.css";
 
 const FuelRequestingForm = ({ title, request, onSubmit }) => {
-  const [plateNumber, setPlateNumber] = useState("");
   const [typeOfFuel, setTypeOfFuel] = useState("");
   const [currentRecordOnCounter, setCurrentRecordOnCounter] = useState("");
   const [requestAmount, setRequestAmount] = useState(0);
@@ -17,7 +17,25 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [validated, setValidated] = useState(false);
+  const { user } = useAuth();
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get(`/user/getuser/${user.id}`);
+        setUserData(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
 
+    if (user) {
+      fetchUserData();
+    }
+  }, [user]);
+  const [plateNumber, setPlateNumber] = useState(
+    userData?.driverinfo?.vehiclePlateNumber || ""
+  );
   useEffect(() => {
     if (request) {
       setPlateNumber(request.plateNumber);
@@ -90,7 +108,7 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
         });
     }
   };
-
+  const PlateNumber = userData?.driverinfo?.vehiclePlateNumber;
   return (
     <div className="container my-3">
       <div className="row justify-content-center">
@@ -114,11 +132,12 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
             <Row className="mb-3">
               <Form.Group as={Col}>
                 <Form.Label className="form-control-custom">
-                  Vehicle Plate Number
+                  For Vehicle Plate Number
                 </Form.Label>
                 <Form.Control
                   name="plateNumber"
-                  value={plateNumber}
+                  value={PlateNumber}
+                  readOnly
                   onChange={(event) => setPlateNumber(event.target.value)}
                   required
                   className="mb-3"
@@ -127,9 +146,11 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
                   Please provide a valid Plate Number.
                 </Form.Control.Feedback>
               </Form.Group>
+            </Row>
+            <Row>
               <Form.Group as={Col} className="mb-3" controlId="type">
                 <Form.Label className="form-control-custom">
-                  Type of Fuel
+                  Select Type of Fuel
                 </Form.Label>
                 <Form.Control
                   as="select"
@@ -147,8 +168,7 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
                   <option value="Other Oil">Other Oil</option>
                 </Form.Control>
               </Form.Group>
-            </Row>
-            <Row>
+
               <Form.Group as={Col}>
                 <Form.Label className="form-control-custom">
                   {" "}
@@ -189,23 +209,31 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
           {success && <SuccessProvider success={success} />}
 
           <div className="d-flex justify-content-end my-4">
-            <Button className="btn-secondary me-2">Cancel</Button>
-            <Button
-              type="reset"
-              className="btn-danger me-2"
-              onClick={handleClear}
-            >
-              Clear
-            </Button>
-            <Button
-              type="submit"
-              className="btn-primary"
-              onClick={() => {
-                setShowModal(true);
-              }}
-            >
-              Submit
-            </Button>
+            {userData?.driverinfo?.vehiclePlateNumber === "not-Assigned" ? (
+              <Alert variant="info">
+                Unfortunately, a Vehicle That Is Not Assigned To You Prevents
+                You From Sending a Fuel Request.
+              </Alert>
+            ) : (
+              <>
+                <Button
+                  type="reset"
+                  className="btn-danger me-2"
+                  onClick={handleClear}
+                >
+                  Clear
+                </Button>
+                <Button
+                  type="submit"
+                  className="btn-primary"
+                  onClick={() => {
+                    setShowModal(true);
+                  }}
+                >
+                  Submit
+                </Button>
+              </>
+            )}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
               <Modal.Header closeButton>
                 <Modal.Title>Confirm Submission</Modal.Title>

@@ -3,7 +3,7 @@ import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import api from "../../../api/api";
 
 const RegisterForm = () => {
-  const [vehicles,setVehicles]=useState([]);
+  const [vehicles, setVehicles] = useState([]);
   const [user, setUser] = useState({
     userName: "",
     firstName: "",
@@ -15,8 +15,7 @@ const RegisterForm = () => {
     photo: "",
   });
   const [driverinfo, setDriverinfo] = useState({
-
-    driverVehicle:"",
+    vehiclePlateNumber: "",
     yearsOfExperience: "",
     licenses: {
       id: "",
@@ -31,7 +30,7 @@ const RegisterForm = () => {
   }, []);
   const fetchVehicles = async () => {
     try {
-      const response = await api.get('/VehicleRecord?select=plateNumber,driver=null');
+      const response = await api.get("/VehicleRecord?select=plateNumber");
       setVehicles(response.data.data);
     } catch (error) {
       console.log(error);
@@ -53,6 +52,7 @@ const RegisterForm = () => {
     }));
     if (value === "ROLE_DRIVER") {
       setDriverinfo({
+        vehiclePlateNumber: "",
         yearsOfExperience: "",
         licenses: {
           id: "",
@@ -65,7 +65,12 @@ const RegisterForm = () => {
   };
   const handleDriverInfoChange = (event) => {
     const { name, value } = event.target;
-    if (name === "id" || name === "stateIssued") {
+    if (name === "vehiclePlateNumber") {
+      setDriverinfo((prevDriverinfo) => ({
+        ...prevDriverinfo,
+        [name]: value,
+      }));
+    } else if (name === "id" || name === "stateIssued") {
       setDriverinfo((prevDriverinfo) => ({
         ...prevDriverinfo,
         licenses: {
@@ -232,25 +237,26 @@ const RegisterForm = () => {
             {user.role === "ROLE_DRIVER" && (
               <div>
                 <Form.Group className="mb-3" controlId="assignedvehicle">
-              <Form.Label>Assign Vehicle</Form.Label>
-              <Form.Control
-                as="select"
-                value={driverinfo.driverVehicle}
-                onChange={handleDriverInfoChange}
-                required
-                className="mb-3"
-              >
-                <option value="">Select a Vehicle</option>
-                {vehicles?.map((vehicle) => (
-                  <option
-                    key={vehicle.plateNumber}
-                    value={vehicle.plateNumber}
+                  <Form.Label>Assign Vehicle</Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={driverinfo.vehiclePlateNumber}
+                    onChange={handleDriverInfoChange}
+                    required
+                    className="mb-3"
+                    name="vehiclePlateNumber"
                   >
-                    {vehicle.plateNumber}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
+                    <option value="">Select a Vehicle</option>
+                    {vehicles?.map((vehicle) => (
+                      <option
+                        key={vehicle.plateNumber}
+                        value={vehicle.plateNumber}
+                      >
+                        {vehicle.plateNumber}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
                 <Form.Group className="mb-3" controlId="yearsOfExperience">
                   <Form.Label className="font-weight-bold">
                     Years of Experience <span className="text-danger">*</span>
