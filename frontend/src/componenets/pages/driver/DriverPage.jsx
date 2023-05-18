@@ -9,6 +9,7 @@ import CreateEmergencyReport from "../../common/report/createEmmergencyReport";
 import EmmergencyReport from "../../common/report/emmergencyReport";
 import TransferVehiclePage from "./transferVehicle";
 import EditEmergencyReport from "./EditEmergencyReport";
+import DriverReceiveVehicle from "./ReceiveVehicle";
 import UserPage from "./test";
 import { Routes, Route } from "react-router-dom";
 const links = [
@@ -90,6 +91,7 @@ const DriverPage = () => {
           element={<MaintenanceRequestForm />}
         />
         <Route path="vehicles/transfer" element={<TransferVehiclePage />} />
+        <Route path="vehicles/receive" element={<DriverReceiveVehicle />} />
       </Routes>
     </div>
   );

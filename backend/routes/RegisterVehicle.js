@@ -54,7 +54,7 @@ router.get(
   getRegisteredVehicles
 );
 router.get(
-  "/:plateNumber",
+  "/:id",
   advancedResult(RegisteredVehicle, "VehicleRequest"),
   getRegisteredVehicle
 );
