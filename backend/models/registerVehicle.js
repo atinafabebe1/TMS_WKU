@@ -1,18 +1,18 @@
-const mongoose = require('mongoose');
-const VehicleRequest = require('./vehicleRequest');
-const VehicleTransfer = require('./VehicleTransfer');
-const EmergencyReport = require('./emergencyReport');
-const FuelRequest = require('./fuelRequest');
-const MaintenanceReport = require('./maintenanceReport');
-const ErrorResponse = require('../utils/errorResponse');
+const mongoose = require("mongoose");
+const VehicleRequest = require("./vehicleRequest");
+const VehicleTransfer = require("./VehicleTransfer");
+const EmergencyReport = require("./emergencyReport");
+const FuelRequest = require("./fuelRequest");
+const MaintenanceReport = require("./maintenanceReport");
+const ErrorResponse = require("../utils/errorResponse");
 const Schema = mongoose.Schema;
 
 const VehicleImageSchema = new Schema(
   {
     photo: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   { timestamps: true }
 );
@@ -21,36 +21,41 @@ const VehicleRecordSchema = new Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
-      immutable: true
+      ref: "User",
+      immutable: true,
+    },
+    driver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: "No Driver Assigned",
     },
     modelNo: {
       type: Number,
       required: true,
       unique: true,
       min: 1000,
-      max: 9999
+      max: 9999,
     },
     chassisNo: {
       type: Number,
       unique: true,
       min: 100000,
-      max: 999999
+      max: 999999,
     },
     motorNo: {
       type: Number,
-      unique: true
+      unique: true,
     },
     type: {
       type: String,
-      enum: ['Bus', 'Truck', 'Pick Up', 'Ambulace', 'Automobile'],
-      required: true
+      enum: ["Bus", "Truck", "Pick Up", "Ambulace", "Automobile"],
+      required: true,
     },
     cC: {
-      type: Number
+      type: Number,
     },
     purchasePrice: {
-      type: Number
+      type: Number,
     },
     plateNumber: {
       type: String,
@@ -62,13 +67,13 @@ const VehicleRecordSchema = new Schema(
           const pattern = /^[1-5][A-Z][0-9]{7}$/i;
           return pattern.test(v);
         },
-        message: (props) => `${props.value} is not a valid plate number`
-      }
+        message: (props) => `${props.value} is not a valid plate number`,
+      },
     },
     typeOfFuel: {
       type: String,
-      enum: ['diesel', 'benzene', 'motorOil', 'frenOil', 'otherOil', 'grease'],
-      required: true
+      enum: ["diesel", "benzene", "motorOil", "frenOil", "otherOil", "grease"],
+      required: true,
     },
 
     purchaseDate: {
@@ -77,16 +82,16 @@ const VehicleRecordSchema = new Schema(
     },
 
     maxPerson: {
-      type: Number
+      type: Number,
     },
     maxLoad: {
-      type: Number
+      type: Number,
     },
     maxLitres: {
-      type: Number
+      type: Number,
     },
     proprietaryIdNumber: {
-      type: Number
+      type: Number,
     },
     propertyType: {
       type: String,
@@ -94,66 +99,66 @@ const VehicleRecordSchema = new Schema(
       required: true,
     },
     vehicleImage: {
-      type: VehicleImageSchema
+      type: VehicleImageSchema,
     },
     itemsWithVehicle: {
       itemDetail: { type: String },
-      quantity: { type: Number }
+      quantity: { type: Number },
     },
-    driver:{
+    driver: {
       type: mongoose.Schema.Types.ObjectId,
-      default:null,
+      default: null,
     },
     assignedTo: {
       type: String,
-      default: null
+      default: null,
     },
     location: {
       type: String,
       //required: true
     },
     serviceLocation: {
-      type: String
+      type: String,
     },
     load: {
-      type: Number
+      type: Number,
       //  required: true
     },
     duration: {
       type: Number,
-      default: 0
+      default: 0,
     },
     onMaintenance: {
       type: Boolean,
-      default: false
+      default: false,
     },
     assignedTrips: [
       {
         tripId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Trip'
+          ref: "Trip",
         },
         duration: {
-          type: Number
-        }
-      }
+          type: Number,
+        },
+      },
     ],
 
     isDeleted: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 VehicleRecordSchema.index({
   availability: 1,
-  'unavailable.from': 1,
-  'unavailable.to': 1
+  "unavailable.from": 1,
+  "unavailable.to": 1,
 });
 
-VehicleRecordSchema.pre('findOneAndUpdate', async function (next) {
+VehicleRecordSchema.pre("findOneAndUpdate", async function (next) {
   if (!this._update.isDeleted) {
     return next();
   }
@@ -168,23 +173,39 @@ VehicleRecordSchema.pre('findOneAndUpdate', async function (next) {
 });
 
 VehicleRecordSchema.methods.updateRelatedVehicleRequests = async function () {
-  await VehicleRequest.updateMany({ vehicle: this._conditions._id }, { isDeleted: true });
+  await VehicleRequest.updateMany(
+    { vehicle: this._conditions._id },
+    { isDeleted: true }
+  );
 };
 
 VehicleRecordSchema.methods.updateRelatedVehicleTransfers = async function () {
-  await VehicleTransfer.updateMany({ vehicle: this._conditions._id }, { isDeleted: true });
+  await VehicleTransfer.updateMany(
+    { vehicle: this._conditions._id },
+    { isDeleted: true }
+  );
 };
 
 VehicleRecordSchema.methods.updateRelatedFuelRequests = async function () {
-  await FuelRequest.updateMany({ vehicle: this._conditions._id }, { isDeleted: true });
+  await FuelRequest.updateMany(
+    { vehicle: this._conditions._id },
+    { isDeleted: true }
+  );
 };
 
-VehicleRecordSchema.methods.updateRelatedMaintenanceReports = async function () {
-  await MaintenanceReport.updateMany({ vehicle: this._conditions._id }, { isDeleted: true });
-};
+VehicleRecordSchema.methods.updateRelatedMaintenanceReports =
+  async function () {
+    await MaintenanceReport.updateMany(
+      { vehicle: this._conditions._id },
+      { isDeleted: true }
+    );
+  };
 
 VehicleRecordSchema.methods.updateRelatedEmergencyReports = async function () {
-  await EmergencyReport.updateMany({ vehicle: this._conditions._id }, { isDeleted: true });
+  await EmergencyReport.updateMany(
+    { vehicle: this._conditions._id },
+    { isDeleted: true }
+  );
 };
 // restrict updating assignedTo field to directors only
 // VehicleRecordSchema.pre("findOneAndUpdate", async function (next) {
@@ -201,32 +222,32 @@ VehicleRecordSchema.methods.updateRelatedEmergencyReports = async function () {
 //   return next();
 // });
 
-VehicleRecordSchema.virtual('VehicleRequest', {
-  ref: 'Vehicle Request',
-  localField: 'plateNumber',
-  foreignField: 'plateNumber',
-  justOne: false
+VehicleRecordSchema.virtual("VehicleRequest", {
+  ref: "Vehicle Request",
+  localField: "plateNumber",
+  foreignField: "plateNumber",
+  justOne: false,
 });
 
-VehicleRecordSchema.virtual('FuelRequest', {
-  ref: 'FuelRequest',
-  localField: 'plateNumber',
-  foreignField: 'plateNumber',
-  justOne: false
+VehicleRecordSchema.virtual("FuelRequest", {
+  ref: "FuelRequest",
+  localField: "plateNumber",
+  foreignField: "plateNumber",
+  justOne: false,
 });
 
-VehicleRecordSchema.virtual('MaintenanceRequest', {
-  ref: 'Maintenance Request',
-  localField: 'plateNumber',
-  foreignField: 'plateNumber',
-  justOne: false
+VehicleRecordSchema.virtual("MaintenanceRequest", {
+  ref: "Maintenance Request",
+  localField: "plateNumber",
+  foreignField: "plateNumber",
+  justOne: false,
 });
 
-VehicleRecordSchema.virtual('EmergencyReport', {
-  ref: 'EmergencyReport',
-  localField: 'plateNumber',
-  foreignField: 'plateNumber',
-  justOne: false
+VehicleRecordSchema.virtual("EmergencyReport", {
+  ref: "EmergencyReport",
+  localField: "plateNumber",
+  foreignField: "plateNumber",
+  justOne: false,
 });
 
-module.exports = mongoose.model('VehicleRecord', VehicleRecordSchema);
+module.exports = mongoose.model("VehicleRecord", VehicleRecordSchema);
