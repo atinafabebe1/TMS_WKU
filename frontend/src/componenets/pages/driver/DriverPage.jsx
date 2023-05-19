@@ -7,7 +7,7 @@ import FuelRequestListPage from "./FuelRequestList";
 import SendComplain from "../../common/shared/sendComplain";
 import CreateEmergencyReport from "../../common/report/createEmmergencyReport";
 import EmmergencyReport from "../../common/report/emmergencyReport";
-import TransferVehiclePage from "./transferVehicle";
+import TransferVehicleRequest from "./TransferVehicleRequest";
 import EditEmergencyReport from "./EditEmergencyReport";
 import DriverReceiveVehicle from "./ReceiveVehicle";
 import UserPage from "./test";
@@ -90,7 +90,7 @@ const DriverPage = () => {
           path="maintenance-request-form"
           element={<MaintenanceRequestForm />}
         />
-        <Route path="vehicles/transfer" element={<TransferVehiclePage />} />
+        <Route path="vehicles/transfer" element={<TransferVehicleRequest />} />
         <Route path="vehicles/receive" element={<DriverReceiveVehicle />} />
       </Routes>
     </div>

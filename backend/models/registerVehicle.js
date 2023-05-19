@@ -151,7 +151,11 @@ const VehicleRecordSchema = new Schema(
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
-
+VehicleRecordSchema.statics.getVehicleByPlateNumber = async function (
+  plateNumber
+) {
+  return this.findOne({ plateNumber });
+};
 VehicleRecordSchema.index({
   availability: 1,
   "unavailable.from": 1,
