@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Alert, Table } from "react-bootstrap";
+import { Alert, Table, Button, Modal } from "react-bootstrap";
 import api from "../../../api/api";
 import { useAuth } from "../../../context/AuthContext";
 
@@ -7,6 +7,8 @@ const DriverReceiveVehicle = () => {
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
   const [vehicleData, setVehicleData] = useState([]);
+  const [selectedVehicleId, setSelectedVehicleId] = useState(null);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -43,10 +45,33 @@ const DriverReceiveVehicle = () => {
     }
   }, [plateNumber]);
 
-  console.log(vehicleData);
+  const handleUpdate = async (vehicleId) => {
+    setSelectedVehicleId(vehicleId);
+    setShowConfirmationModal(true);
+  };
+
+  const handleConfirmation = async () => {
+    try {
+      await api.put(`/VehicleRecord/${selectedVehicleId}`, {
+        driver: user?.id,
+      });
+
+      console.log("Vehicle updated successfully.");
+    } catch (error) {
+      console.error("Error updating vehicle:", error);
+    }
+
+    setShowConfirmationModal(false);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedVehicleId(null);
+    setShowConfirmationModal(false);
+  };
+
   return (
     <div className="p-4">
-      <h2>Hi, I am a Driver</h2>
+      <h4>Your Vehicle Detail Information</h4>
       {userData?.driverinfo?.vehiclePlateNumber === "not-Assigned" ? (
         <Alert variant="info">Vehicle Not Assigned For You</Alert>
       ) : (
@@ -70,7 +95,7 @@ const DriverReceiveVehicle = () => {
             </tr>
           </thead>
           <tbody>
-            {vehicleData.data.map((vehicle) => (
+            {vehicleData?.data?.map((vehicle) => (
               <tr key={vehicle._id}>
                 <td>{vehicle.plateNumber}</td>
                 <td>{vehicle.type}</td>
@@ -78,13 +103,42 @@ const DriverReceiveVehicle = () => {
                 <td>{vehicle.modelNo}</td>
                 <td>{vehicle.propertyType}</td>
                 <td>
-                  <button>Perform Action</button>
+                  {vehicle.driver === "null" && (
+                    <Button
+                      variant="success"
+                      onClick={() => handleUpdate(vehicle._id)}
+                    >
+                      Receive
+                    </Button>
+                  )}
+                  {vehicle.driver !== "null" && (
+                    <Button variant="success" disabled>
+                      Received
+                    </Button>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </Table>
       </div>
+
+      <Modal show={showConfirmationModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are you sure You have received this vehicle?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Cancel
+          </Button>
+          <Button variant="success" onClick={handleConfirmation}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
