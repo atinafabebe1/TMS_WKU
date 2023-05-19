@@ -21,7 +21,7 @@ const MechMaintenanceOrder = () => {
       >
         <Tab eventKey="all" title="All"></Tab>
         <Tab eventKey="pending" title="Pending"></Tab>
-        <Tab eventKey="UnderMaintenance" title="Under Maintenance"></Tab>
+        <Tab eventKey="undermaintenance" title="Under Maintenance"></Tab>
         <Tab eventKey="in-progress" title="In Progress"></Tab>
         <Tab eventKey="completed" title="Completed"></Tab>
         <Tab eventKey="canceled" title="Cancelled"></Tab>

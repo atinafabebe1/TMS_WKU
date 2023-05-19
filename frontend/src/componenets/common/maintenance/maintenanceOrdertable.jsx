@@ -1,13 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
-import axios from "axios";
 import api from "../../../api/api";
-const MaintenanceOrderTable = () => {
+import { useAuth } from "../../../context/AuthContext";
+
+const MaintenanceOrderTable = ({ filter }) => {
   const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const { user } = useAuth();
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`/user/getuser/${user?.id}`);
+        setUserData(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    if (user?.id) {
+      fetchData();
+    }
+  }, [user]);
+
+  const myId = userData?.driverinfo?._id;
 
   useEffect(() => {
     api
@@ -36,12 +54,24 @@ const MaintenanceOrderTable = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredRequests = requests.filter((request) => {
-    return (
-      request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.status.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const filteredRequests = requests
+    .filter((request) => {
+      if (filter === "all") {
+        return true;
+      } else {
+        return request.status.toLowerCase() === filter;
+      }
+    })
+    .filter((request) => {
+      return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
+    })
+    .filter((request) => {
+      return myId === request.receiver;
+    });
+    filteredRequests.forEach((request) => {
+      console.log("myId:", myId);
+      console.log("Receiver:", request.receiver);
+    });
   return (
     <div className="p-4">
       <Form>
@@ -72,14 +102,15 @@ const MaintenanceOrderTable = () => {
               <td>{request.createdAt}</td>
               <td>{request.status}</td>
               <td>
-                
                 {request.status === "pending" && (
                   <>
                   </>
                 )}{" "}
-                <Button variant="info" 
-                className="btn btn-sm"
-                onClick={() => handleMore(request)}>
+                <Button
+                  variant="info"
+                  className="btn btn-sm"
+                  onClick={() => handleMore(request)}
+                >
                   More
                 </Button>
               </td>
@@ -103,16 +134,19 @@ const MaintenanceOrderTable = () => {
             <strong>Status:</strong> {selectedRequest?.status}
           </p>
           <p>
-            <strong>Description:</strong> {selectedRequest?.description}
+            <strong>Description:</strong> {selectedRequest?.crashType}
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" className="btn btn-sm" onClick={handleModalClose}>
+          <Button
+            variant="secondary"
+            className="btn btn-sm"
+            onClick={handleModalClose}
+          >
             Close
           </Button>
         </Modal.Footer>
       </Modal>
-
     </div>
   );
 };

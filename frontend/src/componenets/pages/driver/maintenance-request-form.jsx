@@ -8,6 +8,7 @@ import {
   Modal,
 } from "react-bootstrap";
 import api from "../../../api/api";
+import { useAuth } from "../../../context/AuthContext";
 
 const MaintenanceRequestForm = () => {
   const [description, setDescription] = useState("");
@@ -15,6 +16,8 @@ const MaintenanceRequestForm = () => {
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState("");
   const [success, setSucces] = useState("");
+  const { user } = useAuth();
+  const [userData, setUserData] = useState(null);
   const [kilometerOnCounter,setKilometerOncounter]=useState("");
   const fetch = async () => {};
 
@@ -28,15 +31,33 @@ const MaintenanceRequestForm = () => {
     handleSubmit();
   };
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get(`/user/getuser/${user?.id}`);
+        setUserData(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    if (user?.id) {
+      fetchUserData();
+    }
+  }, [user]);
+
+  const myplateNumber = userData?.driverinfo?.vehiclePlateNumber;
+
+
   const handleSubmit = () => {
-    if (!description||!plateNumber) {
-      setError("Description cannot be empty");
+    if (!description||!myplateNumber) {
+      setError("Description or plate number cannot be empty");
       setSucces(null);
       return;
     }
     
     const result = {
-      plateNumber,
+      myplateNumber,
       kilometerOnCounter,
       description,
     };
@@ -82,9 +103,10 @@ const MaintenanceRequestForm = () => {
             <FormLabel>Plate Number</FormLabel>
               <FormControl
                 type="text"
-                value={plateNumber}
+                value={myplateNumber}
                 onChange={(event) => setPlateNumber(event.target.value)}
                 required
+                readOnly
                 className="mb-3"
               />
         <Form.Label>Kilometer Reading</Form.Label>

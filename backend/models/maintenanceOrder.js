@@ -95,14 +95,6 @@ const MaintenanceOrderSchema = new Schema(
         message: (props) => `${props.value} is not a valid plate number`,
       },
     },
-    typeOfVehicle: {
-      type: String,
-      //required: true,
-    },
-    assignedWorkflow: {
-      type: String,
-     // required: true,
-    },
     kilometerOnCounter: {
       type: Number,
       required: true,
