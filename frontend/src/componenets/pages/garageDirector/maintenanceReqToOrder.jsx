@@ -105,8 +105,6 @@ const GDMaintenanceRequestTables = ({ filter }) => {
     const data = {
     ...selectedRequest,selectedMechanic,
     plateNumber: selectedRequest?.plateNumber,
-    typeOfVehicle: typeOfVehicle,
-    assignedWorkflow: assignedWorkflow,
     kilometerOnCounter: parseInt(selectedRequest?.kilometerOnCounter),
     crashType: selectedRequest?.description,
     reciever: selectedMechanic,
