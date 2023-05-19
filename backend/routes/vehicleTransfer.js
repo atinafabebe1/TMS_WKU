@@ -20,11 +20,7 @@ router.get(
   advancedResult(VehicleTransfer, ""),
   getVehicleTransfers
 );
-router.post(
-  "/transfer/:recieverId",
-  Authorize("ROLE_DRIVER"),
-  createVehicleTransfer
-);
+router.post("/transfer", Authorize("ROLE_DRIVER"), createVehicleTransfer);
 router.delete("/transfer/:id", Authorize("ROLE_DRIVER"), deletevehicleTransfer);
 router.patch("/transfer/:id", Authorize("ROLE_DRIVER"), updatevehicleTransfer);
 router.patch("/transfer/backup/:id", backupDeletedDocument(VehicleTransfer));

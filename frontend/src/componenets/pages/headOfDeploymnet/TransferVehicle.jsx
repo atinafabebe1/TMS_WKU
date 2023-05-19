@@ -1,116 +1,84 @@
-import api from "../../../api/api";
-import { Button, Table, Modal } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
+import { Table, Button, Tab, Nav, Modal } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../../../api/api";
 
-const TRANSFER_ENDPOINT = "/Request/transfer";
-
-const TransferVehicle = () => {
-  const [transfers, setTransfers] = useState([]);
-  const [status, setStatus] = useState("pending");
-  const [showModal, setShowModal] = useState(false);
-  const [selectedTransfer, setSelectedTransfer] = useState(null);
-
-  const fetchVehicleTransferRequest = async () => {
-    try {
-      const response = await api.get(TRANSFER_ENDPOINT);
-      setTransfers(response.data.data);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const handleResolve = (transfer) => {
-    setSelectedTransfer(transfer);
-    setShowModal(true);
-  };
-
-  const handleModalClose = () => {
-    setSelectedTransfer(null);
-    setShowModal(false);
-  };
-
-  const handleApprove = () => {
-    const updatedTransfer = { ...selectedTransfer, status: "Approved" };
-    api
-      .put(`/Request/transfer/${selectedTransfer.id}`, updatedTransfer)
-      .then(() => {
-        setSelectedTransfer(null);
-        setShowModal(false);
-        setStatus("Approved");
-        setTransfers((prevTransfers) =>
-          prevTransfers.map((transfer) =>
-            transfer.id === updatedTransfer.id ? updatedTransfer : transfer
-          )
-        );
-      })
-      .catch((error) => {
-        console.error("Error updating status:", error);
-      });
-  };
+const TransferVehicle = ({ link }) => {
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchVehicleTransferRequest();
+    api
+      .get("/Request/transfer")
+      .then((response) => {
+        setData(response.data.data);
+        setIsLoading(false);
+      })
+      .catch((error) => console.error("Error Fetching Report:", error));
   }, []);
 
-  
+  useEffect(() => {
+    data.forEach((item) => {
+      console.log(item.user); // Log item.user value in the console
+    });
+  }, [data]);
+
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const response = await api.get(`/user/getuser/${user?.id}`);
+  //       setUserData(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching user data:", error);
+  //     }
+  //   };
+
+  //   if (user?.id) {
+  //     fetchUserData();
+  //   }
+  // }, [user]);
 
   return (
-    <div>
-      <div className="table-responsive p-2 my-3">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2>Vehicle Transfer Requests List</h2>
-        </div>
-        <Table striped bordered hover responsive>
-          <thead>
+    <div className="p-4">
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>sender</th>
+            <th>Plate Number</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {isLoading ? (
             <tr>
-              <th>User Id</th>
-              <th>Model of Vehicle</th>
-              <th>Plate Number</th>
-              <th>Status</th>
-              <th>Action</th>
+              <td colSpan="7">Loading...</td>
             </tr>
-          </thead>
-          <tbody>
-            {transfers.map((transfer) => (
-              <tr key={transfer.id}>
-                <td>{transfer.user}</td>
-                <td>{transfer.modelOfVehicle}</td>
-                <td>{transfer.plateNumber}</td>
-                <td>{transfer.status}</td>
+          ) : data.length > 0 ? (
+            data.map((item) => (
+              <tr key={item._id}>
+                <td>{item.user}</td>
+                <td>{item.plateNumber}</td>
+                <td>{item.description}</td>
+                <td>{new Date(item.updatedAt).toLocaleString()}</td>
+                <td>{item.status}</td>
                 <td>
-                  <Button variant="success" className="btn-sm mx-2" onClick={() => handleResolve(transfer)}
-                    disabled={transfer.status === "resolved"}>
-                    Approve
-                  </Button>
-                  <Button variant="danger" className="btn-sm">
-                    Reject
-                  </Button>
+                  <Button variant="info" size="sm">
+                    See More
+                  </Button>{" "}
                 </td>
               </tr>
-            ))}
-          </tbody>
-          <Modal show={showModal} onHide={handleModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            <h5><strong>Approve Vehicle Request</strong></h5>
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <h5><strong>Are you sure to approve Vehicle Request</strong></h5>
-        </Modal.Body>
-      
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalClose}>
-            Close
-          </Button>
-
-          <Button variant="success" onClick={handleApprove}>
-            Approve
-          </Button>
-        </Modal.Footer>
-      </Modal>
-        </Table>
-      </div>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="7">No data available.</td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
     </div>
   );
 };

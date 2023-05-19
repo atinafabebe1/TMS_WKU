@@ -1,4 +1,5 @@
 const VehicleTransfer = require("../models/VehicleTransfer");
+const VehicleRecord = require("../models/registerVehicle");
 const mongoose = require("mongoose");
 const role = require("../middleware/role");
 const asyncHandler = require("../middleware/async");
@@ -15,9 +16,8 @@ const getVehicleTransfers = asyncHandler(async (req, res, next) => {
 // @route     Post /Request/Vehicle/Transfer
 // @access    Private/Driver
 const createVehicleTransfer = asyncHandler(async (req, res, next) => {
-  req.body.recieverId = req.params.recieverId;
   req.body.user = req.user.id;
-  const vehicle = await VehicleTransfer.getVehicleByPlateNumber(
+  const vehicle = await VehicleRecord.getVehicleByPlateNumber(
     req.body.plateNumber
   );
   if (!vehicle) {

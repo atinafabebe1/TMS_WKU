@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Table } from 'react-bootstrap';
-import api from '../../../api/api';
+import React, { useState, useEffect } from "react";
+import { Table } from "react-bootstrap";
+import api from "../../../api/api";
 
 const UserPage = () => {
   const [users, setUsers] = useState([]);
@@ -11,13 +11,13 @@ const UserPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await api.get('/user/me');
+      const response = await api.get("/user/me");
       setUsers(response.data.data);
     } catch (error) {
       console.log(error);
     }
   };
-//console.log(users);
+  //console.log(users);
   return (
     <div>
       <Table striped bordered hover responsive className="table-sm">
