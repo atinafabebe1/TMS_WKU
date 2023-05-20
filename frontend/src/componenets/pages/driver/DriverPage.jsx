@@ -22,11 +22,7 @@ const links = [
     url: "/driver/vehicles",
     children: [
       {
-        name: "Vehicle Transfer",
-        url: "/driver/vehicles/transfer",
-      },
-      {
-        name: "Receive Vehicle",
+        name: "My Vehicle",
         url: "/driver/vehicles/receive",
       },
     ],

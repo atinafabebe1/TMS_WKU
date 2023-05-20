@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Col, Row, Card, Container } from "react-bootstrap";
 import api from "../../../api/api";
+import { useAuth } from "../../../context/AuthContext";
+
 import "../../common/css/formStyles.css";
 const CreateEmergencyReport = ({ title, data }) => {
+  const { user } = useAuth();
+  const [userData, setUserData] = useState(null);
   const [reportData, setReportData] = useState({
     plateNumber: "",
     type: "",
@@ -21,6 +25,25 @@ const CreateEmergencyReport = ({ title, data }) => {
       address: "",
     },
   });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api.get(`/user/getuser/${user.id}`);
+        setUserData(response.data);
+        setReportData((prevData) => ({
+          ...prevData,
+          plateNumber: response.data?.driverinfo?.vehiclePlateNumber || "",
+        }));
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    if (user) {
+      fetchUserData();
+    }
+  }, [user]);
 
   useEffect(() => {
     if (data) {
@@ -104,39 +127,43 @@ const CreateEmergencyReport = ({ title, data }) => {
   const renderWitnessFields = () => {
     return reportData.witnesses.map((witness, index) => (
       <div key={index}>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">Name</Form.Label>
+        <Row className="mb-3">
+          <Form.Group as={Col}>
+            <Form.Label className="form-control-custom">Name</Form.Label>
 
-          <Form.Control
-            type="text"
-            name="name"
-            value={witness.name}
-            onChange={(e) => handleWitnessChange(e, index)}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">Address</Form.Label>
+            <Form.Control
+              type="text"
+              name="name"
+              value={witness.name}
+              onChange={(e) => handleWitnessChange(e, index)}
+              required
+            />
+          </Form.Group>
+          <Form.Group as={Col}>
+            <Form.Label className="form-control-custom">Address</Form.Label>
 
-          <Form.Control
-            type="text"
-            name="address"
-            value={witness.address}
-            onChange={(e) => handleWitnessChange(e, index)}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">Phone Number</Form.Label>
+            <Form.Control
+              type="text"
+              name="address"
+              value={witness.address}
+              onChange={(e) => handleWitnessChange(e, index)}
+              required
+            />
+          </Form.Group>
+          <Form.Group as={Col}>
+            <Form.Label className="form-control-custom">
+              Phone Number
+            </Form.Label>
 
-          <Form.Control
-            type="text"
-            name="phoneNumber"
-            value={witness.phoneNumber}
-            onChange={(e) => handleWitnessChange(e, index)}
-            required
-          />
-        </Form.Group>
+            <Form.Control
+              type="text"
+              name="phoneNumber"
+              value={witness.phoneNumber}
+              onChange={(e) => handleWitnessChange(e, index)}
+              required
+            />
+          </Form.Group>
+        </Row>
         <Button
           variant="danger"
           size="sm"
@@ -152,28 +179,30 @@ const CreateEmergencyReport = ({ title, data }) => {
     return reportData.passengersPresentDuringAccident.map(
       (passenger, index) => (
         <div key={index}>
-          <Form.Group className="mb-3">
-            <Form.Label className="form-control-custom">Name</Form.Label>
+          <Row className="mb-3">
+            <Form.Group as={Col}>
+              <Form.Label className="form-control-custom">Name</Form.Label>
 
-            <Form.Control
-              type="text"
-              name="name"
-              value={passenger.name}
-              onChange={(e) => handlePassengerChange(e, index)}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label className="form-control-custom">Address</Form.Label>
+              <Form.Control
+                type="text"
+                name="name"
+                value={passenger.name}
+                onChange={(e) => handlePassengerChange(e, index)}
+                required
+              />
+            </Form.Group>
+            <Form.Group as={Col}>
+              <Form.Label className="form-control-custom">Address</Form.Label>
 
-            <Form.Control
-              type="text"
-              name="address"
-              value={passenger.address}
-              onChange={(e) => handlePassengerChange(e, index)}
-              required
-            />
-          </Form.Group>
+              <Form.Control
+                type="text"
+                name="address"
+                value={passenger.address}
+                onChange={(e) => handlePassengerChange(e, index)}
+                required
+              />
+            </Form.Group>
+          </Row>
           <Button
             variant="danger"
             size="sm"
@@ -187,216 +216,277 @@ const CreateEmergencyReport = ({ title, data }) => {
   };
 
   return (
-    <div className="p-4 d-flex justify-content-center">
-      <Form onSubmit={handleSubmit} className="w-50">
-        <h3 style={{ textAlign: "center", color: "#4682B4", padding: "10px" }}>
-          Emergency Reporting Form.
-        </h3>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">
-            Vehicle Plate Number
-          </Form.Label>
-          <Form.Control
-            type="text"
-            name="plateNumber"
-            value={reportData.plateNumber}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
-        <Form.Group controlId="formDate" className="mb-3">
-          <Form.Label className="form-control-custom">Date</Form.Label>
-          <Form.Control
-            type="date"
-            name="date"
-            value={reportData.date}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
+    <Container className="my-3">
+      <Row>
+        <Col>
+          <Card>
+            <Card.Header className="bg-primary text-light">
+              Emergency Reporting Form.
+            </Card.Header>
+            <Card.Body>
+              <div>
+                <Form onSubmit={handleSubmit}>
+                  <h5
+                    style={{
+                      textAlign: "center",
+                      color: "#4682B4",
+                      padding: "30px",
+                    }}
+                  >
+                    Emergency Reporting For Your Vehicle With Plate Number.
+                    <strong> {reportData.plateNumber}</strong>
+                  </h5>
+                  <Row className="mb-3">
+                    <Form.Group controlId="formDate" as={Col}>
+                      <Form.Label className="form-control-custom">
+                        Date
+                      </Form.Label>
+                      <Form.Control
+                        type="date"
+                        name="date"
+                        value={reportData.date}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </Form.Group>
 
-        <Form.Group controlId="formTime" className="mb-3">
-          <Form.Label className="form-control-custom">Time</Form.Label>
-          <Form.Control
-            type="time"
-            name="time"
-            value={reportData.time}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
+                    <Form.Group controlId="formTime" as={Col}>
+                      <Form.Label className="form-control-custom">
+                        Time
+                      </Form.Label>
+                      <Form.Control
+                        type="time"
+                        name="time"
+                        value={reportData.time}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </Form.Group>
 
-        <Form.Group controlId="formAddress" className="mb-3">
-          <Form.Label className="form-control-custom">Address</Form.Label>
-          <Form.Control
-            type="text"
-            name="address"
-            value={reportData.address}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">Type</Form.Label>
+                    <Form.Group controlId="formAddress" as={Col}>
+                      <Form.Label className="form-control-custom">
+                        Address
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="address"
+                        minLength={3}
+                        maxLength={100}
+                        value={reportData.address}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </Form.Group>
+                  </Row>
+                  <br />
+                  <Row className="mb-3">
+                    <Form.Group as={Col}>
+                      <Form.Label className="form-control-custom">
+                        Type
+                      </Form.Label>
 
-          <Form.Control
-            type="text"
-            name="type"
-            value={reportData.type}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
+                      <Form.Select
+                        name="type"
+                        value={reportData.type}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value="">Select a type</option>
+                        <option value="Accident">Accident</option>
+                        <option value="Fire">Fire</option>
+                        <option value="Natural Disaster">
+                          Natural Disaster
+                        </option>
+                        <option value="Other">Other</option>
+                      </Form.Select>
+                    </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">Injuries</Form.Label>
+                    <Form.Group as={Col}>
+                      <Form.Label className="form-control-custom">
+                        Injuries
+                      </Form.Label>
 
-          <Form.Control
-            type="number"
-            name="injuries"
-            value={reportData.injuries}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">Death</Form.Label>
+                      <Form.Control
+                        type="number"
+                        name="injuries"
+                        min={0}
+                        max={100}
+                        value={reportData.injuries}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </Form.Group>
+                    <Form.Group as={Col}>
+                      <Form.Label className="form-control-custom">
+                        Death
+                      </Form.Label>
 
-          <Form.Control
-            type="number"
-            name="death"
-            value={reportData.death}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">
-            Damaged Properties (Birr)
-          </Form.Label>
+                      <Form.Control
+                        type="number"
+                        name="death"
+                        min={0}
+                        max={100}
+                        value={reportData.death}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </Form.Group>
+                    <Form.Group as={Col}>
+                      <Form.Label className="form-control-custom">
+                        Damaged Properties (Birr)
+                      </Form.Label>
 
-          <Form.Control
-            type="number"
-            name="damagedProperties"
-            value={reportData.damagedProperties}
-            onChange={handleInputChange}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">
-            Detailed Description
-          </Form.Label>
+                      <Form.Control
+                        type="number"
+                        name="damagedProperties"
+                        min={0}
+                        max={10000000}
+                        value={reportData.damagedProperties}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </Form.Group>
+                  </Row>
+                  <br />
+                  <Form.Group className="mb-3">
+                    <Form.Label className="form-control-custom">
+                      Provide Detail Description
+                    </Form.Label>
 
-          <Form.Control
-            as="textarea"
-            name="detailedDescription"
-            value={reportData.detailedDescription}
-            onChange={handleInputChange}
-            rows={3}
-            required
-          />
-        </Form.Group>
+                    <Form.Control
+                      as="textarea"
+                      name="detailedDescription"
+                      minLength={200}
+                      maxLength={1000}
+                      value={reportData.detailedDescription}
+                      onChange={handleInputChange}
+                      rows={3}
+                      required
+                    />
+                  </Form.Group>
+                  <br />
+                  <br />
+                  <h5 style={{ color: "#4682B4" }}>Witnesses</h5>
+                  {renderWitnessFields()}
+                  <div style={{ paddingTop: "10px" }}>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() =>
+                        setReportData((prevData) => ({
+                          ...prevData,
+                          witnesses: [
+                            ...prevData.witnesses,
+                            { name: "", address: "" },
+                          ],
+                        }))
+                      }
+                    >
+                      Add Witness
+                    </Button>
+                  </div>
+                  <br />
+                  <h5 style={{ color: "#4682B4" }}>
+                    Passengers Present During Accident
+                  </h5>
+                  {renderPassengerFields()}
+                  <div style={{ paddingTop: "10px" }}>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() =>
+                        setReportData((prevData) => ({
+                          ...prevData,
+                          passengersPresentDuringAccident: [
+                            ...prevData.passengersPresentDuringAccident,
+                            { name: "", address: "" },
+                          ],
+                        }))
+                      }
+                    >
+                      Add Passenger
+                    </Button>
+                  </div>
+                  <br />
+                  <h4>Traffic</h4>
+                  <Row className="mb-3">
+                    <Form.Group as={Col}>
+                      <Form.Label className="form-control-custom">
+                        Name
+                      </Form.Label>
 
-        <h5 style={{ color: "#4682B4" }}>Witnesses</h5>
-        {renderWitnessFields()}
-        <div style={{ paddingTop: "10px" }}>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() =>
-              setReportData((prevData) => ({
-                ...prevData,
-                witnesses: [...prevData.witnesses, { name: "", address: "" }],
-              }))
-            }
-          >
-            Add Witness
-          </Button>
-        </div>
-        <h5 style={{ color: "#4682B4" }}>Passengers Present During Accident</h5>
-        {renderPassengerFields()}
-        <div style={{ paddingTop: "10px" }}>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() =>
-              setReportData((prevData) => ({
-                ...prevData,
-                passengersPresentDuringAccident: [
-                  ...prevData.passengersPresentDuringAccident,
-                  { name: "", address: "" },
-                ],
-              }))
-            }
-          >
-            Add Passenger
-          </Button>
-        </div>
-        <h4>Traffic</h4>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="name"
+                        minLength={3}
+                        maxLength={30}
+                        value={reportData.traffic.name}
+                        onChange={(e) =>
+                          setReportData((prevData) => ({
+                            ...prevData,
+                            traffic: {
+                              ...prevData.traffic,
+                              name: e.target.value,
+                            },
+                          }))
+                        }
+                        required
+                      />
+                    </Form.Group>
+                    <Form.Group as={Col}>
+                      <Form.Label className="form-control-custom">
+                        Site
+                      </Form.Label>
 
-          <Form.Control
-            type="text"
-            name="name"
-            value={reportData.traffic.name}
-            onChange={(e) =>
-              setReportData((prevData) => ({
-                ...prevData,
-                traffic: {
-                  ...prevData.traffic,
-                  name: e.target.value,
-                },
-              }))
-            }
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">Site</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="site"
+                        value={reportData.traffic.site}
+                        onChange={(e) =>
+                          setReportData((prevData) => ({
+                            ...prevData,
+                            traffic: {
+                              ...prevData.traffic,
+                              site: e.target.value,
+                            },
+                          }))
+                        }
+                        required
+                      />
+                    </Form.Group>
+                    <Form.Group as={Col}>
+                      <Form.Label className="form-control-custom">
+                        Address
+                      </Form.Label>
 
-          <Form.Control
-            type="text"
-            name="site"
-            value={reportData.traffic.site}
-            onChange={(e) =>
-              setReportData((prevData) => ({
-                ...prevData,
-                traffic: {
-                  ...prevData.traffic,
-                  site: e.target.value,
-                },
-              }))
-            }
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="form-control-custom">Address</Form.Label>
-
-          <Form.Control
-            type="text"
-            name="address"
-            value={reportData.traffic.address}
-            onChange={(e) =>
-              setReportData((prevData) => ({
-                ...prevData,
-                traffic: {
-                  ...prevData.traffic,
-                  address: e.target.value,
-                },
-              }))
-            }
-            required
-          />
-        </Form.Group>
-        <div style={{ paddingBottom: "70px" }}>
-          {" "}
-          <Button type="submit">Submit</Button>
-        </div>
-      </Form>
-    </div>
+                      <Form.Control
+                        type="text"
+                        name="address"
+                        value={reportData.traffic.address}
+                        onChange={(e) =>
+                          setReportData((prevData) => ({
+                            ...prevData,
+                            traffic: {
+                              ...prevData.traffic,
+                              address: e.target.value,
+                            },
+                          }))
+                        }
+                        required
+                      />
+                    </Form.Group>
+                  </Row>
+                  <div style={{ paddingBottom: "70px" }}>
+                    {" "}
+                    <Button type="submit">Submit</Button>
+                  </div>
+                </Form>
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

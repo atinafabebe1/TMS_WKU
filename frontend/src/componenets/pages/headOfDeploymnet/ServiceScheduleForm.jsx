@@ -1,22 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Button, Container, Row, Col, Card, Modal, Table, ListGroup, FormControl } from 'react-bootstrap';
-import api from '../../../api/api';
+import React, { useState, useEffect } from "react";
+import {
+  Form,
+  Button,
+  Container,
+  Row,
+  Col,
+  Card,
+  Modal,
+  Table,
+  ListGroup,
+  FormControl,
+} from "react-bootstrap";
+import api from "../../../api/api";
 
 function Servicescheduleform() {
   const [vehicles, setVehicles] = useState([]);
-  const [selectedPlateNumber, setSelectedPlateNumber] = useState('');
-  const [error, setError] = useState('');
+  const [selectedPlateNumber, setSelectedPlateNumber] = useState("");
+  const [error, setError] = useState("");
 
   const [trips, setTrips] = useState({
     departing: {
-      address: '',
-      time: ''
+      address: "",
+      time: "",
     },
     destination: {
-      address: '',
-      time: ''
+      address: "",
+      time: "",
     },
-    numVehiclesRequired: 1
+    numVehiclesRequired: 1,
   });
   const [selectedVehicles, setSelectedVehicles] = useState([]);
   const [schedule, setSchedule] = useState([]);
@@ -25,7 +36,7 @@ function Servicescheduleform() {
   const [editRowIndex, setEditRowIndex] = useState(null);
 
   useEffect(() => {
-    api.get('/VehicleRecord').then((response) => {
+    api.get("/VehicleRecord").then((response) => {
       console.log(response);
       setVehicles(response.data?.data);
     });
@@ -36,14 +47,23 @@ function Servicescheduleform() {
     const isChecked = event.target.checked;
 
     if (isChecked) {
-      const selectedVehicle = vehicles.find((vehicle) => vehicle.id === vehicleId);
-      const isPlateNumberSelected = selectedVehicles.some((vehicle) => vehicle.plateNumber === selectedVehicle?.plateNumber);
+      const selectedVehicle = vehicles.find(
+        (vehicle) => vehicle.id === vehicleId
+      );
+      const isPlateNumberSelected = selectedVehicles.some(
+        (vehicle) => vehicle.plateNumber === selectedVehicle?.plateNumber
+      );
 
       if (!isPlateNumberSelected) {
-        setSelectedVehicles([...selectedVehicles, { _id: vehicleId, plateNumber: selectedVehicle?.plateNumber }]);
+        setSelectedVehicles([
+          ...selectedVehicles,
+          { _id: vehicleId, plateNumber: selectedVehicle?.plateNumber },
+        ]);
       }
     } else {
-      setSelectedVehicles(selectedVehicles.filter((vehicle) => vehicle._id !== vehicleId));
+      setSelectedVehicles(
+        selectedVehicles.filter((vehicle) => vehicle._id !== vehicleId)
+      );
     }
   };
   const handleSelectedPlateNumberChange = (event, vehicleId) => {
@@ -57,14 +77,16 @@ function Servicescheduleform() {
     setSelectedVehicles(updatedSelectedVehicles);
   };
   const handleDeleteSelectedVehicle = (vehicleId) => {
-    const updatedSelectedVehicles = selectedVehicles.filter((vehicle) => vehicle._id !== vehicleId);
+    const updatedSelectedVehicles = selectedVehicles.filter(
+      (vehicle) => vehicle._id !== vehicleId
+    );
     setSelectedVehicles(updatedSelectedVehicles);
   };
 
   const handleTripChange = (event, field) => {
     const { name, value } = event.target;
     const updatedTrip = { ...trips };
-    if (field === 'numVehiclesRequired') {
+    if (field === "numVehiclesRequired") {
       updatedTrip[field] = event.target.value;
       setTrips(updatedTrip);
     } else {
@@ -77,7 +99,9 @@ function Servicescheduleform() {
     const { departing, destination } = trips;
 
     if (departing.time >= destination.time) {
-      setError("Departing time can't be greater than or equal to the destination time.");
+      setError(
+        "Departing time can't be greater than or equal to the destination time."
+      );
       return;
     }
 
@@ -86,27 +110,27 @@ function Servicescheduleform() {
       {
         departing: {
           address: departing?.address,
-          time: departing?.time
+          time: departing?.time,
         },
         destination: {
           address: destination?.address,
-          time: destination?.time
+          time: destination?.time,
         },
-        numVehiclesRequired: trips.numVehiclesRequired
-      }
+        numVehiclesRequired: trips.numVehiclesRequired,
+      },
     ]);
     setTrips({
       departing: {
-        address: '',
-        time: ''
+        address: "",
+        time: "",
       },
       destination: {
-        address: '',
-        time: ''
+        address: "",
+        time: "",
       },
-      numVehiclesRequired: 1
+      numVehiclesRequired: 1,
     });
-    setError('');
+    setError("");
     setShowModal(false);
   };
 
@@ -116,13 +140,13 @@ function Servicescheduleform() {
     setTrips({
       departing: {
         address: trip.departing?.address,
-        time: trip.departing?.time
+        time: trip.departing?.time,
       },
       destination: {
         address: trip.destination?.address,
-        time: trip.destination?.time
+        time: trip.destination?.time,
       },
-      numVehiclesRequired: trip.numVehiclesRequired
+      numVehiclesRequired: trip.numVehiclesRequired,
     });
     setShowModal(true);
   };
@@ -132,13 +156,13 @@ function Servicescheduleform() {
     updatedSchedule[editRowIndex] = {
       departing: {
         address: trips.departing?.address,
-        time: trips.departing?.time
+        time: trips.departing?.time,
       },
       destination: {
         address: trips.destination?.address,
-        time: trips.destination?.time
+        time: trips.destination?.time,
       },
-      numVehiclesRequired: trips.numVehiclesRequired
+      numVehiclesRequired: trips.numVehiclesRequired,
     };
     setSchedule(updatedSchedule);
     setEditRowIndex(null);
@@ -155,9 +179,9 @@ function Servicescheduleform() {
     event.preventDefault();
     console.log(selectedVehicles);
     const response = await api
-      .post('/Schedule/work-day', {
+      .post("/Schedule/work-day", {
         vehicles: selectedVehicles,
-        trips: schedule
+        trips: schedule,
       })
       .then((response) => {
         console.log(response.data.createdTrips);
@@ -170,21 +194,33 @@ function Servicescheduleform() {
       <Row>
         <Col>
           <Card>
-            <Card.Header className="bg-primary text-light">Service Schedule Form</Card.Header>
+            <Card.Header className="bg-primary text-light">
+              Service Schedule Form
+            </Card.Header>
             <Card.Body>
               <Form onSubmit={handleSubmit}>
                 <Form.Group>
                   <Form.Label>Select Vehicles:</Form.Label>
-                  <Button variant="info" className="mx-2" onClick={() => setShowVehicleModal(true)}>
+                  <Button
+                    variant="info"
+                    className="mx-2"
+                    onClick={() => setShowVehicleModal(true)}
+                  >
                     Choose Vehicles
                   </Button>
-                  <Modal show={showVehicleModal} onHide={() => setShowVehicleModal(false)}>
+                  <Modal
+                    show={showVehicleModal}
+                    onHide={() => setShowVehicleModal(false)}
+                  >
                     <Modal.Header closeButton>
                       <Modal.Title>Select Vehicles</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                       {vehicles.map((vehicle) => {
-                        const isChecked = selectedVehicles.some((selectedVehicle) => selectedVehicle.plateNumber === vehicle.plateNumber);
+                        const isChecked = selectedVehicles.some(
+                          (selectedVehicle) =>
+                            selectedVehicle.plateNumber === vehicle.plateNumber
+                        );
 
                         return (
                           <Form.Check
@@ -200,10 +236,16 @@ function Servicescheduleform() {
                       })}
                     </Modal.Body>
                     <Modal.Footer>
-                      <Button variant="secondary" onClick={() => setShowVehicleModal(false)}>
+                      <Button
+                        variant="secondary"
+                        onClick={() => setShowVehicleModal(false)}
+                      >
                         Close
                       </Button>
-                      <Button variant="primary" onClick={() => setShowVehicleModal(false)}>
+                      <Button
+                        variant="primary"
+                        onClick={() => setShowVehicleModal(false)}
+                      >
                         Save Changes
                       </Button>
                     </Modal.Footer>
@@ -211,7 +253,9 @@ function Servicescheduleform() {
                   {selectedVehicles.length == 0 && (
                     <div className="mt-3">
                       <h6 className="text-center mb-3">Selected Vehicles:</h6>
-                      <p className="text-center text-muted">No vehicles selected</p>
+                      <p className="text-center text-muted">
+                        No vehicles selected
+                      </p>
                     </div>
                   )}
                   {selectedVehicles.length > 0 && (
@@ -230,12 +274,25 @@ function Servicescheduleform() {
                                         type="text"
                                         disabled
                                         value={vehicle.plateNumber}
-                                        onChange={(event) => handleSelectedPlateNumberChange(event, vehicle._id)}
+                                        onChange={(event) =>
+                                          handleSelectedPlateNumberChange(
+                                            event,
+                                            vehicle._id
+                                          )
+                                        }
                                         placeholder="Enter Plate Number"
                                       />
                                     </Col>
                                     <Col xs={3} className="text-right">
-                                      <Button size="sm" variant="danger" onClick={() => handleDeleteSelectedVehicle(vehicle._id)}>
+                                      <Button
+                                        size="sm"
+                                        variant="danger"
+                                        onClick={() =>
+                                          handleDeleteSelectedVehicle(
+                                            vehicle._id
+                                          )
+                                        }
+                                      >
                                         Delete
                                       </Button>
                                     </Col>
@@ -252,15 +309,22 @@ function Servicescheduleform() {
 
                 <Form.Group>
                   <Form.Label>Add Trips:</Form.Label>
-                  <Button variant="info" className="mx-2" onClick={() => setShowModal(true)}>
+                  <Button
+                    variant="info"
+                    className="mx-2"
+                    onClick={() => setShowModal(true)}
+                  >
                     Add Trip
                   </Button>
                   <Modal show={showModal} onHide={() => setShowModal(false)}>
                     <Modal.Header closeButton>
-                      <Modal.Title>{editRowIndex !== null ? 'Edit Trip' : 'Add Trip'}</Modal.Title>
+                      <Modal.Title>
+                        {editRowIndex !== null ? "Edit Trip" : "Add Trip"}
+                      </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      {error && <div className="text-danger">{error}</div>} {/* Display error message in red */}
+                      {error && <div className="text-danger">{error}</div>}{" "}
+                      {/* Display error message in red */}
                       <Form.Group>
                         <Form.Label>Departing Address:</Form.Label>
                         <Form.Control
@@ -268,7 +332,9 @@ function Servicescheduleform() {
                           placeholder="Enter departing address"
                           name="address"
                           value={trips.departing?.address}
-                          onChange={(event) => handleTripChange(event, 'departing')}
+                          onChange={(event) =>
+                            handleTripChange(event, "departing")
+                          }
                         />
                       </Form.Group>
                       <Form.Group>
@@ -278,7 +344,9 @@ function Servicescheduleform() {
                           placeholder="Enter departing time"
                           name="time"
                           value={trips.departing?.time}
-                          onChange={(event) => handleTripChange(event, 'departing')}
+                          onChange={(event) =>
+                            handleTripChange(event, "departing")
+                          }
                         />
                       </Form.Group>
                       <Form.Group>
@@ -288,7 +356,9 @@ function Servicescheduleform() {
                           placeholder="Enter destination address"
                           name="address"
                           value={trips.destination?.address}
-                          onChange={(event) => handleTripChange(event, 'destination')}
+                          onChange={(event) =>
+                            handleTripChange(event, "destination")
+                          }
                         />
                       </Form.Group>
                       <Form.Group>
@@ -298,7 +368,9 @@ function Servicescheduleform() {
                           placeholder="Enter destination time"
                           name="time"
                           value={trips.destination?.time}
-                          onChange={(event) => handleTripChange(event, 'destination')}
+                          onChange={(event) =>
+                            handleTripChange(event, "destination")
+                          }
                         />
                       </Form.Group>
                       <Form.Group>
@@ -308,12 +380,17 @@ function Servicescheduleform() {
                           placeholder="Enter number of vehicles"
                           value={trips.numVehiclesRequired}
                           min="1"
-                          onChange={(event) => handleTripChange(event, 'numVehiclesRequired')}
+                          onChange={(event) =>
+                            handleTripChange(event, "numVehiclesRequired")
+                          }
                         />
                       </Form.Group>
                     </Modal.Body>
                     <Modal.Footer>
-                      <Button variant="secondary" onClick={() => setShowModal(false)}>
+                      <Button
+                        variant="secondary"
+                        onClick={() => setShowModal(false)}
+                      >
                         Close
                       </Button>
                       {editRowIndex !== null ? (
@@ -347,7 +424,9 @@ function Servicescheduleform() {
                                 type="text"
                                 value={trips.departing?.address}
                                 name="address"
-                                onChange={(event) => handleTripChange(event, 'departing')}
+                                onChange={(event) =>
+                                  handleTripChange(event, "departing")
+                                }
                               />
                             ) : (
                               trip.departing?.address
@@ -359,7 +438,9 @@ function Servicescheduleform() {
                                 type="time"
                                 value={trips.departing?.time}
                                 name="time"
-                                onChange={(event) => handleTripChange(event, 'departing')}
+                                onChange={(event) =>
+                                  handleTripChange(event, "departing")
+                                }
                               />
                             ) : (
                               trip.departing?.time
@@ -371,7 +452,9 @@ function Servicescheduleform() {
                                 type="text"
                                 value={trips.destination?.address}
                                 name="address"
-                                onChange={(event) => handleTripChange(event, 'destination')}
+                                onChange={(event) =>
+                                  handleTripChange(event, "destination")
+                                }
                               />
                             ) : (
                               trip.destination?.address
@@ -383,7 +466,9 @@ function Servicescheduleform() {
                                 type="time"
                                 value={trips.destination?.time}
                                 name="time"
-                                onChange={(event) => handleTripChange(event, 'destination')}
+                                onChange={(event) =>
+                                  handleTripChange(event, "destination")
+                                }
                               />
                             ) : (
                               trip.destination?.time
@@ -395,7 +480,9 @@ function Servicescheduleform() {
                                 type="number"
                                 value={trips.numVehiclesRequired}
                                 min="1"
-                                onChange={(event) => handleTripChange(event, 'numVehiclesRequired')}
+                                onChange={(event) =>
+                                  handleTripChange(event, "numVehiclesRequired")
+                                }
                               />
                             ) : (
                               trip.numVehiclesRequired
@@ -404,19 +491,33 @@ function Servicescheduleform() {
                           <td>
                             {editRowIndex === index ? (
                               <>
-                                <Button variant="success" className="mr-2" onClick={handleSaveEdit}>
+                                <Button
+                                  variant="success"
+                                  className="mr-2"
+                                  onClick={handleSaveEdit}
+                                >
                                   Save
                                 </Button>
-                                <Button variant="secondary" onClick={() => setEditRowIndex(null)}>
+                                <Button
+                                  variant="secondary"
+                                  onClick={() => setEditRowIndex(null)}
+                                >
                                   Cancel
                                 </Button>
                               </>
                             ) : (
                               <>
-                                <Button variant="primary" className="mr-2" onClick={() => handleEditTrip(index)}>
+                                <Button
+                                  variant="primary"
+                                  className="mr-2"
+                                  onClick={() => handleEditTrip(index)}
+                                >
                                   Edit
                                 </Button>
-                                <Button variant="danger" onClick={() => handleDeleteTrip(index)}>
+                                <Button
+                                  variant="danger"
+                                  onClick={() => handleDeleteTrip(index)}
+                                >
                                   Delete
                                 </Button>
                               </>
