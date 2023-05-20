@@ -51,13 +51,13 @@ const MaintenanceRequestForm = () => {
 
   const handleSubmit = () => {
     if (!description||!myplateNumber) {
-      setError("Description or plate number cannot be empty");
+      setError("Description or plate number cannot be empty",myplateNumber);
       setSucces(null);
       return;
     }
     
     const result = {
-      myplateNumber,
+      plateNumber:myplateNumber,
       kilometerOnCounter,
       description,
     };

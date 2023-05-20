@@ -1,4 +1,5 @@
 const MaintenanceRequest = require("../models/maintenanceRequest");
+const VehicleRecord = require("../models/registerVehicle");
 const UserSchema = require("../models/user");
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
@@ -17,14 +18,14 @@ const createMaintenanceRequest = asyncHandler(async (req, res, next) => {
   if (headofDeployemnt) {
     req.body.reciever = headofDeployemnt._id;
   }
-  let vehicle = await MaintenanceRequest.getVehicleByPlateNumber(
+  let vehicle = await VehicleRecord.getVehicleByPlateNumber(
     req.body.plateNumber
   );
   if (vehicle) {
     console.log(vehicle);
     req.body.vehicle = vehicle._id;
   } else {
-    return next(new ErrorResponse("vehicle not found", 404));
+    return next(new ErrorResponse(`vehicle not found with ${req.body.plateNumber}`, 404));
   }
   req.body.user = req.user.id;
   await MaintenanceRequest.create(req.body);

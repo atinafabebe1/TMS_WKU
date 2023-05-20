@@ -9,6 +9,23 @@ const MaintenanceReportSchema = new Schema(
       ref: "User",
       immutable: true,
     },
+    vehicle: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "VehicleRecord",
+    },
+    plateNumber: {
+      type: String,
+      required: true,
+      maxlength: 10,
+      validate: {
+        validator: function (v) {
+          const pattern = /^[1-5][A-Z][0-9]{7}$/i;
+          return pattern.test(v);
+        },
+        message: (props) => `${props.value} is not a valid plate number`,
+      },
+    },
+    spareparts: {
     identificationNumber: {
       type: String,
       required: true,
@@ -16,42 +33,35 @@ const MaintenanceReportSchema = new Schema(
       minlength: 6,
       maxlength: 20,
     },
-    itemName: { type: String, required: true, minlength: 2, maxlength: 50 },
+    itemName: { type: String, required: true, },
     itemPrice: {
-      birr: {
+      
         type: Number,
         required: true,
         min: [0, "Price must be positive"],
-      },
-      coin: {
-        type: Number,
-        required: true,
-        min: [0, "Price must be positive"],
-      },
+
+
     },
+    itemQuantity: {
+      
+      type: Number,
+      required: true,
+      min: [0, "Price must be positive"],
+
+
+  },
     totalPrice: {
-      birr: {
         type: Number,
         required: true,
         min: [0, "Price must be positive"],
-      },
-      coin: {
-        type: Number,
-        required: true,
-        min: [0, "Price must be positive"],
-      },
+      
     },
+  },
     exchangedMaintenanceTotalPrice: {
-      birr: {
         type: Number,
         required: true,
         min: [0, "Price must be positive"],
-      },
-      coin: {
-        type: Number,
-        required: true,
-        min: [0, "Price must be positive"],
-      },
+    
     },
     examination: {
       type: String,

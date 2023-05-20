@@ -3,21 +3,15 @@ import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import api from "../../../api/api";
 import { useAuth } from "../../../context/AuthContext";
 
-const MaintenanceOrderTable = ({ filter }) => {
+const MaintenanceOrderTable = ({ filter,data }) => {
 
-  const [identificationNumber, setIdentificationNumber] = useState("");
-  const [quantity, setQuantity] = useState(0);
-  const [unitPrice, setUnitPrice] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [showForm, setShowForm] = useState(false);
-  const [itemsWithVehicle, setItemsWithVehicle] = useState([{ itemDetail: '', quantity: '' }]);
-
-
-  const [description, setCrashType]=useState("");
+  const [spareparts, setSparePart] = useState([{identificationNumber:'', itemName: '', itemPrice: '', itemQuantity:'',
+  totalPrice: '' }]);
+  const [exchangedMaintenanceTotalPrice, setExchangedMaintenanceTotalPrice]=useState(0);
+  const [examination, setExamination]=useState("");
   const [plateNumber,setPlateNumber]=useState("");
   const [selectedMechanic, setSelectedMechanic] = useState(); 
   const [mechanics,setMechanics]=useState([]);
-
   const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [approvalModal,setApprovalModal]=useState("");
@@ -25,32 +19,50 @@ const MaintenanceOrderTable = ({ filter }) => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
-
+  useEffect(() => {
+    if (data) {
+      setPlateNumber(data.plateNumber);
+      setSparePart(data.spareparts);
+    } else {
+      setPlateNumber('');
+      setSparePart([{identificationNumber:'', itemName: '', itemPrice: '', itemQuantity:'',
+      totalPrice: '' }]);
+    }
+  }, [data]);
   const handleItemsChange = (index, field, value) => {
-    const newItems = [...itemsWithVehicle];
+    const newItems = [...spareparts];
     newItems[index][field] = value;
-    setItemsWithVehicle(newItems);
-    const updatedItems = [...itemsWithVehicle];
-     updatedItems[index][field] = value;
-
-  // Calculate the total price for the spare part
-  if (field === 'unitPrice' || field === 'quantity') {
-    const totalPrice = updatedItems[index].unitPrice * updatedItems[index].quantity;
-    updatedItems[index].totalPrice = totalPrice;
-  }
-
-  // Update the state with the modified array
-  setItemsWithVehicle(updatedItems);
+    setSparePart(newItems);
+  
+    const updatedItems = [...spareparts];
+    updatedItems[index][field] = value;
+  
+    // Calculate the total price for the spare part
+    if (field === 'itemPrice' || field === 'itemQuantity') {
+      const totalPrice = updatedItems[index].itemPrice * updatedItems[index].itemQuantity;
+      updatedItems[index].totalPrice = totalPrice;
+    }
+  
+    // Update the state with the modified array
+    setSparePart(updatedItems);
+  
+    // Calculate the overall total
+    let total = 0;
+    updatedItems.forEach(item => {
+      total += item.totalPrice || 0;
+    });
+    setExchangedMaintenanceTotalPrice(total);
   };
-
+  
   const handleAddItem = () => {
-    setItemsWithVehicle([...itemsWithVehicle, { itemDetail: '', quantity: '' }]);
+    setSparePart([...spareparts, {identificationNumber:'', itemName: '', itemPrice: '', itemQuantity:'',
+    totalPrice: '' }]);
   };
 
   const handleRemoveItem = (index) => {
-    const newItems = [...itemsWithVehicle];
+    const newItems = [...spareparts];
     newItems.splice(index, 1);
-    setItemsWithVehicle(newItems);
+    setSparePart(newItems);
   };
 
   function handleMechanicChange(event) {
@@ -105,9 +117,33 @@ const MaintenanceOrderTable = ({ filter }) => {
     setShowModal(true);
   };
 
-  const handleSend=(request)=>{
-
-  }
+  const handleSend = async (event) => {
+event.preventDefault();
+    // Prepare the maintenance order data to be sent to the backend
+      const maintenanceReport = {
+        plateNumber,
+        spareparts,
+        examination,
+        exchangedMaintenanceTotalPrice,
+        expertWorked: selectedMechanic,
+        // Other properties...
+      };
+  
+      try {
+        // Send the maintenance order data to the backend
+        const response = await api.post("/maintenanceReport", maintenanceReport);
+        console.log("Maintenance report submitted successfully:", response.data);
+  
+        // Perform any necessary actions after successful submission
+        // For example, show a success message, reset form fields, etc.
+  
+      } catch (error) {
+        console.error("Error submitting maintenance order:", error);
+        // Handle any errors that occurred during submission
+        // For example, show an error message to the user
+      }
+    };
+  
   const handleApproval=(request)=>{
     setSelectedRequest(request);
     setApprovalModal(true);
@@ -254,7 +290,7 @@ const MaintenanceOrderTable = ({ filter }) => {
     <h5>Changed Spare Part</h5>
     <hr />
 
-    {itemsWithVehicle?.map((item, index) => (
+    {spareparts?.map((item, index) => (
       <Form.Group key={index}>
         <Form.Label>
           <strong>Spare #{index + 1}</strong>
@@ -264,8 +300,8 @@ const MaintenanceOrderTable = ({ filter }) => {
             <Form.Label>Spare Part ID</Form.Label>
             <Form.Control
               type="text"
-              value={item.itemDetail}
-              onChange={(e) => handleItemsChange(index, 'itemDetail', e.target.value)}
+              value={item.identificationNumber}
+              onChange={(e) => handleItemsChange(index, 'identificationNumber', e.target.value)}
               className="mb-3"
             />
           </div>
@@ -282,17 +318,18 @@ const MaintenanceOrderTable = ({ filter }) => {
             <Form.Label>Unit Price</Form.Label>
             <Form.Control
               type="number"
-              value={item.unitPrice}
-              onChange={(e) => handleItemsChange(index, 'unitPrice', e.target.value)}
+              value={item.itemPrice}
+              onChange={(e) => handleItemsChange(index, 'itemPrice', e.target.value)}
               className="mb-3"
+              min={0}
             />
           </div>
           <div style={{ flex: '0 0 120px', marginRight: '1rem' }}>
             <Form.Label>Item Quantity</Form.Label>
             <Form.Control
               type="number"
-              value={item.quantity}
-              onChange={(e) => handleItemsChange(index, 'quantity', e.target.value)}
+              value={item.itemQuantity}
+              onChange={(e) => handleItemsChange(index, 'itemQuantity', e.target.value)}
               className="mb-3"
               min={0}
             />
@@ -314,22 +351,24 @@ const MaintenanceOrderTable = ({ filter }) => {
             Remove Item
           </Button>
         )}
+
       </Form.Group>
     ))}
 
     <Button variant="success" onClick={handleAddItem} className="mb-3 btn-sm">
       Add Item
     </Button>
-
+    <div>
+  <strong>Overall Total: </strong>
+  {exchangedMaintenanceTotalPrice}
+</div>
     <Form.Group controlId="description">
-      <Form.Label>Description</Form.Label>
+      <Form.Label>Examination</Form.Label>
       <Form.Control
         type="string"
         required
-        minLength={9}
-        maxLength={9}
-        value={selectedRequest?.description}
-        onChange={(e) => setCrashType(e.target.value)}
+        value={examination}
+        onChange={(e) => setExamination(e.target.value)}
       />
     </Form.Group>
 
@@ -357,7 +396,7 @@ const MaintenanceOrderTable = ({ filter }) => {
     <Button variant="secondary" className="btn btn-sm" onClick={handleModalClose}>
       Cancel
     </Button>
-    <Button variant="success" className="btn btn-sm" onClick={() => handleSend(selectedRequest)}>
+    <Button variant="success" className="btn btn-sm" onClick={() => handleSend()}>
       Send
     </Button>
   </Modal.Footer>
