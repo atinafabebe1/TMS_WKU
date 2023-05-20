@@ -1,4 +1,5 @@
 const FuelRequest = require("../models/fuelRequest");
+const VehicleRecord = require("../models/registerVehicle");
 const UserSchema = require("../models/user");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/async");
@@ -23,19 +24,17 @@ const getfuelRequests = asyncHandler(async (req, res) => {
 const createFuelRequest = asyncHandler(async (req, res, next) => {
   req.body.user = req.user.id;
 
-  const vehicle = await FuelRequest.getVehicleByPlateNumber(
+  const vehicle = await VehicleRecord.getVehicleByPlateNumber(
     req.body.plateNumber
   );
-
   if (!vehicle) {
     return next(
       new ErrorResponse(
-        `Vehicle not found with plate number ${req.body.plateNumber} `,
+        `Vehicle not found with plate Number ${req.body.plateNumber} `,
         404
       )
     );
   }
-
   req.body.vehicle = vehicle._id;
 
   const fuelRequest = await FuelRequest.create(req.body);
