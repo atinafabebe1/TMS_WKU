@@ -119,28 +119,22 @@ const MaintenanceOrderTable = ({ filter,data }) => {
 
   const handleSend = async (event) => {
 event.preventDefault();
-    // Prepare the maintenance order data to be sent to the backend
       const maintenanceReport = {
         plateNumber,
         spareparts,
         examination,
         exchangedMaintenanceTotalPrice,
         expertWorked: selectedMechanic,
-        // Other properties...
+       
       };
   
       try {
-        // Send the maintenance order data to the backend
-        const response = await api.post("/maintenanceReport", maintenanceReport);
+        const response = await api.post("/MaintenanceReport", maintenanceReport);
         console.log("Maintenance report submitted successfully:", response.data);
-  
-        // Perform any necessary actions after successful submission
-        // For example, show a success message, reset form fields, etc.
+
   
       } catch (error) {
         console.error("Error submitting maintenance order:", error);
-        // Handle any errors that occurred during submission
-        // For example, show an error message to the user
       }
     };
   
