@@ -4,6 +4,7 @@ import SparePartRequest from "./CreateAccessoryRequest";
 import SparePartRequestListPage from "./SparePartRequestList";
 import EditSparePartRequest from "./EditAccessoryRequest";
 import MecMaintenanceReport from "./maintenanceReport";
+import MechApproval from "./MechanicApprovalPage";
 import MechMaintenanceOrder from "./MechMaintenanceOrder";
 import MechanicHome from "./Home";
 import { Routes, Route } from "react-router-dom";
@@ -57,6 +58,10 @@ const MechanicPage = () => {
         <Route
           path="maintenance/receive-maintenance-order"
           element={<MechMaintenanceOrder />}
+        />
+        <Route
+          path="maintenance/approve-maintenance"
+          element={<MechApproval />}
         />
         <Route
           path="maintenance/send-maintenance-report"

@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../../common/header/Navbar";
 import { Routes, Route } from "react-router-dom";
 import AccessoryRequest from "./Accessory-Request";
+import GDMaintenanceApproveTable from "./maintenanceApproval";
 import GDmaintenanceRequestPage from "./maintenanceOrder";
 import GDHome from "./Home";
 const links = [
@@ -56,6 +57,10 @@ const GarageDirectorPag = () => {
         <Route
           path="request/get-accessory-request"
           element={<AccessoryRequest />}
+        />
+         <Route
+          path="maintenance/approve-maintenance"
+          element={<GDMaintenanceApproveTable  />}
         />
         <Route
           path="maintenance/maintenance-orders"
