@@ -34,22 +34,10 @@ const SparePartSchema = new Schema(
         message: (props) => `${props.value} is not a valid plate number`,
       },
     },
-    type: {
+
+    sparePartName: {
       type: String,
       required: true,
-      enum: ["Bus", "Truck", "Pick Up", "Ambulace", "Automobile"],
-    },
-    identificationNumber: {
-      type: String,
-      required: true,
-      minlength: 5,
-      validate: {
-        validator: function (v) {
-          const pattern = /^[A-Za-z0-9]{5,}$/;
-          return pattern.test(v);
-        },
-        message: (props) => `${props.value} is not a valid spare part ID`,
-      },
     },
     quantity: {
       type: Number,

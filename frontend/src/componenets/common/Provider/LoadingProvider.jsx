@@ -16,13 +16,13 @@ function Loading() {
           <Spinner
             as="span"
             animation="border"
-            size="sm"
+            size="lg"
             role="status"
             aria-hidden="true"
           />
           <span className="visually-hidden">Loading...</span>
         </Button>{" "}
-        <Button variant="primary" disabled>
+        {/* <Button variant="primary" disabled>
           <Spinner
             as="span"
             animation="grow"
@@ -31,7 +31,7 @@ function Loading() {
             aria-hidden="true"
           />
           Loading...
-        </Button>
+        </Button> */}
       </>
     </div>
   );

@@ -92,7 +92,7 @@ const SparePartRequestTable = ({
           <tr>
             <th>User</th>
             <th>Plate Number</th>
-            <th>Spare Part ID </th>
+            <th>SparePart Name </th>
             <th>Quantity</th>
             <th>Total price</th>
             <th>Date</th>
@@ -111,7 +111,7 @@ const SparePartRequestTable = ({
                 </a>
               </td>
               <td>{request.plateNumber}</td>
-              <td>{request.identificationNumber}</td>
+              <td>{request.sparePartName}</td>
               <td>{request.quantity}</td>
               <td>{request.totalPrice}</td>
               <td>{new Date(request.createdAt).toLocaleDateString()}</td>
@@ -243,7 +243,7 @@ const SparePartRequestTable = ({
           <Button
             className="btn btn-sm"
             variant="secondary"
-            onClick={handleCloseModal}
+            onClick={handleCloseConfirmModal}
           >
             Cancel
           </Button>
@@ -267,7 +267,7 @@ const SparePartRequestTable = ({
           <Button
             className="btn btn-sm"
             variant="secondary"
-            onClick={handleCloseModal}
+            onClick={handleCloseConfirmBuyModal}
           >
             Cancel
           </Button>
@@ -329,8 +329,8 @@ const SparePartRequestTable = ({
                 Oops! Kindly be informed that this request has been rejected due
                 to the reason of{" "}
                 <strong>"{selectedRequest?.rejectedReason}"</strong>. We advise
-                that upon resubmission of request they have to consider
-                modifying the reason to improve their chances of approval.
+                User that upon resubmission of request they have to consider
+                modify the reason to improve their chances of approval.
               </p>
             </>
           )}
@@ -345,9 +345,9 @@ const SparePartRequestTable = ({
               </tr>
               <tr>
                 <td>
-                  <strong>Spare Part Id</strong>
+                  <strong>Spare Part Name</strong>
                 </td>
-                <td>{selectedRequest?.identificationNumber}</td>
+                <td>{selectedRequest?.sparePartName}</td>
               </tr>
               <tr>
                 <td>
@@ -355,12 +355,7 @@ const SparePartRequestTable = ({
                 </td>
                 <td>{selectedRequest?.plateNumber}</td>
               </tr>
-              <tr>
-                <td>
-                  <strong>Type</strong>
-                </td>
-                <td>{selectedRequest?.type}</td>
-              </tr>
+
               <tr>
                 <td>
                   <strong>Quantity</strong>
