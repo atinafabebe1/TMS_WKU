@@ -90,8 +90,7 @@ const SparePartPurchasingRequestTable = ({
         <thead>
           <tr>
             <th>User</th>
-            <th>ID </th>
-
+            <th>Spare Part Name </th>
             <th>Quantity</th>
             <th>Date</th>
             <th>Status</th>
@@ -108,7 +107,7 @@ const SparePartPurchasingRequestTable = ({
                 </a>
               </td>
 
-              <td>{request.identificationNumber}</td>
+              <td>{request.sparePartName}</td>
               <td>{request.quantity}</td>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
@@ -301,9 +300,9 @@ const SparePartPurchasingRequestTable = ({
               </tr>
               <tr>
                 <td>
-                  <strong>Spare Part Id</strong>
+                  <strong>Spare Part Name</strong>
                 </td>
-                <td>{selectedRequest?.identificationNumber}</td>
+                <td>{selectedRequest?.sparePartName}</td>
               </tr>
               <tr>
                 <td>

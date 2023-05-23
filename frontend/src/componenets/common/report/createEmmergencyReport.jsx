@@ -25,7 +25,6 @@ const CreateEmergencyReport = ({ title, data }) => {
       address: "",
     },
   });
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {

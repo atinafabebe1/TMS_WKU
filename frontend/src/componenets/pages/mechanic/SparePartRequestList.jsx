@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Table, Button, Row, Col, Form, Badge } from "react-bootstrap";
+import { Table, Button, Row, Col, Form, Badge, Modal } from "react-bootstrap";
 import Loading from "../../common/Provider/LoadingProvider";
 import api from "../../../api/api";
-
+import "../../common/css/formStyles.css";
 const SparePartRequestListPage = () => {
   const [requests, setRequests] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [deleteRequestId, setDeleteRequestId] = useState(null);
   const navigate = useNavigate();
 
-  const fetchReqestData = async () => {
-    await api.get(`/Request/sparePart`).then((response) => {
-      console.log(response.data.data);
+  const fetchRequestData = async () => {
+    try {
+      const response = await api.get("/Request/sparePart?isDeleted=false");
       setRequests(response.data.data);
       setIsLoading(false);
-    });
+    } catch (error) {
+      console.error("Error fetching spare part requests:", error);
+    }
   };
 
   useEffect(() => {
-    fetchReqestData();
+    fetchRequestData();
   }, []);
 
   const handleNext = () => {
@@ -31,17 +35,21 @@ const SparePartRequestListPage = () => {
     setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
   };
 
-  const handleDeleteRequest = (id) => {
-    // Delete the SparePart request with the specified ID from your server API
-    api
-      .delete(`/Request/sparePart/${id}`)
-      .then(() => {
-        // Filter out the deleted request from the local state
-        setRequests(requests);
-      })
-      .catch((error) =>
-        console.error(`Error deleting spare Part request with ID ${id}:`, error)
+  const handleDeleteRequest = async (id) => {
+    try {
+      await api.delete(`/Request/sparePart/${id}`);
+      setRequests((prevRequests) =>
+        prevRequests.filter((request) => request._id !== id)
       );
+    } catch (error) {
+      console.error(`Error deleting spare part request with ID ${id}:`, error);
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    handleDeleteRequest(deleteRequestId);
+    setDeleteRequestId(null);
+    setShowConfirmationModal(false);
   };
 
   const handleSearch = (event) => {
@@ -59,7 +67,7 @@ const SparePartRequestListPage = () => {
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h3>Your Last Spare Part Requests</h3>
+          <h5 className="form-control-custom">Your Last Spare Part Requests</h5>
         </Col>
         <Col className="text-end">
           <Link to="/mechanic/request/create-accessory">
@@ -82,10 +90,9 @@ const SparePartRequestListPage = () => {
       {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
         <thead>
-          <tr>
+          <tr className="form-control-custom">
             <th>Plate Number</th>
-            <th>Type</th>
-            <th>ID </th>
+            <th>Spare Part Name</th>
             <th>Quantity</th>
             <th>Unit Price</th>
             <th>Total Price</th>
@@ -94,12 +101,11 @@ const SparePartRequestListPage = () => {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="form-control-custom">
           {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
-              <td>{request.type}</td>
-              <td>{request.identificationNumber}</td>
+              <td>{request.sparePartName}</td>
               <td>{request.quantity}</td>
               <td>{request.unitPrice}</td>
               <td>{request.totalPrice}</td>
@@ -161,7 +167,10 @@ const SparePartRequestListPage = () => {
                     <Button
                       className="btn btn-sm"
                       variant="danger"
-                      onClick={() => handleDeleteRequest(request._id)}
+                      onClick={() => {
+                        setDeleteRequestId(request._id);
+                        setShowConfirmationModal(true);
+                      }}
                     >
                       Delete
                     </Button>
@@ -192,6 +201,26 @@ const SparePartRequestListPage = () => {
           Next
         </Button>
       </div>
+      <Modal
+        show={showConfirmationModal}
+        onHide={() => setShowConfirmationModal(false)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this request?</Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowConfirmationModal(false)}
+          >
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleConfirmDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
