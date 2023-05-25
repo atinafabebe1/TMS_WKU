@@ -133,8 +133,8 @@ const MaintenanceOrderSchema = new Schema(
     },
     status: {
       type: String,
-      default: "pending",
-      enum: ["pending", "in-progress", "UnderMaintenance","completed", "canceled"],
+      default: "UnderMaintenance",
+      enum: ["pending", "in-progress", "UnderMaintenance","Waiting-Mech-To-Approve","Waiting-GD-To-Approve","completed", "canceled"],
       validate: {
         validator: function (v) {
           if (this.isNew && v !== "pending") {

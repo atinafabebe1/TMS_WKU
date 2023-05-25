@@ -69,7 +69,7 @@ const updateMaintenanceOrderStatus = asyncHandler(async (req, res, next) => {
   if (!requestId || !status) {
     return res.status(400).json({ message: "Missing required fields" });
   }
-  const validStatuses = ["pending", "in-progress", "completed", "canceled"];
+  const validStatuses = ["pending", "in-progress", "completed","Waiting-Mech-To-Approve","Waiting-GD-To-Approve", "canceled"];
   if (!validStatuses.includes(status)) {
     return next(new ErrorResponse(`Invalid status: ${status}`, 400));
   }

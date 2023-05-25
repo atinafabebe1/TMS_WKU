@@ -14,9 +14,23 @@ const getMaintenanceReports = asyncHandler(async (req, res) => {
 //@route     POST/http://localhost:3500/MaintenanceReport
 //@access    MECHANIC
 const createMaintenanceReport = asyncHandler(async (req, res) => {
-  req.body.user = req.user.id;
-  const maintenanceReport = await MaintenanceReport.create(req.body);
-  res.status(200).json(maintenanceReport);
+  
+  try {
+    const reportData = req.body;
+
+    // Create a new instance of the MaintenanceReport model with the reportData
+    const maintenanceReport = new MaintenanceReport(reportData);
+
+    // Save the maintenance report data to the database
+    await maintenanceReport.save();
+
+    // Return a success response
+    res.status(200).json({ message: 'Maintenance report submitted successfully' });
+  } catch (error) {
+    console.error('Failed to submit maintenance report:', error);
+    // Return an error response
+    res.status(500).json({ error: 'Failed to submit maintenance report' });
+  }
 });
 
 //@desc      to Update single Maintenance Report

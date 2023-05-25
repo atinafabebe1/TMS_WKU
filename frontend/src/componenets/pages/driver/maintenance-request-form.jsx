@@ -7,6 +7,8 @@ import {
   FormControl,
   Modal,
 } from "react-bootstrap";
+import { Alert, Row,Col,Card, Container } from 'react-bootstrap';
+
 import api from "../../../api/api";
 import { useAuth } from "../../../context/AuthContext";
 
@@ -93,10 +95,16 @@ const MaintenanceRequestForm = () => {
   };
 
   return (
+    <Container className="my-3">
+    <Row>
+      <Col>
+        <Card>
+          <Card.Header className="bg-primary text-light">
+          Maintenance Requesting Form          </Card.Header>
+          <Card.Body>
     <div className="container my-5">
       <div className="row justify-content-center">
         <div className="col-lg-8">
-          <h1 className="mb-5 text-center">Maintenance Requesting Form</h1>
 
           <Form onSubmit={handleConfirmation}>
             <FormGroup>
@@ -179,6 +187,12 @@ const MaintenanceRequestForm = () => {
         </div>
       </div>
     </div>
+    
+    </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
