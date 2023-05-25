@@ -63,7 +63,22 @@ const MaintenanceReportSchema = new Schema(
         min: [0, "Price must be positive"],
     
     },
-    examination: {
+    status:{
+      type: String,
+      default: "Waiting-Mech-To-Approve",
+      enum: ["pending", "in-progress", "UnderMaintenance","Waiting-Mech-To-Approve","Waiting-GD-To-Approve","completed", "canceled"],
+      validate: {
+        validator: function (v) {
+          if (this.isNew && v !== "Waiting-Mech-To-Approve") {
+            return false;
+          }
+          return true;
+        },
+        message: (props) =>
+          `Cannot set status "${props.value}" when creating a new maintenance request.`,
+      },
+    },
+ examination: {
       type: String,
       required: true,
       minlength: 2,

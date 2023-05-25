@@ -6,6 +6,7 @@ import EditSparePartRequest from "./EditAccessoryRequest";
 import MecMaintenanceReport from "./maintenanceReport";
 import MechApproval from "./MechanicApprovalPage";
 import MechMaintenanceOrder from "./MechMaintenanceOrder";
+import MaintenanceReportForm from "../../common/maintenance/ReportandApproval";
 import MechanicHome from "./Home";
 import { Routes, Route } from "react-router-dom";
 
@@ -58,6 +59,10 @@ const MechanicPage = () => {
         <Route
           path="maintenance/receive-maintenance-order"
           element={<MechMaintenanceOrder />}
+        />
+         <Route
+          path="maintenance/approval-report"
+          element={<MaintenanceReportForm />}
         />
         <Route
           path="maintenance/approve-maintenance"
