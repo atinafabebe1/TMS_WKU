@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ErrorProvider from "../Provider/ErrorProvider";
 import SuccessProvider from "../Provider/SuccessProvider";
 import Loading from "../../common/Provider/LoadingProvider";
+import { useNavigate } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
 import { Form, Button, Modal, Alert, Card, Container } from "react-bootstrap";
 import api from "../../../api/api";
@@ -20,6 +21,7 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
   const [validated, setValidated] = useState(false);
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -38,18 +40,16 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
 
   useEffect(() => {
     if (request) {
-      setPlateNumber(request.plateNumber);
       setTypeOfFuel(request.type);
       setCurrentRecordOnCounter(request.identificationNumber);
       setRequestAmount(request.quantity);
     } else {
-      setPlateNumber("");
       setTypeOfFuel("");
       setCurrentRecordOnCounter("");
       setRequestAmount("");
     }
   }, [request]);
-  //handle validation and confirmation
+
   const handleConfirmation = (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
@@ -63,7 +63,6 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
   };
 
   const handleClear = (event) => {
-    setPlateNumber("");
     setTypeOfFuel("");
     setCurrentRecordOnCounter("");
     setRequestAmount("");
@@ -85,6 +84,9 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
           setSuccess("Successfuly Updated");
           setError(null);
           onSubmit();
+          setTimeout(() => {
+            navigate("/driver/request/fuel"); // Navigate to the desired page after 6 seconds
+          }, 6000); // Navigate to the desired page
         })
         .catch((err) => {
           console.log(err.response.data);
@@ -99,6 +101,9 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
           setIsLoading(false);
           setSuccess("Successfuly Sent");
           setError(null);
+          setTimeout(() => {
+            navigate("/driver/request/fuel"); // Navigate to the desired page after 6 seconds
+          }, 6000); // Navigate to the desired page
         })
         .catch((err) => {
           console.log(err.response.data);
@@ -219,6 +224,17 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
                     <>
                       <Button
                         type="reset"
+                        size="sm"
+                        className="btn-secondary me-2"
+                        onClick={(e) => {
+                          navigate("/driver/request/fuel");
+                        }}
+                      >
+                        Cancel
+                      </Button>{" "}
+                      <Button
+                        type="reset"
+                        size="sm"
                         className="btn-danger me-2"
                         onClick={handleClear}
                       >
@@ -226,6 +242,7 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
                       </Button>
                       <Button
                         type="submit"
+                        size="sm"
                         className="btn-primary"
                         onClick={() => {
                           setShowModal(true);
@@ -240,16 +257,21 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
                       <Modal.Title>Confirm Submission</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      Are you sure you want to submit this request?
+                      <p>Are you sure you want to submit this request?</p>
                     </Modal.Body>
                     <Modal.Footer>
                       <Button
-                        variant="secondary"
+                        className="btn-secondary"
+                        size="sm"
                         onClick={() => setShowModal(false)}
                       >
                         Cancel
                       </Button>
-                      <Button variant="primary" onClick={handleConfirmation}>
+                      <Button
+                        className="btn-primary"
+                        size="sm"
+                        onClick={handleConfirmation}
+                      >
                         Submit
                       </Button>
                     </Modal.Footer>

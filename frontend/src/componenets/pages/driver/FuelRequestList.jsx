@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import Loading from "../../common/Provider/LoadingProvider";
 import api from "../../../api/api";
-
+import { useAuth } from "../../../context/AuthContext";
 const FuelRequestListPage = () => {
   const [requests, setRequests] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
@@ -13,9 +13,9 @@ const FuelRequestListPage = () => {
   const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
-
+  const { user } = useAuth();
   const fetchReqestData = async () => {
-    await api.get(`/Request/fuel`).then((response) => {
+    await api.get(`/Request/fuel?user=${user.id}`).then((response) => {
       console.log(response.data.data);
       setRequests(response.data.data);
       setIsLoading(false);
@@ -24,7 +24,7 @@ const FuelRequestListPage = () => {
 
   useEffect(() => {
     fetchReqestData();
-  }, []);
+  }, [user]);
 
   const handleShowModal = (request) => {
     setSelectedRequest(request);

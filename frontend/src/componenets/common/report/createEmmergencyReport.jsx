@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Col, Row, Card, Container } from "react-bootstrap";
+import ErrorProvider from "../Provider/ErrorProvider";
+import SuccessProvider from "../Provider/SuccessProvider";
+
 import api from "../../../api/api";
 import { useAuth } from "../../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 import "../../common/css/formStyles.css";
 const CreateEmergencyReport = ({ title, data }) => {
   const { user } = useAuth();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [userData, setUserData] = useState(null);
+  const navigate = useNavigate();
   const [reportData, setReportData] = useState({
     plateNumber: "",
     type: "",
@@ -69,6 +76,27 @@ const CreateEmergencyReport = ({ title, data }) => {
     }
   }, [data]);
 
+  const handleClear = (e) => {
+    setReportData({
+      plateNumber: "",
+      type: "",
+      date: "",
+      time: "",
+      address: "",
+      injuries: "",
+      death: "",
+      damagedProperties: "",
+      detailedDescription: "",
+      witnesses: [{ name: "", address: "", phoneNumber: "" }],
+      passengersPresentDuringAccident: [{ name: "", address: "" }],
+      traffic: {
+        name: "",
+        site: "",
+        address: "",
+      },
+    });
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setReportData((prevData) => ({
@@ -117,9 +145,26 @@ const CreateEmergencyReport = ({ title, data }) => {
     e.preventDefault();
     let response;
     if (data) {
-      response = await api.put(`/EmergencyReport/${data._id}`, reportData);
+      response = await api
+        .put(`/EmergencyReport/${data._id}`, reportData)
+        .then((response) => {
+          setSuccess("Successfuly Updated");
+          setError(null);
+          setTimeout(() => {
+            navigate("/driver/report/emmergency"); // Navigate to the desired page after 6 seconds
+          }, 6000); // Navigate to the desired page
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+          setError(err.response.data);
+          setSuccess(null);
+        });
     } else {
       response = await api.post("/EmergencyReport", reportData);
+      setTimeout(() => {
+        navigate("/driver/report/emmergency"); // Navigate to the desired page after 6 seconds
+      }, 6000); // Navigate to the desired page
+      setSuccess("Successfuly Sent");
     }
   };
 
@@ -475,9 +520,39 @@ const CreateEmergencyReport = ({ title, data }) => {
                       />
                     </Form.Group>
                   </Row>
-                  <div style={{ paddingBottom: "70px" }}>
-                    {" "}
-                    <Button type="submit">Submit</Button>
+                  {error && <ErrorProvider error={error} />}
+                  {success && <SuccessProvider success={success} />}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    <Button
+                      variant="secondary"
+                      size="medium"
+                      onClick={() => navigate("/driver/report/emmergency")}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="medium"
+                      onClick={handleClear}
+                    >
+                      Clear
+                    </Button>
+
+                    {data ? (
+                      <Button variant="primary" size="medium" type="submit">
+                        Update
+                      </Button>
+                    ) : (
+                      <Button variant="primary" size="medium" type="submit">
+                        Submit
+                      </Button>
+                    )}
                   </div>
                 </Form>
               </div>
