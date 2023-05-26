@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Col, Row, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
+
 import api from "../../../api/api";
 
 const EmmergencyReport = ({ link }) => {

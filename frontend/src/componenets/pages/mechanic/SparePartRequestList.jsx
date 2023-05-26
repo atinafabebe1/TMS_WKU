@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Table, Button, Row, Col, Form, Badge, Modal } from "react-bootstrap";
 import Loading from "../../common/Provider/LoadingProvider";
 import api from "../../../api/api";
+import { useAuth } from "../../../context/AuthContext";
+
 import "../../common/css/formStyles.css";
 const SparePartRequestListPage = () => {
   const [requests, setRequests] = useState([]);
@@ -11,11 +13,13 @@ const SparePartRequestListPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [deleteRequestId, setDeleteRequestId] = useState(null);
+  const { user } = useAuth();
+
   const navigate = useNavigate();
 
   const fetchRequestData = async () => {
     try {
-      const response = await api.get("/Request/sparePart?isDeleted=false");
+      const response = await api.get(`/Request/sparePart?user=${user.id}`);
       setRequests(response.data.data);
       setIsLoading(false);
     } catch (error) {

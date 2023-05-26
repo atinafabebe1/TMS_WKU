@@ -4,6 +4,8 @@ import Loading from "../../common/Provider/LoadingProvider";
 import SuccessProvider from "../../common/Provider/SuccessProvider";
 import ErrorProvider from "../../common/Provider/ErrorProvider";
 import DaysAgo from "../../common/shared/daysAgoCalculate";
+import { useAuth } from "../../../context/AuthContext";
+
 import api from "../../../api/api";
 import {
   MDBCard,
@@ -22,7 +24,7 @@ const SendComplain = () => {
   const [selectedComplain, setSelectedComplain] = useState(null);
   const [response, setResponse] = useState("");
   const [dataCount, setDataCount] = useState(0);
-  const [user, setUser] = useState({});
+  //const [user, setUser] = useState({});
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -30,9 +32,10 @@ const SendComplain = () => {
   const [complaints, setComplaints] = useState([]);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
+  const { user } = useAuth();
 
   const fetchRequestData = async () => {
-    await api.get(`/Complain?seen=unseen`).then((response) => {
+    await api.get(`/Complain?user=${user.id}`).then((response) => {
       console.log(response.data.data);
       setComplains(response.data.data);
       setDataCount(response.data.data.length);
@@ -142,11 +145,12 @@ const SendComplain = () => {
                   <MDBCardText>{complain.response}</MDBCardText>
                   <Button
                     href="#"
+                    size="sm"
                     variant="success"
                     onClick={() => handleResolve(complain)}
                   >
-                    Ok
-                  </Button>
+                    Receive
+                  </Button>{" "}
                 </MDBCardBody>
                 <MDBCardFooter className="text-muted">
                   <DaysAgo createdAt={complain.updatedAt} />
