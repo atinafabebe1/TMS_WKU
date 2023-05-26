@@ -6,7 +6,7 @@ import FuelRequest from "./CreateFuelRequest";
 import FuelRequestListPage from "./FuelRequestList";
 import SendComplain from "../../common/shared/sendComplain";
 import CreateEmergencyReport from "../../common/report/createEmmergencyReport";
-import EmmergencyReport from "../../common/report/emmergencyReport";
+import EmmergencyReport from "./emmergencyReport";
 import TransferVehicleRequest from "./TransferVehicleRequest";
 import EditEmergencyReport from "./EditEmergencyReport";
 import DriverReceiveVehicle from "./ReceiveVehicle";
