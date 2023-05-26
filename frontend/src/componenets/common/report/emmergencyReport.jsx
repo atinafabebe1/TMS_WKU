@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Col, Row } from "react-bootstrap";
+import { Table, Button, Col, Row, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../../api/api";
 
 const EmmergencyReport = ({ link }) => {
   const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [startIndex, setStartIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -18,12 +20,21 @@ const EmmergencyReport = ({ link }) => {
       })
       .catch((error) => console.error("Error Fetching Report:", error));
   }, []);
+  const handleNext = () => {
+    setStartIndex((prevIndex) => prevIndex + 7);
+  };
 
+  const handlePrevious = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
+  };
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
   return (
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h4 className="form-control-custom">Your Last Emergency Report</h4>
+          <h4 className="form-control-custom">Your Last Emergency Reports</h4>
         </Col>
         <Col className="text-end">
           <Link to="/driver/report/emmergency/create">
@@ -31,6 +42,18 @@ const EmmergencyReport = ({ link }) => {
           </Link>
         </Col>
       </Row>
+      <Form>
+        <Row className="mb-3">
+          <Col>
+            <Form.Control
+              type="text"
+              placeholder="Search by Plate Number"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </Col>
+        </Row>
+      </Form>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -48,7 +71,7 @@ const EmmergencyReport = ({ link }) => {
               <td colSpan="6">Loading...</td>
             </tr>
           ) : data.length > 0 ? (
-            data.map((item) => (
+            data.slice(startIndex, startIndex + 7).map((item) => (
               <tr key={item._id}>
                 <td>{item.plateNumber}</td>
                 <td>{item.type}</td>
@@ -88,6 +111,29 @@ const EmmergencyReport = ({ link }) => {
           )}
         </tbody>
       </Table>
+      <div
+        className="d-flex justify-content-center align-items-center w-100"
+        style={{ paddingBottom: "70px" }}
+      >
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handlePrevious}
+          disabled={startIndex === 0}
+          block
+        >
+          Previous
+        </Button>
+        <Button
+          variant="primary"
+          className="btn-sm mx-2"
+          onClick={handleNext}
+          disabled={startIndex + 7 >= data.length}
+          block
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

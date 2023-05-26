@@ -84,7 +84,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
 
           setTimeout(() => {
             navigate("/mechanic/request/accessory"); // Navigate to the desired page after 6 seconds
-          }, 6000); // Navigate to the desired page
+          }, 6000);
         })
         .catch((err) => {
           console.log(err.response.data);

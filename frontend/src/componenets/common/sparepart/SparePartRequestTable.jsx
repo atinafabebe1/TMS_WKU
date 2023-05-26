@@ -132,7 +132,6 @@ const SparePartRequestTable = ({
                       className="btn btn-sm"
                       variant="success"
                       onClick={() => handleShowConfirmModal(request)}
-                      // onClick={() => handleApproveClick(request)}
                     >
                       Approve
                     </Button>{" "}
