@@ -15,7 +15,7 @@ const MaintenanceOrderTable = () => {
   useEffect(() => {
     // Fetch the  reports from your server API
     api
-      .get("/MaintenanceOrder")
+      .get("/MaintenanceReport")
       .then((response) => {
         console.log(response.data.data);
         setReports(response.data.data);
@@ -85,7 +85,7 @@ const MaintenanceOrderTable = () => {
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h1 align="center">Maintenance Reports</h1>
+          <h1 className="form-control-custom" align="center">Maintenance Reports</h1>
         </Col>
       </Row>
       <Form>
@@ -102,7 +102,7 @@ const MaintenanceOrderTable = () => {
       </Form>
       <Table striped bordered hover responsive className="table-sm">
         <thead>
-          <tr>
+          <tr className="form-control-custom">
             <th>Plate Number</th>
             <th>Date</th>
             <th>Status</th>
@@ -110,7 +110,7 @@ const MaintenanceOrderTable = () => {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="form-control-custom">
           {filteredReports.map((report) => (
             <tr key={report._id}>
               <td>{report.plateNumber}</td>

@@ -19,6 +19,8 @@ const GDMaintenanceApproveTable = () => {
         onSelect={handleFilter}
         id="maintenance-request-tabs"
       >
+          <Tab eventKey="waiting-gd-to-approve" title="Pending">
+        </Tab>
         <Tab eventKey="completed" title="Completed">
         </Tab>
         <Tab eventKey="canceled" title="Cancelled">

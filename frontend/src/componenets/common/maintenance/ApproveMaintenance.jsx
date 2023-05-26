@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import api from "../../../api/api";
+import "../../common/css/formStyles.css";
+
 
 const MaintenanceApprovalTable = ({ filter,data }) => {
 
@@ -75,21 +77,21 @@ event.preventDefault();
       </Form>
       <Table striped bordered hover responsive className="table-sm">
         <thead>
-          <tr>
+        <tr className="form-control-custom">
             <th>Plate Number</th>
             <th>Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="form-control-custom">
           {filteredRequests.map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
               <td>{request.createdAt}</td>
               <td>{request.status}</td>
               <td>
-                {request.status === "pending" && (
+                {(request.status === "Waiting-Mech-To-Approve"|| request.status === "Waiting-GD-To-Approve") && (
                   <>
                      <Button
                   variant="success"

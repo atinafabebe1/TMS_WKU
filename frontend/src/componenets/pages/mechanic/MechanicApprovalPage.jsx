@@ -12,14 +12,15 @@ const MechApproval = () => {
   return (
     <>
       <div className="text-center">
-        <h1>Maintenance Orders</h1>
+        <h1>Approve Maintenance </h1>
       </div>
       <Tabs
         activeKey={filter}
         onSelect={handleFilter}
         id="maintenance-request-tabs"
       >
-        <Tab eventKey="in-progress" title="In Progress"></Tab>
+        <Tab eventKey="waiting-mech-to-approve" title="Pending"></Tab>
+        <Tab eventKey="waiting-gd-to-approve" title="In Progress"></Tab>
         <Tab eventKey="completed" title="Completed"></Tab>
         <Tab eventKey="canceled" title="Cancelled"></Tab>
       </Tabs>

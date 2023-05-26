@@ -100,14 +100,14 @@ const MaintenanceOrderTable = ({ filter }) => {
       </Form>
       <Table striped bordered hover responsive className="table-sm">
         <thead>
-          <tr>
+          <tr className="form-control-custom">
             <th>Plate Number</th>
             <th>Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="form-control-custom">
           {filteredRequests.map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
