@@ -20,6 +20,7 @@ const MaintenanceRequestPage = ({ filter }) => {
   const [startIndex, setStartIndex] = useState(0);
   const [requests, setRequests] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [success, setSuccess] = useState("");
@@ -62,9 +63,24 @@ const MaintenanceRequestPage = ({ filter }) => {
 
   const handleModalClose = () => {
     setShowEditModal(false);
+    setShowModal(false);
     setSelectedRequest(null);
   };
+  const handleMore = (request) => {
+    setSelectedRequest(request);
+    if (request.status === "canceled") {
+      setShowModal(false); // Close the existing modal
+      const reason = request.rejectReason || "No reason provided";
+      // Set the selected request with the rejection reason
+      setSelectedRequest({ ...request, reason });
+      setShowModal(true); // Reopen the modal with the rejection reason
+    } else {
+      setShowModal(true);
+    }
+  };
+  
 
+  
   const handleDeleteRequest = (id) => {
     // Delete the vehicle request with the specified ID from your server API
     api
@@ -104,13 +120,6 @@ const MaintenanceRequestPage = ({ filter }) => {
 
   return (
     <div className="p-4">
-      <Row className="mb-4">
-        <Col className="text-end">
-          <Link to="/driver/maintenance-request-form">
-            <Button variant="primary">New Request</Button>
-          </Link>
-        </Col>
-      </Row>
       <Form>
         <Row className="mb-3">
           <Col>
@@ -128,24 +137,24 @@ const MaintenanceRequestPage = ({ filter }) => {
       {isLoading && <Loading/>}
       <Table striped bordered hover responsive className="table-sm">
         <thead>
-          <tr>
+          <tr className="form-control-custom">
             <th>Plate Number</th>
             <th>Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="form-control-custom">
           {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
               <td>
-                {request.status === "rejected" && (
+                {request.status === "canceled" && (
                   <Button
                     className="btn btn-sm"
-                    variant="secondary"
+                    variant="primary"
                     onClick={() =>
                       window.location.replace(
                         `/driver/maintenance-request-form?_id=${request._id}`
@@ -178,11 +187,47 @@ const MaintenanceRequestPage = ({ filter }) => {
                     </Button>
                   </div>
                 )}
+                {" "}<Button variant="info"
+                className="btn btn-sm" onClick={() => handleMore(request)}>
+                  More
+                </Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+      <Modal show={showModal} onHide={handleModalClose}>
+  <Modal.Header closeButton>
+    <Modal.Title>Maintenance Request Details</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <p>
+      <strong>Plate Number:</strong> {selectedRequest?.plateNumber}
+    </p>
+    <p>
+      <strong>Date:</strong> {selectedRequest?.createdAt}
+    </p>
+    <p>
+      <strong>Status:</strong> {selectedRequest?.status}
+    </p>
+    <p>
+      <strong>Description:</strong> {selectedRequest?.description}
+    </p>
+    {selectedRequest?.status === "canceled" && (
+      <p>
+        <strong>Rejection Reason:</strong> {selectedRequest?.reason}
+      </p>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" 
+    className="btn btn-sm"
+    onClick={handleModalClose}>
+      Close
+    </Button>
+   
+  </Modal.Footer>
+</Modal>
       <Modal show={showEditModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Maintenance Request</Modal.Title>

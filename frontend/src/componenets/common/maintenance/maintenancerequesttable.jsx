@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Modal,Row,Col } from "react-bootstrap";
 import api from "../../../api/api";
 import Loading from "../Provider/LoadingProvider";
+import "../../common/css/formStyles.css";
 const MaintenanceRequestTables = ({ filter }) => {
   const [startIndex, setStartIndex] = useState(0);
   const [isLoading, setIsLoading]=useState(true);
@@ -106,14 +107,14 @@ const MaintenanceRequestTables = ({ filter }) => {
       {isLoading && <Loading/> }
       <Table striped bordered hover responsive className="table-sm">
         <thead>
-          <tr>
+          <tr className="form-control-custom">
             <th>Plate Number</th>
             <th>Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="form-control-custom">
           {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>

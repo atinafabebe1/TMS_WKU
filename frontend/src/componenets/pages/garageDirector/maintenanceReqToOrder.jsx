@@ -162,14 +162,14 @@ const GDMaintenanceRequestTables = ({ filter }) => {
       </Form>
       <Table striped bordered hover responsive className="table-sm">
         <thead>
-          <tr>
+          <tr className="form-control-custom">
             <th>Plate Number</th>
             <th>Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="form-control-custom">
           {filteredRequests.slice(startIndex, startIndex + 7).map((request)  => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
@@ -207,7 +207,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
         </tbody>
       </Table>
 
-      <Modal show={showModal} onHide={handleModalClose}>
+      <Modal show={showModal} className="form-control-custom" onHide={handleModalClose}>
   <Modal.Header closeButton>
     <Modal.Title>Maintenance Order Details</Modal.Title>
   </Modal.Header>

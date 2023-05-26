@@ -66,7 +66,7 @@ const MaintenanceReportSchema = new Schema(
     status:{
       type: String,
       default: "Waiting-Mech-To-Approve",
-      enum: ["pending", "in-progress", "UnderMaintenance","Waiting-Mech-To-Approve","Waiting-GD-To-Approve","completed", "canceled"],
+      enum: ["Waiting-Mech-To-Approve","Waiting-GD-To-Approve","completed", "canceled"],
       validate: {
         validator: function (v) {
           if (this.isNew && v !== "Waiting-Mech-To-Approve") {
