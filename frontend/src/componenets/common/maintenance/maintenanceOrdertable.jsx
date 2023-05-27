@@ -3,6 +3,7 @@ import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../../api/api";
 import { useAuth } from "../../../context/AuthContext";
+import Loading from "../Provider/LoadingProvider";
 const MaintenanceOrderTable = ({ filter }) => {
   const [spareparts, setSpareParts] = useState([
     {
@@ -13,7 +14,7 @@ const MaintenanceOrderTable = ({ filter }) => {
       totalPrice: 0,
     },
   ]);
-  
+  const [isLoading, setIsLoading]=useState(true);
   const [plateNumber, setPlateNumber] = useState("");
   const [selectedMechanic, setSelectedMechanic] = useState("");
   const [mechanics, setMechanics] = useState([]);
@@ -51,6 +52,7 @@ const MaintenanceOrderTable = ({ filter }) => {
       .then((response) => {
         console.log(response.data.data);
         setRequests(response.data.data);
+        setIsLoading(false);
       })
       .catch((error) =>
         console.error("Error fetching vehicle requests:", error)
@@ -98,7 +100,9 @@ const MaintenanceOrderTable = ({ filter }) => {
           </Col>
         </Row>
       </Form>
+      {isLoading && <Loading/> }
       <Table striped bordered hover responsive className="table-sm">
+   
         <thead>
           <tr className="form-control-custom">
             <th>Plate Number</th>
