@@ -21,7 +21,7 @@ const VehicleDisplayTable = ({
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = (vehicle) => {
     setCurrentRequest(vehicle);
-    setShowModal(vehicle);
+    setShowModal(true);
   };
 
   const handleSearch = (event) => {
@@ -42,6 +42,62 @@ const VehicleDisplayTable = ({
     return <p>No Vehicle found.</p>;
   }
 
+  const handleDeleteConfirmation = (vehicle) => {
+    setCurrentRequest(vehicle);
+    setShowModal(true);
+  };
+
+  const handleDelete = (vehicle) => {
+    handledeleteClick(vehicle);
+    handleCloseModal();
+  };
+
+  const handleDisableConfirmation = (vehicle) => {
+    setCurrentRequest(vehicle);
+    setShowModal(true);
+  };
+
+  const handleDisable = (vehicle) => {
+    handledissabele(vehicle);
+    handleCloseModal();
+  };
+
+  const handleUnassignConfirmation = (vehicle) => {
+    setCurrentRequest(vehicle);
+    setShowModal(true);
+  };
+
+  const handleUnassign = (vehicle) => {
+    handeleUnassign(vehicle);
+    handleCloseModal();
+  };
+
+  const handleEnableConfirmation = (vehicle) => {
+    setCurrentRequest(vehicle);
+    setShowModal(true);
+  };
+
+  const handleEnable = (vehicle) => {
+    handleEnableVehicle(vehicle);
+    handleCloseModal();
+  };
+
+  const handleModalAction = () => {
+    const { currentRequest } = currentRequest;
+
+    if (currentRequest) {
+      if (currentRequest.action === "delete") {
+        handleDelete(currentRequest.vehicle);
+      } else if (currentRequest.action === "disable") {
+        handleDisable(currentRequest.vehicle);
+      } else if (currentRequest.action === "unassign") {
+        handleUnassign(currentRequest.vehicle);
+      } else if (currentRequest.action === "enable") {
+        handleEnable(currentRequest.vehicle);
+      }
+    }
+  };
+
   return (
     <div className="p-4">
       <Form>
@@ -60,7 +116,7 @@ const VehicleDisplayTable = ({
         <thead>
           <tr>
             <th>Plate Number</th>
-            <th>Type </th>
+            <th>Type</th>
             <th>Proprietary Id Number</th>
             <th>Model Number</th>
             <th>Property Type</th>
@@ -114,14 +170,18 @@ const VehicleDisplayTable = ({
                         <Button
                           className="btn btn-sm"
                           variant="secondary"
-                          onClick={() => handledissabele(vehicle)}
+                          onClick={() =>
+                            handleDisableConfirmation({ action: "disable", vehicle })
+                          }
                         >
-                          Temporarly Diactivate
+                          Temporarily Deactivate
                         </Button>{" "}
                         <Button
                           className="btn btn-sm"
                           variant="danger"
-                          onClick={() => handledeleteClick(vehicle)}
+                          onClick={() =>
+                            handleDeleteConfirmation({ action: "delete", vehicle })
+                          }
                         >
                           Delete
                         </Button>{" "}
@@ -142,7 +202,9 @@ const VehicleDisplayTable = ({
                       <Button
                         className="btn btn-sm"
                         variant="danger"
-                        onClick={() => handeleUnassign(vehicle)}
+                        onClick={() =>
+                          handleUnassignConfirmation({ action: "unassign", vehicle })
+                        }
                       >
                         Remove Assigned Task
                       </Button>{" "}
@@ -151,12 +213,14 @@ const VehicleDisplayTable = ({
                   {vehicle.onMaintenance === true && (
                     <>
                       <Button className="btn btn-sm" variant="danger" disabled>
-                        This Vehicle Is Temporarly Diactivated
+                        This Vehicle Is Temporarily Deactivated
                       </Button>{" "}
                       <Button
                         className="btn btn-sm"
                         variant="success"
-                        onClick={() => handleEnableVehicle(vehicle)}
+                        onClick={() =>
+                          handleEnableConfirmation({ action: "enable", vehicle })
+                        }
                       >
                         Activate
                       </Button>{" "}
@@ -187,6 +251,23 @@ const VehicleDisplayTable = ({
           Next
         </Button>
       </div>
+
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to perform this action?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleModalAction}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
