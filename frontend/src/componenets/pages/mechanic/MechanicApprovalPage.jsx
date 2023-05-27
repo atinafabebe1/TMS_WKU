@@ -12,9 +12,10 @@ const MechApproval = () => {
   return (
     <>
       <div className="text-center">
-        <h1>Approve Maintenance </h1>
+        <h2 className="form-control-custom">Approve Maintenance </h2>
       </div>
       <Tabs
+      className="form-control-custom"
         activeKey={filter}
         onSelect={handleFilter}
         id="maintenance-request-tabs"

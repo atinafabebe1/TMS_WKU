@@ -12,9 +12,10 @@ const MechMaintenanceOrder = () => {
   return (
     <>
       <div className="text-center">
-        <h1>Maintenance Orders</h1>
+        <h2 className="form-control-custom" >Maintenance Orders</h2>
       </div>
       <Tabs
+      className="form-control-custom"
         activeKey={filter}
         onSelect={handleFilter}
         id="maintenance-request-tabs"

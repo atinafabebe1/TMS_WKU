@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import api from "../../../api/api";
 import "../../common/css/formStyles.css";
-
+import Loading from "../Provider/LoadingProvider";
 
 const MaintenanceApprovalTable = ({ filter,data }) => {
 
@@ -11,12 +11,14 @@ const MaintenanceApprovalTable = ({ filter,data }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [isLoading,setIsLoading]=useState(true);
   useEffect(() => {
     api
       .get("/MaintenanceReport")
       .then((response) => {
         console.log(response.data.data);
         setRequests(response.data.data);
+        setIsLoading(false);
       })
       .catch((error) =>
         console.error("Error fetching maintenance reports:", error)
@@ -75,6 +77,7 @@ event.preventDefault();
           </Col>
         </Row>
       </Form>
+      {isLoading && <Loading/> }
       <Table striped bordered hover responsive className="table-sm">
         <thead>
         <tr className="form-control-custom">

@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "../../common/header/Navbar";
 import WeeklyReport from "../../common/report/weeklyReport";
 import DailyReport from "../../common/report/dailyReport";
-import MonthlyReport from "../../common/report/monthlyReport";
+import MonthlyReportList from "../../common/report/monthlyReport";
 import ServiceScheduleForm from "./ServiceScheduleForm";
 import TransferVehicle from "./TransferVehicle";
 import TrackVehicle from "../../common/vehicle/TrackVehicle";
@@ -117,7 +117,7 @@ const HeadOfDeploymentPage = () => {
         <Route path="schedule/workday-new" element={<ServiceScheduleForm />} />
         <Route path="report/weekly" element={<WeeklyReport />} />
         <Route path="report/daily" element={<DailyReport />} />
-        <Route path="report/monthly" element={<MonthlyReport />} />
+        <Route path="report/monthly" element={<MonthlyReportList />} />
         <Route path="report/emergence" element={<EmmergencyReport />} />
         <Route path="report/detail/:id" element={<DetailEmmergecy />} />
         <Route path="vehicles" element={<DetailVehicleInfo />} />
