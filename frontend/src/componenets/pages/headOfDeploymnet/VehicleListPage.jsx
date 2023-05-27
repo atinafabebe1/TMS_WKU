@@ -44,7 +44,7 @@ const VehicleListPage = () => {
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h1>List of Available Vehicle</h1>
+          <h1 className="form-control-custom">List of Available Vehicle</h1>
         </Col>
         <Col className="text-end">
           <Link to="/hd/vehicles/Receive">

@@ -101,10 +101,17 @@ const VehicleRecordSchema = new Schema(
     vehicleImage: {
       type: VehicleImageSchema,
     },
-    itemsWithVehicle: {
-      itemDetail: { type: String },
-      quantity: { type: Number },
-    },
+    itemsWithVehicle: [
+      {
+        itemDetail: {
+          type: String,
+        },
+        quantity: {
+          type: Number,
+        },
+      },
+    ],
+
     driver: {
       type: mongoose.Schema.Types.ObjectId,
       default: null,
