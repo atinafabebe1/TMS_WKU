@@ -8,7 +8,7 @@ import {
   Modal,
 } from "react-bootstrap";
 import { Alert, Row,Col,Card, Container } from 'react-bootstrap';
-
+import { useNavigate } from "react-router-dom";
 import api from "../../../api/api";
 import { useAuth } from "../../../context/AuthContext";
 
@@ -21,6 +21,7 @@ const MaintenanceRequestForm = () => {
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
   const [kilometerOnCounter,setKilometerOncounter]=useState("");
+  const navigate = useNavigate();
   const fetch = async () => {};
 
   useEffect(() => {
@@ -123,6 +124,7 @@ const MaintenanceRequestForm = () => {
            value={kilometerOnCounter}
            onChange={(event) => setKilometerOncounter(event.target.value)}
           required
+          min={0}
           className="mb-3"
         />
         <Form.Control.Feedback type="invalid">
@@ -145,7 +147,11 @@ const MaintenanceRequestForm = () => {
             {success && <p className="text-success">{success}</p>}
 
             <div className="d-flex justify-content-end my-4">
-              <Button className="btn-secondary me-2">Cancel</Button>
+              <Button className="btn-secondary me-2"
+                    onClick={(e) => {
+                      navigate("/driver/request/maintenance");
+                    }}
+              >Cancel</Button>
               <Button
                 type="reset"
                 className="btn-danger me-2"
@@ -173,7 +179,9 @@ const MaintenanceRequestForm = () => {
                 <Modal.Footer>
                   <Button
                     variant="secondary"
-                    onClick={handleModalClose}
+                    onClick={(e) => {
+                      navigate("/driver/request/maintenance");
+                    }}
                   >
                     Cancel
                   </Button>

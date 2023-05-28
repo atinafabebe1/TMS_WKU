@@ -114,15 +114,15 @@ const updateMaintenanaceStatus = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // check if the user who created the maintenance request is updating the status
-  if (maintenanceRequest.user.toString() === req.user.id) {
-    return next(
-      new ErrorResponse(
-        `You are not authorized to update this maintenance request`,
-        401
-      )
-    );
-  }
+  // // check if the user who created the maintenance request is updating the status
+  // if (maintenanceRequest.user.toString() === req.user.id) {
+  //   return next(
+  //     new ErrorResponse(
+  //       `You are not authorized to update this maintenance request`,
+  //       401
+  //     )
+  //   );
+  // }
   // update the status and save the maintenance request
   maintenanceRequest.status = status;
   await maintenanceRequest.save();

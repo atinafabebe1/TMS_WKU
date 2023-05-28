@@ -12,9 +12,10 @@ const GDMaintenanceApproveTable = () => {
   return (
     <>
             <div className="text-center">
-        <h1>Maintenance Approvals</h1>
+        <h2 className="form-control-custom" >Maintenance Approvals</h2>
       </div>
       <Tabs
+      className="form-control-custom"
         activeKey={filter}
         onSelect={handleFilter}
         id="maintenance-request-tabs"
