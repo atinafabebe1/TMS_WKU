@@ -93,8 +93,8 @@ const SparePartRequestListPage = () => {
       </Form>
       {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
-        <thead>
-          <tr className="form-control-custom">
+        <thead className="form-control-custom">
+          <tr>
             <th>Plate Number</th>
             <th>Spare Part Name</th>
             <th>Quantity</th>
@@ -105,7 +105,7 @@ const SparePartRequestListPage = () => {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody className="form-control-custom">
+        <tbody>
           {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>

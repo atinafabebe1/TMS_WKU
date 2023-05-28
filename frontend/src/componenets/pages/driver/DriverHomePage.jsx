@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { useState, useEffect } from "react";
 import api from "../../../api/api";
-const MechanicHome = () => {
+const DriverHomePage = () => {
   const [data, setData] = useState([]);
   const [dataCount, setDataCount] = useState(0);
   const [dataCount2, setDataCount2] = useState(0);
@@ -22,42 +22,30 @@ const MechanicHome = () => {
             alignItems: "center",
           }}
         >
-          <h4 style={{ textAlign: "center", color: "#4682B4" }}>
-            Get And Track Request up on Update
-          </h4>
           <h5 style={{ textAlign: "center", color: "#4682B4" }}>
-            To Track Changes in Your Request
+            Remember to drive safely, follow traffic rules, and provide
+            excellent service to our passengers
           </h5>
           <br />
-          <div className="d-flex justify-content-center align-items-center">
-            <div className="p-4">
-              <Link to="/mechanic/request/accessory">
-                <Button className="align-items-center">
-                  <strong>Explore Request</strong>
-                </Button>
-              </Link>
-            </div>
-          </div>
+
+          <hr></hr>
           <div className="d-flex justify-content-center align-items-center">
             <div className="p-4">
               <Card>
-                <Card.Header className="bg-secondary text-light">
-                  Order
-                </Card.Header>
+                <Card.Header className="form-control-custom">Fuel</Card.Header>
                 <Card.Body>
                   <Card.Text>
                     <h6 style={{ textAlign: "center", color: "#4682B4" }}>
-                      Get Maintenance Assigned For <br />
-                      You And Accept
+                      Request For Fuel
                     </h6>
                   </Card.Text>
 
                   <div className="text-center">
-                    <Link to="/mechanic/maintenance/receive-maintenance-order">
+                    <Link to="/driver/request/fuel">
                       <Button
-                        variant="outline-secondary"
+                        variant="outline-success"
                         size="sm"
-                        style={{ width: "200px" }}
+                        style={{ width: "250px" }}
                       >
                         See More
                       </Button>
@@ -68,23 +56,22 @@ const MechanicHome = () => {
             </div>
             <div className="p-4">
               <Card>
-                <Card.Header className="bg-secondary text-light">
-                  Approval
+                <Card.Header className="form-control-custom">
+                  Maintenance
                 </Card.Header>
                 <Card.Body>
                   <Card.Text>
                     <h6 style={{ textAlign: "center", color: "#4682B4" }}>
-                      Check Maintained Vehicle Properly <br />
-                      And Approve
+                      Request For Maintenance
                     </h6>
                   </Card.Text>
 
                   <div className="text-center">
-                    <Link to="/mechanic/maintenance/approve-maintenance">
+                    <Link to="/driver/request/maintenance">
                       <Button
-                        variant="outline-secondary"
+                        variant="outline-success"
                         size="sm"
-                        style={{ width: "200px" }}
+                        style={{ width: "250px" }}
                       >
                         See More
                       </Button>
@@ -95,23 +82,22 @@ const MechanicHome = () => {
             </div>
             <div className="p-4">
               <Card>
-                <Card.Header className="bg-secondary text-light">
+                <Card.Header className="form-control-custom">
                   Report
                 </Card.Header>
                 <Card.Body>
                   <Card.Text>
                     <h6 style={{ textAlign: "center", color: "#4682B4" }}>
-                      Report Completed And <br />
-                      Approved Maintenance
+                      Report for Emergency
                     </h6>
                   </Card.Text>
 
                   <div className="text-center">
-                    <Link to="/mechanic/maintenance/send-maintenance-report">
+                    <Link to="/driver/report/emmergency">
                       <Button
-                        variant="outline-secondary"
+                        variant="outline-success"
                         size="sm"
-                        style={{ width: "200px" }}
+                        style={{ width: "250px" }}
                       >
                         See More
                       </Button>
@@ -142,4 +128,4 @@ const MechanicHome = () => {
   );
 };
 
-export default MechanicHome;
+export default DriverHomePage;

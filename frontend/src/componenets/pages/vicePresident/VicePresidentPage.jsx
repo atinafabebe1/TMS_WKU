@@ -3,6 +3,10 @@ import Navbar from "../../common/header/Navbar";
 import { Routes, Route } from "react-router-dom";
 import VehiclesRequests from "../../common/vehicle/vehiclerequest";
 import SendComplain from "../../common/shared/sendComplain";
+import VehicleRequestListPage from "./VehicleRequests";
+import CreateVehicleRequestForm from "./CreateVehicleRequest";
+import EditVehicleRequest from "./EditVehicleRequest";
+import VpHomePage from "./VpHome";
 import { useAuth } from "../../../context/AuthContext";
 
 const links = [
@@ -15,12 +19,12 @@ const links = [
     url: "/vp/requests",
     children: [
       {
-        name: "Vehicle",
+        name: "Approve Vehicle Request",
         url: "/vp/request/vehicle",
       },
       {
-        name: "Fuel",
-        url: "/vp/request/fuel",
+        name: "Send Vehicle Request",
+        url: "/vp/request/vehicle-request",
       },
     ],
   },
@@ -60,6 +64,19 @@ const VicePresidentPage = () => {
           element={<VehiclesRequests link={`/Request/vehicle`} />}
         />
         <Route path="complain" element={<SendComplain />} />
+        <Route path="/" element={<VpHomePage />} />
+        <Route
+          path="/request/vehicle-request"
+          element={<VehicleRequestListPage />}
+        />
+        <Route
+          path="/request/vehicle-request/create"
+          element={<CreateVehicleRequestForm />}
+        />
+        <Route
+          path="request/edit-vehicle-request/:id"
+          element={<EditVehicleRequest />}
+        />
       </Routes>
     </div>
   );

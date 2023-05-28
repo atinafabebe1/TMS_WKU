@@ -21,6 +21,17 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [validated, setValidated] = useState(false);
+  const [isValidPlateNumber, setIsValidPlateNumber] = useState(true);
+
+  const handlePlateNumberChange = (event) => {
+    const value = event.target.value;
+    setPlateNumber(value);
+
+    // Validate plate number against the schema
+    const pattern = /^(4-[0-9]{5}|UN [0-9]{3})$/i;
+    const isValid = pattern.test(value);
+    setIsValidPlateNumber(isValid);
+  };
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -157,6 +168,8 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                       </Form.Label>
                       <Form.Control
                         type="text"
+                        minLength={3}
+                        maxLength={50}
                         value={sparePartName}
                         onChange={(event) =>
                           setSparePartName(event.target.value)
@@ -175,13 +188,16 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                       <Form.Control
                         name="plateNumber"
                         value={plateNumber}
-                        onChange={(event) => setPlateNumber(event.target.value)}
+                        onChange={handlePlateNumberChange}
                         required
                         className="mb-3"
-                      ></Form.Control>{" "}
-                      <Form.Control.Feedback type="invalid">
-                        Please provide a valid Plate Number.
-                      </Form.Control.Feedback>
+                        isInvalid={!isValidPlateNumber} // Set invalid state based on validation result
+                      />
+                      {!isValidPlateNumber && (
+                        <Form.Control.Feedback type="invalid">
+                          Please provide a valid Plate Number.
+                        </Form.Control.Feedback>
+                      )}
                     </Form.Group>
                   </Row>
                   <Row>
