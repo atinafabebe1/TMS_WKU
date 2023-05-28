@@ -17,10 +17,7 @@ const links = [
     name: "Daily-Fuel",
     url: "/fd/registered-fuel",
   },
-  {
-    name: "Fuel-Resource",
-    url: "/fd/fuel-resources",
-  },
+
   {
     name: "Approve",
     url: "/fd/approve-fuel-request",

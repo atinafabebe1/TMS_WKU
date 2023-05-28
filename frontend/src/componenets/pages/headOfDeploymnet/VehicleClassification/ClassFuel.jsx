@@ -81,7 +81,7 @@ const FuelTypeList = () => {
                 <th>Type</th>
                 <th>Proprietary Id Number</th>
                 <th>Model Number</th>
-                <th>Property Type</th>
+                <th>Fuel Type</th>
                 <th>Action</th>
               </tr>
             </thead>

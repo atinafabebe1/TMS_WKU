@@ -100,7 +100,7 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
         .then((response) => {
           setIsLoading(false);
           setSuccess("Successfuly Sent");
-          setError("Failed to Send This Request");
+          setError("");
           setTimeout(() => {
             navigate("/driver/request/fuel"); // Navigate to the desired page after 6 seconds
           }, 6000); // Navigate to the desired page
@@ -257,25 +257,34 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
                   )}
                   <Modal show={showModal} onHide={() => setShowModal(false)}>
                     <Modal.Header closeButton>
-                      <Modal.Title>Confirm Submission</Modal.Title>
+                      <Modal.Title>Confirmation</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      <p>Are you sure you want to submit this request?</p>
+                      <p>
+                        Please review the filled data before sending the
+                        request:
+                      </p>
+                      <p>
+                        <strong>Type of Fuel:</strong> {typeOfFuel}
+                      </p>
+                      <p>
+                        <strong>Current Record on Counter:</strong>{" "}
+                        {currentRecordOnCounter}
+                      </p>
+                      <p>
+                        <strong>Request Amount:</strong> {requestAmount}
+                      </p>
                     </Modal.Body>
                     <Modal.Footer>
-                      <Button
-                        className="btn-secondary"
-                        size="sm"
-                        onClick={() => setShowModal(false)}
-                      >
-                        Cancel
+                      <Button variant="secondary" onClick={handleClear}>
+                        Clear
                       </Button>
                       <Button
-                        className="btn-primary"
-                        size="sm"
+                        variant="primary"
                         onClick={handleConfirmation}
+                        disabled={isLoading}
                       >
-                        Submit
+                        {isLoading ? "Sending..." : "Send Request"}
                       </Button>
                     </Modal.Footer>
                   </Modal>

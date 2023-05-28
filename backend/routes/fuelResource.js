@@ -16,5 +16,5 @@ router.use(Auth);
 
 router.post("/", createResources);
 router.get("/", advancedResult(Resource, ""), getresources);
-router.put("/id", updateResources);
+router.put("/:id", updateResources);
 module.exports = router;

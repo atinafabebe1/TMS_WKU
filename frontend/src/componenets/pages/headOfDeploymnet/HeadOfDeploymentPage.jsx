@@ -23,6 +23,9 @@ import ClassTypeVehicleList from "./VehicleClassification/ClassType";
 import FuelTypeList from "./VehicleClassification/ClassFuel";
 import EmmergencyReport from "./EmmergencyReportList";
 import DetailEmmergecy from "./DetailEmergency";
+import FuelCost from "../../common/fuel/RegisterFuelCost";
+import FuelCostListPage from "../../common/fuel/DisplayFuelCost";
+import EditFuelCost from "../../common/fuel/EditFuelCost";
 const links = [
   {
     name: "Home",
@@ -101,6 +104,10 @@ const links = [
     ],
   },
   {
+    name: "Fuel",
+    url: "/hd/fuel",
+  },
+  {
     name: "Complain",
     url: "/hd/complain",
   },
@@ -149,6 +156,9 @@ const HeadOfDeploymentPage = () => {
           element={<HODMaintenanceRequestPage link={`/Request/maintenance`} />}
         />
         <Route path="request/fuel" element={<ApproveFuelRequest />} />
+        <Route path="fuel" element={<FuelCostListPage />} />
+        <Route path="fuel/register" element={<FuelCost />} />
+        <Route path="fuel/edit-fuel/:id" element={<EditFuelCost />} />
       </Routes>
     </div>
   );
