@@ -82,7 +82,7 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
         .then((response) => {
           setIsLoading(false);
           setSuccess("Successfuly Updated");
-          setError(null);
+          setError("");
           onSubmit();
           setTimeout(() => {
             navigate("/driver/request/fuel"); // Navigate to the desired page after 6 seconds
@@ -91,8 +91,8 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
         .catch((err) => {
           console.log(err.response.data);
           setIsLoading(false);
-          setError("Please Provide Valid Data and Try Again");
-          setSuccess(null);
+          setError(err.response.data);
+          setSuccess("");
         });
     } else {
       api
@@ -100,7 +100,7 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
         .then((response) => {
           setIsLoading(false);
           setSuccess("Successfuly Sent");
-          setError(null);
+          setError("Failed to Send This Request");
           setTimeout(() => {
             navigate("/driver/request/fuel"); // Navigate to the desired page after 6 seconds
           }, 6000); // Navigate to the desired page
@@ -108,12 +108,11 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
         .catch((err) => {
           console.log(err.response.data);
           setIsLoading(false);
-          setError("Please Provide Valid Data and Try Again");
-          setSuccess(null);
+          setError("Failed to Send This Request");
+          setSuccess("");
         });
     }
   };
-  //const plateNumber = userData?.driverinfo?.vehiclePlateNumber;
   return (
     <Container className="my-3">
       <Row>
@@ -179,6 +178,8 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
                       </Form.Label>
                       <Form.Control
                         type="number"
+                        min={0}
+                        max={100}
                         value={currentRecordOnCounter}
                         onChange={(event) =>
                           setCurrentRecordOnCounter(event.target.value)
@@ -196,6 +197,8 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
                       </Form.Label>
                       <Form.Control
                         type="number"
+                        min={1}
+                        max={100}
                         value={requestAmount}
                         onChange={(event) =>
                           setRequestAmount(event.target.value)

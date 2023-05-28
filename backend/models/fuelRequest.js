@@ -22,7 +22,7 @@ const FuelRequestSchema = new Schema(
       maxlength: 10,
       validate: {
         validator: function (v) {
-          const pattern = /^[1-5][A-Z][0-9]{7}$/i;
+          const pattern = /^(4-[0-9]{5}|UN [0-9]{3})$/i;
           return pattern.test(v);
         },
         message: (props) => `${props.value} is not a valid plate number`,

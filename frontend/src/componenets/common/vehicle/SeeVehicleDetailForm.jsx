@@ -439,7 +439,7 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
             <Form.Control
               type="number"
               name="proprietaryIdNumber"
-              required
+              disabled
               value={vehicleData.proprietaryIdNumber}
               onChange={handleInputChange}
             />

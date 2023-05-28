@@ -13,19 +13,12 @@ const DailyFuelCostRecordSchema = new Schema(
     plateNumber: {
       type: String,
       required: true,
-      maxlength: 10,
       validate: {
         validator: function (v) {
-          const pattern = /^[1-5][A-Z][0-9]{7}$/i;
-          const isPositive = parseInt(v) >= 0;
-          return pattern.test(v) && isPositive;
+          const pattern = /^(4-[0-9]{5}|UN [0-9]{3})$/i;
+          return pattern.test(v);
         },
-        message: (props) => {
-          if (!props.value) {
-            return "Plate number is required";
-          }
-          return `${props.value} is not a valid plate numbers or must be a non-negative number`;
-        },
+        message: (props) => `${props.value} is not a valid plate number`,
       },
     },
     mode: {
