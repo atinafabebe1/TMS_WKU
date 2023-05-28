@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../../api/api";
 import { useAuth } from "../../../context/AuthContext";
 
-const MaintenanceRequestForm = () => {
+const MaintenanceRequestForm = ({request}) => {
   const [description, setDescription] = useState("");
   const [plateNumber, setPlateNumber] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -48,7 +48,16 @@ const MaintenanceRequestForm = () => {
       fetchUserData();
     }
   }, [user]);
-
+  useEffect(() => {
+    if (request) {
+      setDescription(request.description);
+      setKilometerOncounter(request.kilometerOnCounter);
+      
+    } else {
+      setDescription("");
+      setKilometerOncounter("");
+    }
+  }, [request]);
   const myplateNumber = userData?.driverinfo?.vehiclePlateNumber;
 
 
@@ -64,7 +73,36 @@ const MaintenanceRequestForm = () => {
       kilometerOnCounter,
       description,
     };
-    
+    if(request)
+    {
+      //update
+  api
+    .put(`/Request/maintenance/${request._id}`, result)
+    .then(() => {
+    return api.patch(`/Request/maintenance/${request._id}`, {
+    status: "pending",
+    });
+    })
+    .then((response) => {
+      if (response.statusText === "OK") {
+        setSucces(response.data?.message);
+        setError(null);
+      }
+
+      setDescription("");
+      setPlateNumber("");
+      setKilometerOncounter("");
+      
+    })
+    .catch((error) =>
+    console.error(
+    `Error editing Maintenance request with ID ${request._id}:`,
+    error
+    )
+    );
+    }else{
+
+    //New post
     api
       .post(`/Request/maintenance?isDeleted=false`, result)
       .then((response) => {
@@ -75,13 +113,18 @@ const MaintenanceRequestForm = () => {
   
         setDescription("");
         setPlateNumber("");
-        setShowModal();
+        setKilometerOncounter("");
+        setTimeout(() => {
+          navigate("/driver/request/maintenance"); // Navigate to the desired page after 6 seconds
+        }, 6000); 
       })
+
       .catch((err) => {
         console.log(err.response.data);
         setError(err.response.data?.error);
         setSucces(null);
       });
+    }
   };
   
   const handleClear = () => {
@@ -104,6 +147,15 @@ const MaintenanceRequestForm = () => {
           Maintenance Requesting Form          </Card.Header>
           <Card.Body>
     <div className="container my-5">
+    {request?.rejectReason && (
+                  <p className="text-danger">
+                    Kindly be informed that your request has been rejected due
+                    to the reason of "{request.rejectReason}". We advise that
+                    upon resubmission of your request, you consider modifying
+                    the reason to improve your chances of approval. Thank you
+                    for your understanding and cooperation.
+                  </p>
+                )}
       <div className="row justify-content-center">
         <div className="col-lg-8">
 

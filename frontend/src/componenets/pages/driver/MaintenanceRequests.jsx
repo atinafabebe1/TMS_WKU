@@ -94,6 +94,7 @@ const MaintenanceRequestPage = ({ filter }) => {
   };
 
   const handleEditRequest = () => {
+
     api
     .put(`/Request/maintenance/${selectedRequest._id}`, selectedRequest)
     .then(() => {
@@ -154,11 +155,12 @@ const MaintenanceRequestPage = ({ filter }) => {
                           <Button
                           className="btn btn-sm"
                           variant="primary"
-                          onClick={() =>
-                            window.location.replace(
-                              `/driver/maintenance-request-form?_id=${request._id}`
-                            )
-                          }
+                          onClick={() => handleShowEditModal(request._id)}
+                          // onClick={() =>
+                          //   window.location.replace(
+                          //     `/driver/maintenance-request-form?_id=${request._id}`
+                          //   )
+                          // }
                         >
                           Resubmit
                         </Button>
@@ -174,6 +176,12 @@ const MaintenanceRequestPage = ({ filter }) => {
                       className="btn btn-sm"
                       variant="primary"
                       onClick={() => handleShowEditModal(request._id)}
+                     
+                      // onClick={() =>
+                      //   window.location.replace(
+                      //     `/driver/maintenance-request-form?_id=${request._id}`
+                      //   )
+                      // }
                     >
                       Edit
                     </Button>
@@ -211,7 +219,7 @@ const MaintenanceRequestPage = ({ filter }) => {
     )}
   </Modal.Body>
   <Modal.Footer>
-  {selectedRequest?.status === "canceled" && (
+  {selectedRequest?.status === "canceled"||"pending" && (
             <Button
               variant="primary"
               className="btn btn-sm"
@@ -269,7 +277,7 @@ const MaintenanceRequestPage = ({ filter }) => {
           onClick={handleModalClose}>
             Close
           </Button>
-          {selectedRequest?.status === "canceled" && (
+          {selectedRequest?.status === "canceled"||"pending" && (
             <Button
               variant="primary"
               className="btn btn-sm"
