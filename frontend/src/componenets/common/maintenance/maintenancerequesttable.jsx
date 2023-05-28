@@ -9,7 +9,9 @@ const MaintenanceRequestTables = ({ filter }) => {
   const [requests, setRequests] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [reason,setReason]=useState("");
 
   useEffect(() => {
     api
@@ -30,8 +32,11 @@ const MaintenanceRequestTables = ({ filter }) => {
   };
   
   const handleRejectClick = async (request) => {
-    const reason = prompt("Please enter a reason for rejection:");
-    if (!reason) return; // If the user cancels the prompt, do nothing
+   
+    if (!reason)
+    {
+    return; 
+    }else{// If the user cancels the prompt, do nothing
     try {
       await api.patch(`/Request/maintenance/${request._id}`, {
         status: "canceled",
@@ -41,9 +46,13 @@ const MaintenanceRequestTables = ({ filter }) => {
       setRequests(response.data.data);
     } catch (error) {
       console.log(error);
-    }
+    }}
   };
-  
+  const handleRejectModal=(request)=>{
+    setSelectedRequest(request);
+    setShowRejectModal(true);
+    setShowModal(false);
+  }
 
   const handleMore = (request) => {
     setSelectedRequest(request);
@@ -52,15 +61,20 @@ const MaintenanceRequestTables = ({ filter }) => {
       const reason = request.rejectReason || "No reason provided";
       // Set the selected request with the rejection reason
       setSelectedRequest({ ...request, reason });
-      setShowModal(true); // Reopen the modal with the rejection reason
+      setShowModal(true);
+      setShowRejectModal(false);
+      // Reopen the modal with the rejection reason
     } else {
       setShowModal(true);
+      setShowRejectModal(false);
+
     }
   };
   
 
   const handleModalClose = () => {
     setShowModal(false);
+    setShowRejectModal(false);
     setSelectedRequest(null);
   };
 
@@ -135,7 +149,7 @@ const MaintenanceRequestTables = ({ filter }) => {
                     <Button
                       variant="danger"
                       className="btn btn-sm"
-                      onClick={() => handleRejectClick(request)}
+                      onClick={() => handleRejectModal(request)}
                     >
                       Reject
                     </Button>
@@ -182,12 +196,54 @@ const MaintenanceRequestTables = ({ filter }) => {
       Close
     </Button>
     {selectedRequest?.status === "pending" && (
+      <Form.Group>
+      <Button
+      variant="danger"
+      className="btn btn-sm"
+      onClick={() => handleRejectModal(selectedRequest)}
+    >
+      Reject
+    </Button>
+{" "}
       <Button
         variant="primary"
         className="btn btn-sm"
         onClick={() => handleTransferOrder(selectedRequest)}
       >
         Transfer Order
+      </Button>
+      </Form.Group>
+    )}
+  </Modal.Footer>
+</Modal>
+<Modal show={showRejectModal} onHide={handleModalClose}>
+  <Modal.Header closeButton>
+    <Modal.Title>Provide Reject Reason</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+   
+  <Form.Label>Reject Reason</Form.Label>
+        <Form.Control
+          type="text"
+           value={reason}
+           onChange={(event) => setReason(event.target.value)}
+          required
+          className="mb-3"
+        />
+         </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" 
+    className="btn btn-sm"
+    onClick={handleModalClose}>
+      Close
+    </Button>
+    {selectedRequest?.status === "pending" && (
+      <Button
+        variant="primary"
+        className="btn btn-sm"
+        onClick={() => handleRejectClick(selectedRequest)}
+      >
+        Reject
       </Button>
     )}
   </Modal.Footer>
