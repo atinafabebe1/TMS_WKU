@@ -10,7 +10,7 @@ import EmmergencyReport from "./emmergencyReport";
 import TransferVehicleRequest from "./TransferVehicleRequest";
 import EditEmergencyReport from "./EditEmergencyReport";
 import DriverReceiveVehicle from "./ReceiveVehicle";
-import UserPage from "./test";
+import DriverHomePage from "./DriverHomePage";
 import { Routes, Route } from "react-router-dom";
 const links = [
   {
@@ -61,6 +61,7 @@ const DriverPage = () => {
     <div>
       <Navbar links={links} title="TMS" />
       <Routes>
+        <Route path="" element={<DriverHomePage />} />
         <Route path="report/emmergency" element={<EmmergencyReport />} />
         <Route
           path="report/emmergency/create"
