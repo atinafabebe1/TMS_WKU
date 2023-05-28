@@ -48,15 +48,6 @@ const createFuelRequest = asyncHandler(async (req, res, next) => {
 const updateFuelRequest = asyncHandler(async (req, res, next) => {
   let fuelRequest = await FuelRequest.findById(req.params.id);
 
-  // if (fuelRequest.user.toString() !== req.user.id) {
-  //   return next(
-  //     new ErrorResponse(
-  //       `User ${req.params.id} is not authorized to update this maintenance Order`,
-  //       404
-  //     )
-  //   );
-  // }
-
   fuelRequest = await FuelRequest.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,

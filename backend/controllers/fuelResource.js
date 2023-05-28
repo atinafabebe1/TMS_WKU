@@ -12,18 +12,23 @@ const createResources = asyncHandler(async (req, res, next) => {
 });
 
 const updateResources = asyncHandler(async (req, res, next) => {
-  try {
-    const resource = await Resource.createOrUpdate({
-      type: req.body.type,
-      amount: req.body.amount,
-      unitPrice: req.body.unitPrice,
-      totalPrice: req.body.totalPrice,
-    });
-    res.json(resource);
-  } catch (error) {
-    next(error);
-  }
+  let fuelResource = await Resource.findById(req.params.id);
+  fuelResource = await Resource.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  res.status(200).json(fuelRequest);
 });
+
+// const updateFuelRequest = asyncHandler(async (req, res, next) => {
+//   let fuelRequest = await FuelRequest.findById(req.params.id);
+
+//   fuelRequest = await FuelRequest.findByIdAndUpdate(req.params.id, req.body, {
+//     new: true,
+//     runValidators: true,
+//   });
+//   res.status(200).json(fuelRequest);
+// });
 
 module.exports = {
   updateResources,

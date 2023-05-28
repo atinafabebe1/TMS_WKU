@@ -5,7 +5,17 @@ const ResourceSchema = new Schema(
   {
     type: {
       type: String,
-      enum: ["Coupon", "Fuel", "Cash", "Benzene", "Diesel", "Fren Oil"],
+      enum: [
+        "Fuel",
+        "Benzene",
+        "Petrol",
+        "Kerosene",
+        "Biodiesel",
+        "Diesel",
+        "Fren Oil",
+        "Gear oil",
+        "Grease",
+      ],
     },
     amount: {
       type: Number,
@@ -23,18 +33,18 @@ const ResourceSchema = new Schema(
   { timestamps: true }
 );
 
-ResourceSchema.statics.createOrUpdate = async function (resource) {
-  try {
-    const existingResource = await this.findOne({ type: resource.type });
-    if (existingResource) {
-      existingResource.amount += resource.amount;
-      return existingResource.save();
-    } else {
-      return this.create(resource);
-    }
-  } catch (error) {
-    throw new ErrorResponse("Error creating or updating resource.", 500);
-  }
-};
+// ResourceSchema.statics.createOrUpdate = async function (resource) {
+//   try {
+//     const existingResource = await this.findOne({ type: resource.type });
+//     if (existingResource) {
+//       existingResource.amount += resource.amount;
+//       return existingResource.save();
+//     } else {
+//       return this.create(resource);
+//     }
+//   } catch (error) {
+//     throw new ErrorResponse("Error creating or updating resource.", 500);
+//   }
+// };
 
 module.exports = mongoose.model("Resource", ResourceSchema);

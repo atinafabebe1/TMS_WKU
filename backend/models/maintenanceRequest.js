@@ -18,7 +18,7 @@ const MaintenanceRequestSchema = new Schema(
     kilometerOnCounter: {
       type: Number,
       //required:true,
-      default:null,
+      default: null,
     },
     plateNumber: {
       type: String,
@@ -26,7 +26,7 @@ const MaintenanceRequestSchema = new Schema(
       maxlength: 10,
       validate: {
         validator: function (v) {
-          const pattern = /^[1-5][A-Z][0-9]{7}$/i;
+          const pattern = /^(4-[0-9]{5}|UN [0-9]{3})$/i;
           return pattern.test(v);
         },
         message: (props) => `${props.value} is not a valid plate number`,
@@ -66,7 +66,13 @@ const MaintenanceRequestSchema = new Schema(
     status: {
       type: String,
       default: "pending",
-      enum: ["pending", "in-progress", "completed", "canceled","UnderMaintenance"],
+      enum: [
+        "pending",
+        "in-progress",
+        "completed",
+        "canceled",
+        "UnderMaintenance",
+      ],
       validate: {
         validator: function (v) {
           if (this.isNew && v !== "pending") {
@@ -78,7 +84,7 @@ const MaintenanceRequestSchema = new Schema(
           `Cannot set status "${props.value}" when creating a new maintenance request.`,
       },
     },
-     rejectReason: {
+    rejectReason: {
       type: String,
     },
     isDeleted: {
@@ -87,8 +93,6 @@ const MaintenanceRequestSchema = new Schema(
     },
 
     // This is my initial Point
-
-
 
     //This is my Last Point
   },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
+import { Table, Button, Row, Col, Form, Modal, Alert } from "react-bootstrap";
 import Loading from "../../common/Provider/LoadingProvider";
 import api from "../../../api/api";
 const ApproveFuelRequest = () => {
@@ -13,6 +13,8 @@ const ApproveFuelRequest = () => {
   const [price, setPrice] = useState(0);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [resources, setResources] = useState([]);
+  const [validated, setValidated] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [error, setError] = useState();
   const [success, setSuccess] = useState();
 
@@ -33,7 +35,9 @@ const ApproveFuelRequest = () => {
       setResources(response.data.data);
     });
   };
-
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
+  };
   useEffect(() => {
     fetchRequestData();
   }, []);
@@ -63,16 +67,17 @@ const ApproveFuelRequest = () => {
     setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
   };
 
-  const handleUnapprove = async (request) => {
-    try {
-      await api.put(`/Request/fuel/${request._id}`, {
-        status: "Waiting Approval",
-      });
-      const response = await api.get("/Request/fuel");
-      setRequests(response.data.data);
-    } catch (error) {
-      console.log(error);
+  const handleConfirmation = (event) => {
+    const form = event.currentTarget;
+    setValidated(true);
+
+    if (form && form.checkValidity() === false) {
+      event.stopPropagation();
+      return;
     }
+
+    setShowModal(false);
+    handleApprove();
   };
 
   const handleApprove = async () => {
@@ -95,6 +100,7 @@ const ApproveFuelRequest = () => {
       .then((response) => {
         setSelectedRequest(updatedRequest);
         setShowModal(false);
+        setShowSuccessModal(true);
       })
       .catch((error) => {
         console.log(error);
@@ -172,7 +178,7 @@ const ApproveFuelRequest = () => {
 
   return (
     <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex justify-content-between align-items-left mb-4">
         <Button
           className="btn btn-sm"
           variant="primary"
@@ -184,7 +190,7 @@ const ApproveFuelRequest = () => {
 
       <Row className="mb-4">
         <Col>
-          <h3>Fuel Requests</h3>
+          <h3 className="form-control-custom">Fuel Requests</h3>
         </Col>
       </Row>
       <Form>
@@ -201,7 +207,7 @@ const ApproveFuelRequest = () => {
       </Form>
       {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
-        <thead>
+        <thead className="form-control-custom">
           <tr>
             <th>Plate Number</th>
             <th>Type of Fuel</th>
@@ -234,11 +240,7 @@ const ApproveFuelRequest = () => {
                   </Button>
                 )}
                 {request.status === "Approved" && (
-                  <Button
-                    className="btn btn-sm"
-                    variant="success"
-                    onClick={() => handleUnapprove(request)}
-                  >
+                  <Button className="btn btn-sm" variant="success" disabled>
                     Approved
                   </Button>
                 )}
@@ -252,39 +254,62 @@ const ApproveFuelRequest = () => {
           ))}
         </tbody>
       </Table>
+      <Modal show={showSuccessModal} onHide={handleSuccessModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title className="form-control-custom">Success</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Alert variant="success">Fuel request approved successfully!</Alert>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            className="btn btn-sm"
+            onClick={handleSuccessModalClose}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Approve Fuel Request</Modal.Title>
+          <Modal.Title className="form-control-custom">
+            Approve Fuel Request
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-            <strong>Requested Amount: </strong> {selectedRequest?.requestAmount}{" "}
-            Litres
+            <strong className="form-control-custom">Requested Amount: </strong>{" "}
+            {selectedRequest?.requestAmount} Litres
           </p>
           <p>
-            <strong>Type Of Fuel: </strong> {selectedRequest?.typeOfFuel}
+            <strong className="form-control-custom">Type Of Fuel: </strong>{" "}
+            {selectedRequest?.typeOfFuel}
           </p>
 
           {matchingResource && (
             <p>
-              <strong>{matchingResource.type} Unit Price: </strong>
+              <strong className="form-control-custom">
+                {matchingResource.type} Unit Price:{" "}
+              </strong>
               {matchingResource.unitPrice} Per Litres
             </p>
           )}
 
-          {matchingResourceAmount && (
-            <p>
-              <strong>
-                {matchingResourceAmount.type} Available on Stock:{" "}
-              </strong>
-              {matchingResourceAmount.amount} Litres
-            </p>
-          )}
-          <Form>
+          <Form
+            style={{ padding: "10px" }}
+            className="form"
+            noValidate
+            validated={validated}
+            onSubmit={handleConfirmation}
+          >
             <Form.Group as={Col}>
-              <Form.Label>Add Approved Amount</Form.Label>
+              <Form.Label className="form-control-custom">
+                Add Approved Amount
+              </Form.Label>
               <Form.Control
                 type="number"
+                min={1}
                 value={approvedAmount}
                 onChange={(event) => {
                   const value = event.target.value;
@@ -299,9 +324,12 @@ const ApproveFuelRequest = () => {
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col}>
-              <Form.Label>Total price</Form.Label>
+              <Form.Label className="form-control-custom">
+                Total price
+              </Form.Label>
               <Form.Control
                 type="number"
+                min={1}
                 value={price}
                 disabled
                 onChange={(event) => setPrice(event.target.value)}
@@ -323,9 +351,9 @@ const ApproveFuelRequest = () => {
             Cancel
           </Button>
           <Button
-            variant="secondary"
+            variant="primary"
             className="btn btn-sm"
-            onClick={() => handleApprove(selectedRequest)}
+            onClick={(event) => handleConfirmation(event)}
           >
             Approve
           </Button>
@@ -336,13 +364,13 @@ const ApproveFuelRequest = () => {
           <Modal.Title>
             {" "}
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h4>Current Cost Statistics</h4>
+              <h4 className="form-control-custom">Current Cost Statistics</h4>
             </div>
           </Modal.Title>
         </Modal.Header>
 
         <Table striped bordered hover>
-          <thead>
+          <thead className="form-control-custom">
             <tr>
               <th>Type</th>
               <th>Unit Price</th>

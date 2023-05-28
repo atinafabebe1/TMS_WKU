@@ -136,7 +136,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       onSubmit();
       setError("");
     } catch (error) {
-      setError(error.response.data);
+      setError("Please Provide Valid Data and Try Again");
+      setSuccess("");
     }
   };
 
@@ -145,6 +146,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
     return vehicleData.itemsWithVehicle.map((item, index) => (
       <div key={index}>
         <Row className="mb-3">
+          <h6>Item #{index + 1}</h6>
           <Form.Group as={Col}>
             <Form.Label className="form-control-custom">Item Detail</Form.Label>
 
@@ -181,9 +183,15 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
 
   return (
     <Container>
-      <h2>{title}</h2>
-
+      <h3
+        className="form-control-custom"
+        style={{ textAlign: "center", padding: "10px" }}
+      >
+        {title}
+      </h3>
+      <hr></hr>
       <Form
+        style={{ padding: "10px" }}
         noValidate
         validated={validated}
         onSubmit={(e) => e.preventDefault()}

@@ -19,54 +19,51 @@ const MaintenanceReportSchema = new Schema(
       maxlength: 10,
       validate: {
         validator: function (v) {
-          const pattern = /^[1-5][A-Z][0-9]{7}$/i;
+          const pattern = /^(4-[0-9]{5}|UN [0-9]{3})$/i;
           return pattern.test(v);
         },
         message: (props) => `${props.value} is not a valid plate number`,
       },
     },
     spareparts: {
-    identificationNumber: {
-      type: String,
-      required: true,
-      unique: true,
-      minlength: 6,
-      maxlength: 20,
-    },
-    itemName: { type: String, required: true, },
-    itemPrice: {
-      
+      identificationNumber: {
+        type: String,
+        required: true,
+        unique: true,
+        minlength: 6,
+        maxlength: 20,
+      },
+      itemName: { type: String, required: true },
+      itemPrice: {
         type: Number,
         required: true,
         min: [0, "Price must be positive"],
-
-
+      },
+      itemQuantity: {
+        type: Number,
+        required: true,
+        min: [0, "Price must be positive"],
+      },
+      totalPrice: {
+        type: Number,
+        required: true,
+        min: [0, "Price must be positive"],
+      },
     },
-    itemQuantity: {
-      
+    exchangedMaintenanceTotalPrice: {
       type: Number,
       required: true,
       min: [0, "Price must be positive"],
-
-
-  },
-    totalPrice: {
-        type: Number,
-        required: true,
-        min: [0, "Price must be positive"],
-      
     },
-  },
-    exchangedMaintenanceTotalPrice: {
-        type: Number,
-        required: true,
-        min: [0, "Price must be positive"],
-    
-    },
-    status:{
+    status: {
       type: String,
       default: "Waiting-Mech-To-Approve",
-      enum: ["Waiting-Mech-To-Approve","Waiting-GD-To-Approve","completed", "canceled"],
+      enum: [
+        "Waiting-Mech-To-Approve",
+        "Waiting-GD-To-Approve",
+        "completed",
+        "canceled",
+      ],
       validate: {
         validator: function (v) {
           if (this.isNew && v !== "Waiting-Mech-To-Approve") {
@@ -78,7 +75,7 @@ const MaintenanceReportSchema = new Schema(
           `Cannot set status "${props.value}" when creating a new maintenance request.`,
       },
     },
- examination: {
+    examination: {
       type: String,
       required: true,
       minlength: 2,

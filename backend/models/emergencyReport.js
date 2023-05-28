@@ -42,13 +42,6 @@ const EmergencyReportSchema = new Schema(
       type: String,
       required: true,
       maxlength: 10,
-      validate: {
-        validator: function (v) {
-          const pattern = /^[1-5][A-Z][0-9]{7}$/i;
-          return pattern.test(v);
-        },
-        message: (props) => `${props.value} is not a valid plate number`,
-      },
     },
     type: {
       type: String,
