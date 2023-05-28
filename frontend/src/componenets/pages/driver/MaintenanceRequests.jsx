@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ErrorProvider from "../../common/Provider/ErrorProvider";
 import SuccessProvider from "../../common/Provider/SuccessProvider";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 import Loading from "../../common/Provider/LoadingProvider";
 import {
   Table,
@@ -22,16 +24,20 @@ const MaintenanceRequestPage = ({ filter }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [kilometerOnCounter,setKilometerOncounter]=useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading]=useState(true);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
 
 
   useEffect(() => {
     // Fetch the user's vehicle requests from your server API
     api
-      .get("/Request/maintenance")
+      .get(`/Request/maintenance?user=${user.id}`)
       .then((response) => {
         console.log(response.data.data);
         setRequests(response.data.data);
@@ -78,45 +84,38 @@ const MaintenanceRequestPage = ({ filter }) => {
       setShowModal(true);
     }
   };
-  
 
-  
-  const handleDeleteRequest = (id) => {
-    // Delete the vehicle request with the specified ID from your server API
-    api
-      .delete(`/Request/maintenance/${id}`)
-      .then(() => {
-        // Filter out the deleted request from the local state
-        setRequests(requests.filter((request) => request._id !== id));
-      })
-      .catch((error) =>
-        console.error(`Error deleting vehicle request with ID ${id}:`, error)
-      );
-  };
 
   const handleShowEditModal = (id) => {
-    // Find the selected request from the local state and set it as the selectedRequest
     setSelectedRequest(requests.find((request) => request._id === id));
+    setShowModal(false);
     setShowEditModal(true);
+   
   };
 
   const handleEditRequest = () => {
-    // Edit the selected request with the specified ID on your server API
     api
-      .put(`/Request/maintenance/${selectedRequest._id}`, selectedRequest)
-      .then(() => {
-        // Update the local state with the edited request
-        setRequests(
-          requests.map((request) =>
-            request._id === selectedRequest._id ? selectedRequest : request
-          )
-        );
-        setShowEditModal(false);
-      })
-      .catch((error) =>
-        console.error(`Error editing Maintenance request with ID ${selectedRequest._id}:`, error)
-      );
-  };
+    .put(`/Request/maintenance/${selectedRequest._id}`, selectedRequest)
+    .then(() => {
+    return api.patch(`/Request/maintenance/${selectedRequest._id}`, {
+    status: "pending",
+    });
+    })
+    .then(() => {
+    setRequests(
+    requests.map((request) =>
+    request._id === selectedRequest._id ? selectedRequest : request
+    )
+    );
+    setShowEditModal(false);
+    })
+    .catch((error) =>
+    console.error(
+    `Error editing Maintenance request with ID ${selectedRequest._id}:`,
+    error
+    )
+    );
+    };
 
   return (
     <div className="p-4">
@@ -152,41 +151,33 @@ const MaintenanceRequestPage = ({ filter }) => {
               <td>{request.status}</td>
               <td>
                 {request.status === "canceled" && (
-                  <Button
-                    className="btn btn-sm"
-                    variant="primary"
-                    onClick={() =>
-                      window.location.replace(
-                        `/driver/maintenance-request-form?_id=${request._id}`
-                      )
-                    }
-                  >
-                    Resubmit
-                  </Button>
-                )}
+                          <Button
+                          className="btn btn-sm"
+                          variant="primary"
+                          onClick={() =>
+                            window.location.replace(
+                              `/driver/maintenance-request-form?_id=${request._id}`
+                            )
+                          }
+                        >
+                          Resubmit
+                        </Button>
+                      )}
                 {request.status === "approved" && (
                   <Button className="btn btn-sm" variant="success" disabled>
                     Approved
                   </Button>
                 )}
                 {request.status === "pending" && (
-                  <div>
+                  
                     <Button
                       className="btn btn-sm"
                       variant="primary"
                       onClick={() => handleShowEditModal(request._id)}
                     >
                       Edit
-                    </Button>{" "}
-                    <Button
-                      className="btn btn-sm"
-                      variant="danger"
-                      onClick={() => handleDeleteRequest(request._id)}
-                    >
-                      Delete
                     </Button>
-                  </div>
-                )}
+                  )}
                 {" "}<Button variant="info"
                 className="btn btn-sm" onClick={() => handleMore(request)}>
                   More
@@ -220,6 +211,15 @@ const MaintenanceRequestPage = ({ filter }) => {
     )}
   </Modal.Body>
   <Modal.Footer>
+  {selectedRequest?.status === "canceled" && (
+            <Button
+              variant="primary"
+              className="btn btn-sm"
+              onClick={() => handleShowEditModal(selectedRequest._id)}
+            >
+              Resubmit
+            </Button>
+          )}
     <Button variant="secondary" 
     className="btn btn-sm"
     onClick={handleModalClose}>
@@ -247,6 +247,20 @@ const MaintenanceRequestPage = ({ filter }) => {
     }
   />
 </FormGroup>
+   
+<FormGroup>
+  <FormLabel>Kilometer On Counter:</FormLabel>
+  <FormControl
+    type="number"
+    value={selectedRequest?.kilometerOnCounter}
+    onChange={(e) =>
+      setSelectedRequest({
+        ...selectedRequest,
+        kilometerOnCounter: e.target.value,
+      })
+    }
+  />
+</FormGroup>
 
         </Modal.Body>
         <Modal.Footer>
@@ -255,7 +269,7 @@ const MaintenanceRequestPage = ({ filter }) => {
           onClick={handleModalClose}>
             Close
           </Button>
-          {selectedRequest?.status === "pending" && (
+          {selectedRequest?.status === "canceled" && (
             <Button
               variant="primary"
               className="btn btn-sm"

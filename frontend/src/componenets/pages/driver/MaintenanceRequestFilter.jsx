@@ -12,6 +12,7 @@ const DrivermaintenanceRequestPage = () => {
   };
 
   return (
+    <div className="p-4">
     <>
     <br></br>
     <Row className="mb-4">
@@ -47,6 +48,7 @@ const DrivermaintenanceRequestPage = () => {
 
       <MaintenanceRequestPage filter={filter} />
     </>
+    </div>
   );
 };
 
