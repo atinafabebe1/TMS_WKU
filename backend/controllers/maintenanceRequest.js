@@ -98,7 +98,7 @@ const updateMaitenacneRequest = asyncHandler(async (req, res, next) => {
 // @access    Private/HeadofDeployemnt/Director
 const updateMaintenanaceStatus = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { status } = req.body;
+  const { status,rejectReason } = req.body;
 
   // check if the status is valid
   const validStatuses = ["pending", "in-progress", "completed", "UnderMaintenance","canceled"];
@@ -125,6 +125,7 @@ const updateMaintenanaceStatus = asyncHandler(async (req, res, next) => {
   // }
   // update the status and save the maintenance request
   maintenanceRequest.status = status;
+  maintenanceRequest.rejectReason=rejectReason;
   await maintenanceRequest.save();
 
   res.status(200).json({ message: `Request is ${status}` });
