@@ -69,7 +69,7 @@ const updateMaintenanceOrderStatus = asyncHandler(async (req, res, next) => {
   if (!requestId || !status) {
     return res.status(400).json({ message: "Missing required fields" });
   }
-  const validStatuses = ["pending", "in-progress", "completed","Waiting-Mech-To-Approve","Waiting-GD-To-Approve", "canceled"];
+  const validStatuses = ["pending", "in-progress", "UnderMaintenance","completed","Waiting-Mech-To-Approve","Waiting-GD-To-Approve", "canceled"];
   if (!validStatuses.includes(status)) {
     return next(new ErrorResponse(`Invalid status: ${status}`, 400));
   }
@@ -102,14 +102,14 @@ const updateMaintenanceOrderStatus = asyncHandler(async (req, res, next) => {
 
   // Get vehicle ID if status is approved
   let vehicleId;
-  if (status === "pending") {
+  if (status === "UnderMaintenance") {
     const vehicle = await MaintenanceOrder.getVehicleByPlateNumber(
       maintenanceOrder.plateNumber
     );
     vehicleId = vehicle.id;
   }
 
-  // Update fuel request
+  // Update maintenance request
   await MaintenanceOrder.findOneAndUpdate(
     { _id: requestId },
     { status, ...(vehicleId && { vehicle: vehicleId }) },

@@ -31,6 +31,7 @@ const MaintenanceRequestPage = ({ filter }) => {
   const [isLoading, setIsLoading]=useState(true);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [kilometerError, setKilometerError] = useState("");
 
 
 
@@ -87,36 +88,47 @@ const MaintenanceRequestPage = ({ filter }) => {
 
 
   const handleShowEditModal = (id) => {
-    setSelectedRequest(requests.find((request) => request._id === id));
+    const request = requests.find((request) => request._id === id);
+    setSelectedRequest(request);
+    setKilometerOncounter(request?.kilometerOnCounter || null);
     setShowModal(false);
     setShowEditModal(true);
-   
   };
-
-  const handleEditRequest = () => {
-
-    api
-    .put(`/Request/maintenance/${selectedRequest._id}`, selectedRequest)
-    .then(() => {
-    return api.patch(`/Request/maintenance/${selectedRequest._id}`, {
-    status: "pending",
-    });
-    })
-    .then(() => {
-    setRequests(
-    requests.map((request) =>
-    request._id === selectedRequest._id ? selectedRequest : request
-    )
-    );
-    setShowEditModal(false);
-    })
-    .catch((error) =>
-    console.error(
-    `Error editing Maintenance request with ID ${selectedRequest._id}:`,
-    error
-    )
-    );
+  
+  const handleEditRequest = (selectedRequest) => {
+    if (selectedRequest.kilometerOnCounter < 0) {
+      setKilometerError("Kilometer On Counter cannot be negative.");
+      return;
+    }
+    const updatedRequest = {
+      plateNumber: selectedRequest?.plateNumber,
+      kilometerOnCounter: selectedRequest?.kilometerOnCounter || null,
+      description: selectedRequest?.description,
     };
+    api
+      .put(`/Request/maintenance/${selectedRequest._id}`, updatedRequest)
+      .then(() => {
+        return api.patch(`/Request/maintenance/${selectedRequest._id}`, {
+          status: "pending",
+        });
+      })
+      .then(() => {
+        setRequests((requests) =>
+          requests.map((request) =>
+            request._id === selectedRequest._id ? selectedRequest : request
+          )
+        );
+        setShowEditModal(false);
+      })
+      .catch((error) =>
+        console.error(
+          `Error editing Maintenance request with ID ${selectedRequest._id}:`,
+          error
+        )
+      );
+  };
+  
+  
 
   return (
     <div className="p-4">
@@ -219,15 +231,16 @@ const MaintenanceRequestPage = ({ filter }) => {
     )}
   </Modal.Body>
   <Modal.Footer>
-  {selectedRequest?.status === "canceled"||"pending" && (
-            <Button
-              variant="primary"
-              className="btn btn-sm"
-              onClick={() => handleShowEditModal(selectedRequest._id)}
-            >
-              Resubmit
-            </Button>
-          )}
+  {selectedRequest?.status === "canceled" || selectedRequest?.status === "pending" && (
+  <Button
+    variant="primary"
+    className="btn btn-sm"
+    onClick={() => handleShowEditModal(selectedRequest._id)}
+  >
+    Resubmit
+  </Button>
+)}
+
     <Button variant="secondary" 
     className="btn btn-sm"
     onClick={handleModalClose}>
@@ -245,30 +258,40 @@ const MaintenanceRequestPage = ({ filter }) => {
         <FormGroup>
   <FormLabel>Description:</FormLabel>
   <FormControl
-    as="textarea"
-    value={selectedRequest?.description}
-    onChange={(e) =>
-      setSelectedRequest({
-        ...selectedRequest,
-        description: e.target.value,
-      })
-    }
-  />
+  as="textarea"
+  value={selectedRequest?.description || ""}
+  onChange={(e) =>
+    setSelectedRequest({
+      ...selectedRequest,
+      description: e.target.value,
+    })
+  }
+/>
 </FormGroup>
    
 <FormGroup>
-  <FormLabel>Kilometer On Counter:</FormLabel>
-  <FormControl
-    type="number"
-    value={selectedRequest?.kilometerOnCounter}
-    onChange={(e) =>
-      setSelectedRequest({
-        ...selectedRequest,
-        kilometerOnCounter: e.target.value,
-      })
-    }
-  />
-</FormGroup>
+        <FormLabel>Kilometer On Counter:</FormLabel>
+        <FormControl
+          type="number"
+          min={0}
+          value={selectedRequest?.kilometerOnCounter || ""}
+          onChange={(e) => {
+            const inputValue = parseInt(e.target.value);
+            if (inputValue >= 0) {
+              setSelectedRequest({
+                ...selectedRequest,
+                kilometerOnCounter: inputValue,
+              });
+              setKilometerError("");
+            } else {
+              setKilometerError("Kilometer On Counter cannot be negative.");
+            }
+          }}
+        />
+        {kilometerError && (
+          <div className="text-danger">{kilometerError}</div>
+        )}
+      </FormGroup>
 
         </Modal.Body>
         <Modal.Footer>
@@ -278,13 +301,14 @@ const MaintenanceRequestPage = ({ filter }) => {
             Close
           </Button>
           {selectedRequest?.status === "canceled"||"pending" && (
-            <Button
-              variant="primary"
-              className="btn btn-sm"
-              onClick={() => handleEditRequest(selectedRequest._id)}
-            >
-              Resubmit
-            </Button>
+         <Button
+         variant="primary"
+         className="btn btn-sm"
+         onClick={() => handleEditRequest(selectedRequest)}
+       >
+         Resubmit
+       </Button>
+       
           )}
         </Modal.Footer>
         </Modal>
