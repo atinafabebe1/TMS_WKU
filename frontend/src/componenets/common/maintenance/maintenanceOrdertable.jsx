@@ -48,7 +48,7 @@ const MaintenanceOrderTable = ({ filter }) => {
   }, []);
   useEffect(() => {
     api
-      .get("/MaintenanceOrder")
+      .get(`/MaintenanceOrder?receiver=${user.id}`)
       .then((response) => {
         console.log(response.data.data);
         setRequests(response.data.data);
@@ -75,16 +75,17 @@ const MaintenanceOrderTable = ({ filter }) => {
   };
 
   const filteredRequests = requests
-    .filter((request) => {
-      if (filter === "all") {
-        return true;
-      } else {
-        return request.status.toLowerCase() === filter;
-      }
-    })
-    .filter((request) => {
-      return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
-    });
+  .filter((request) => {
+    if (filter === "all") {
+      return request.status.toLowerCase() !== "pending";
+    } else {
+      return request.status.toLowerCase() === filter;
+    }
+  })
+  .filter((request) => {
+    return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
 
   return (
     <div className="p-4">
@@ -111,11 +112,11 @@ const MaintenanceOrderTable = ({ filter }) => {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody className="form-control-custom">
+        <tbody>
           {filteredRequests.map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
-              <td>{request.createdAt}</td>
+              <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
               <td>
                 {request.status === "UnderMaintenance" && (
@@ -163,6 +164,7 @@ const MaintenanceOrderTable = ({ filter }) => {
           <p>
             <strong>Description:</strong> {selectedRequest?.crashType}
           </p>
+        
         </Modal.Body>
         <Modal.Footer>
           <Button

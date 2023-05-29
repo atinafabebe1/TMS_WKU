@@ -135,7 +135,7 @@ const MaintenanceRequestTables = ({ filter }) => {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody className="form-control-custom">
+        <tbody>
           {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
             <tr key={request._id}>
               <td>{request.plateNumber}</td>
