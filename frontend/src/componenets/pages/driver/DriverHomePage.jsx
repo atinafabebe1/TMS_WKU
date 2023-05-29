@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, Card, Alert, Container, Badge } from "react-bootstrap";
+import { Button, Card, Alert, Container, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
-
+import { useAuth } from "../../../context/AuthContext";
 import { useState, useEffect } from "react";
 import api from "../../../api/api";
 const DriverHomePage = () => {
@@ -9,6 +9,24 @@ const DriverHomePage = () => {
   const [dataCount, setDataCount] = useState(0);
   const [dataCount2, setDataCount2] = useState(0);
   const [showNotification, setShowNotification] = useState(true);
+  const { user } = useAuth();
+
+  console.log(user.id);
+
+  useEffect(() => {
+    api
+      .get(`/Vehiclerecord?driver=${user.id}`)
+      .then((response) => {
+        const filteredData = response.data.data.filter(
+          (item) => item.assignedTo !== null
+        );
+        setData(filteredData);
+        setDataCount(filteredData.length);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [user.id]);
 
   const handleDismiss = () => {
     setShowNotification(false);
@@ -28,6 +46,23 @@ const DriverHomePage = () => {
           </h5>
           <br />
 
+          <div>
+            {dataCount !== 0 && (
+              <Container>
+                <hr></hr>
+                {data?.map((vehicle) => (
+                  <Alert variant="primary">
+                    <p2>
+                      Dear Driver Your Vehicle is Currently assigned for{" "}
+                      <strong>{vehicle.assignedTo}</strong>
+                      {", "}So you have to take and Track action.
+                    </p2>
+                  </Alert>
+                ))}
+              </Container>
+            )}
+          </div>
+          <br></br>
           <hr></hr>
           <div className="d-flex justify-content-center align-items-center">
             <div className="p-4">

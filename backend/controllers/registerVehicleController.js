@@ -33,7 +33,6 @@ const getRegisteredVehicle = asyncHandler(async (req, res, next) => {
 // @route     Post /RegisteredVehicle
 // @access    Private/HeadOfDeployment/
 const registerVehicle = asyncHandler(async (req, res) => {
-  req.body.user = req.user.id;
   await RegisterVehicle.create({
     ...req.body,
   });
