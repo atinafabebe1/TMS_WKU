@@ -30,6 +30,7 @@ import {
   ROLE_GUARD
 } from './constants';
 import LandingPage from './componenets/pages/home/Home';
+import UserProfile from './componenets/common/profile/profile';
 
 function App() {
   return (

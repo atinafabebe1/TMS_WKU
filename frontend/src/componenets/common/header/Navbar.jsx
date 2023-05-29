@@ -1,20 +1,15 @@
-import React, { useState } from "react";
-import { FaBars, FaUser } from "react-icons/fa";
-import { Navbar, Nav, NavDropdown } from "react-bootstrap";
-import LogoutLink from "../../pages/logout/Logout";
-import { useAuth } from "../../../context/AuthContext";
+import React, { useState } from 'react';
+import { FaBars, FaUser } from 'react-icons/fa';
+import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import LogoutLink from '../../pages/logout/Logout';
+import { useAuth } from '../../../context/AuthContext';
 
-function MyNavbar({ links, title, role }) {
+function MyNavbar({ links, title, role, profile }) {
   const [navbarOpen, setNavbarOpen] = useState(false);
   const { user } = useAuth();
 
   return (
-    <Navbar
-      bg="dark"
-      variant="dark"
-      expand="md"
-      className="d-flex justify-content-between"
-    >
+    <Navbar bg="dark" variant="dark" expand="md" className="d-flex justify-content-between">
       <Navbar.Brand className="ms-2">{title}</Navbar.Brand>
       <Navbar.Toggle onClick={() => setNavbarOpen(!navbarOpen)}>
         <FaBars />
@@ -24,12 +19,7 @@ function MyNavbar({ links, title, role }) {
           {links.map((link, index) => {
             if (link.children) {
               return (
-                <NavDropdown
-                  key={index}
-                  title={link.name}
-                  id="basic-nav-dropdown"
-                  className="dropdown-menu-right bg-dark text-light"
-                >
+                <NavDropdown key={index} title={link.name} id="basic-nav-dropdown" className="dropdown-menu-right bg-dark text-light">
                   {link.children.map((child, index) => (
                     <NavDropdown.Item key={index} href={child.url}>
                       {child.name}
@@ -45,16 +35,11 @@ function MyNavbar({ links, title, role }) {
               );
             }
           })}
-          <div style={{ paddingLeft: "20px" }}>
+          <div style={{ paddingLeft: '20px' }}>
             <div className="ms-3">
               {user && (
-                <NavDropdown
-                  title={<FaUser />}
-                  id="basic-nav-dropdown"
-                  className="dropdown-menu-right bg-dark text-light"
-                  align="end"
-                >
-                  <NavDropdown.Item>My Profile</NavDropdown.Item>
+                <NavDropdown title={<FaUser />} id="basic-nav-dropdown" className="dropdown-menu-right bg-dark text-light" align="end">
+                  <NavDropdown.Item href={profile}>My Profile</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item>
                     <LogoutLink />

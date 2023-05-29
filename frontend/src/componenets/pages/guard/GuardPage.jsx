@@ -1,22 +1,24 @@
-import React from "react";
-import Navbar from "../../common/header/Navbar";
-import { Routes, Route } from "react-router-dom";
-import DetailVehicleInfo from "./approvedVehiclePermission";
+import React from 'react';
+import Navbar from '../../common/header/Navbar';
+import { Routes, Route } from 'react-router-dom';
+import DetailVehicleInfo from './approvedVehiclePermission';
 const links = [
   {
-    name: "Home",
-    url: "/guard",
+    name: 'Home',
+    url: '/guard'
   },
   {
-    name: "Approve-Permission",
-    url: "/guard/approve",
-  },
+    name: 'Approve-Permission',
+    url: '/guard/approve'
+  }
 ];
+const profileUrl = '/guard/profile';
+
 const GuardPage = () => {
   return (
     <div>
       <div className="mb-3">
-        <Navbar links={links} title="TMS" />
+        <Navbar links={links} title="TMS" profile={profileUrl} />
       </div>
       <Routes>
         <Route path="approve" element={<DetailVehicleInfo />} />
