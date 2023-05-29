@@ -91,8 +91,6 @@ const RegisteredFuel = ({ fuels }) => {
             <th>Price</th>
             <th>Status</th>
             <th>Registered Date </th>
-            <th>Last Edited Date </th>
-            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -109,26 +107,6 @@ const RegisteredFuel = ({ fuels }) => {
                 {fuel.createdAt !== fuel.updatedAt && (
                   <>
                     <p>Edited in {new Date(fuel.updatedAt).toLocaleString()}</p>
-                  </>
-                )}
-                {fuel.createdAt === fuel.updatedAt && (
-                  <>
-                    <p>Not Edited</p>
-                  </>
-                )}
-              </td>
-
-              <td>
-                {fuel.isDeleted === false && (
-                  <>
-                    <Button
-                      className="btn btn-sm"
-                      variant="warning"
-                      disabled={fuel.status === "Received"}
-                      onClick={() => handleShowModal(fuel)}
-                    >
-                      Edit
-                    </Button>
                   </>
                 )}
               </td>

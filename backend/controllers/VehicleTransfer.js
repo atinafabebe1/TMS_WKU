@@ -72,15 +72,7 @@ const updatevehicleTransfer = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Request not found with id of ${req.params.id}`, 404)
     );
   }
-  //Make sure user is vehicle owner
-  if (vehicleTransfers.user.toString() !== req.user.id) {
-    return next(
-      new ErrorResponse(
-        `User ${req.params.id} is not authorized to update this vehicle transfer`,
-        404
-      )
-    );
-  }
+
   vehicleTransfers = await VehicleTransfer.findByIdAndUpdate(
     req.params.id,
     req.body,
