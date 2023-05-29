@@ -118,7 +118,7 @@ const MaintenanceOrderTable = ({ filter }) => {
               <td>{request.createdAt}</td>
               <td>{request.status}</td>
               <td>
-                {request.status === "pending" && (
+                {request.status === "UnderMaintenance" && (
                   <>
                             <Link to="/mechanic/maintenance/approval-report">
             <Button variant="primary">Send For Approvements </Button>

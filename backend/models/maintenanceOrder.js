@@ -145,13 +145,13 @@ const MaintenanceOrderSchema = new Schema(
       ],
       validate: {
         validator: function (v) {
-          if (this.isNew && v !== "pending") {
+          if (this.isNew && v !== "UnderMaintenance") {
             return false;
           }
           return true;
         },
         message: (props) =>
-          `Cannot set status "${props.value}" when creating a new maintenance request.`,
+          `Cannot set status "${props.value}" when creating a new maintenance Order.`,
       },
     },
     reportStatus: {

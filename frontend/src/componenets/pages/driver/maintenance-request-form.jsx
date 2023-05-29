@@ -22,6 +22,15 @@ const MaintenanceRequestForm = ({request}) => {
   const [userData, setUserData] = useState(null);
   const [kilometerOnCounter,setKilometerOncounter]=useState("");
   const navigate = useNavigate();
+  const [kilometerOnCounterError, setKilometerOnCounterError] = useState("");
+
+const validateKilometerOnCounter = () => {
+  if (kilometerOnCounter < 0) {
+    setKilometerOnCounterError("Kilometer reading cannot be negative");
+  } else {
+    setKilometerOnCounterError("");
+  }
+};
   const fetch = async () => {};
 
   useEffect(() => {
@@ -63,11 +72,11 @@ const MaintenanceRequestForm = ({request}) => {
 
   const handleSubmit = () => {
     if (!description||!myplateNumber) {
-      setError("Description or plate number cannot be empty",myplateNumber);
+      setError("Description or kilometer number cannot be empty",myplateNumber);
       setSucces(null);
       return;
     }
-    
+  
     const result = {
       plateNumber:myplateNumber,
       kilometerOnCounter,
@@ -92,6 +101,9 @@ const MaintenanceRequestForm = ({request}) => {
       setDescription("");
       setPlateNumber("");
       setKilometerOncounter("");
+      setTimeout(() => {
+        navigate("/driver/request/maintenance"); // Navigate to the desired page after 6 seconds
+      }, 6000); 
       
     })
     .catch((error) =>
@@ -172,16 +184,17 @@ const MaintenanceRequestForm = ({request}) => {
               />
         <Form.Label>Kilometer Reading</Form.Label>
         <Form.Control
-          type="number"
-           value={kilometerOnCounter}
-           onChange={(event) => setKilometerOncounter(event.target.value)}
-          required
-          min={0}
-          className="mb-3"
-        />
-        <Form.Control.Feedback type="invalid">
-          Please provide a valid Amount.
-        </Form.Control.Feedback>
+  type="number"
+  value={kilometerOnCounter}
+  onChange={(event) => setKilometerOncounter(event.target.value)}
+  onBlur={validateKilometerOnCounter} // Attach the validation function here
+  required
+  min={0}
+  className="mb-3"
+/>
+{kilometerOnCounterError && (
+  <p className="text-danger">{kilometerOnCounterError}</p>
+)}
 
      
               <FormLabel>Description</FormLabel>

@@ -63,8 +63,8 @@ const getMaintenanceRequests = asyncHandler(async (req, res) => {
 // @route     Put /Request/maintenance/:id
 // @access    Private/Driver/HeadofDeployment/Director
 const updateMaitenacneRequest = asyncHandler(async (req, res, next) => {
-  const { reciever, plateNumber, vehicleType, description } = req.body;
-  const updateFields = { reciever, plateNumber, vehicleType, description };
+  const { reciever, plateNumber, vehicleType, kilometerOnCounter,description } = req.body;
+  const updateFields = { reciever, plateNumber, vehicleType, kilometerOnCounter,description };
 
   let maintenanceRequest = await MaintenanceRequest.findById(req.params.id);
 
@@ -77,7 +77,7 @@ const updateMaitenacneRequest = asyncHandler(async (req, res, next) => {
   if (maintenanceRequest.user.toString() !== req.user.id) {
     return next(
       new ErrorResponse(
-        `User ${req.params.id} is not authorized to update this vehicle`,
+        `User ${req.params.id} is not authorized to update this request`,
         404
       )
     );
