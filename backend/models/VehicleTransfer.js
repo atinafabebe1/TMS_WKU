@@ -32,6 +32,9 @@ const VehicleTransferSchema = new Schema(
       default: "Pending",
       enum: ["Pending", "Approved", "Rejected"],
     },
+    rejectedReason: {
+      type: String,
+    },
     isDeleted: {
       type: Boolean,
       default: false,

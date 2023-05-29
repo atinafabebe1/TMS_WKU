@@ -62,18 +62,17 @@ const updateUser = asyncHanlder(async (req, res, next) => {
   if (!user) {
     return next(new ErrorResponse(`User not found with ${req.params.id}`, 404));
   }
-  if (user.role !== req.body.role) {
-    return next(new ErrorResponse("Role cannot be changed", 401));
-  }
+
   try {
     user = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
+
+    res.status(200).json(user);
   } catch (error) {
-    res.status(401).json(error);
+    next(error); // Pass the error to the next middleware
   }
-  res.status(200).json(user);
 });
 
 const removeUser = asyncHanlder(async (req, res, next) => {
