@@ -156,7 +156,6 @@ const RegisterForm = () => {
         noValidate
         validated={validated}
         onSubmit={handleConfirmation}
-      
       >
         <h2
           className="form-control-custom"
@@ -424,6 +423,7 @@ const RegisterForm = () => {
           </Button>{" "}
           <Button
             variant="primary"
+            type="submit"
             onClick={() => {
               setShowModal(true);
             }}
