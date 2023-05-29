@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import ErrorProvider from "../../common/Provider/ErrorProvider";
+import SuccessProvider from "../../common/Provider/SuccessProvider";
+import { useNavigate } from "react-router-dom";
+
 import api from "../../../api/api";
 
 const RegisterForm = () => {
   const [vehicles, setVehicles] = useState([]);
+  const navigate = useNavigate();
+
   const [user, setUser] = useState({
     userName: "",
     firstName: "",
@@ -307,11 +313,27 @@ const RegisterForm = () => {
                 onChange={handleChange}
               />
             </Form.Group>
-            {error && <p className="text-danger my-2">{error}</p>}
-            {succes && <p className="text-success my-2">{succes}</p>}
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
+
+            {error && <ErrorProvider error={error} />}
+            {succes && <SuccessProvider success={succes} />}
+            <div className="d-flex justify-content-center my-4">
+              <Button
+                type="reset"
+                size="sm"
+                className="btn-secondary me-2"
+                onClick={(e) => {
+                  navigate("/admin/user");
+                }}
+              >
+                Cancel
+              </Button>{" "}
+              <Button type="reset" size="sm" className="btn-danger me-2">
+                Clear
+              </Button>{" "}
+              <Button variant="primary" type="submit">
+                Submit
+              </Button>
+            </div>
           </Col>
         </Form>
       </Row>

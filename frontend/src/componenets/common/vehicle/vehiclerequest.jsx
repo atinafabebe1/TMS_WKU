@@ -104,7 +104,7 @@ const VehiclesRequest = ({ link }) => {
   };
 
   return (
-    <>
+    <div className="p-4">
       <Tabs
         activeKey={activeTab}
         onSelect={handleTabSelect}
@@ -167,7 +167,7 @@ const VehiclesRequest = ({ link }) => {
           </Modal.Body>
         </Modal>
       )}
-    </>
+    </div>
   );
 };
 

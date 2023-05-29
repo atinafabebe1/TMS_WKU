@@ -27,7 +27,7 @@ const RequestTable = ({
   }
 
   return (
-    <>
+    <div className="p-4">
       <Table striped bordered hover responsive className="table-sm">
         <thead>
           <tr>
@@ -94,7 +94,7 @@ const RequestTable = ({
         </Modal.Header>
         <Modal.Body>
           <Form.Group>
-            <Form.Label>Reason for rejection:</Form.Label>
+            <Form.Label>Reason for Rejection:</Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
@@ -120,7 +120,7 @@ const RequestTable = ({
           </Button>
         </Modal.Footer>
       </Modal>
-    </>
+    </div>
   );
 };
 
