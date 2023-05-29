@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import SparePartRequestingForm from "../../common/sparepart/sparePartrequestForm";
+import Loading from "../../common/Provider/LoadingProvider";
 import api from "../../../api/api";
 
 const EditSparePartRequest = () => {
@@ -29,7 +30,9 @@ const EditSparePartRequest = () => {
           />
         </>
       ) : (
-        <p>Loading...</p>
+        <p>
+          <Loading />
+        </p>
       )}
     </div>
   );

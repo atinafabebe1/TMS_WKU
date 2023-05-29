@@ -86,7 +86,7 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
           onSubmit();
           setTimeout(() => {
             navigate("/driver/request/fuel"); // Navigate to the desired page after 6 seconds
-          }, 6000); // Navigate to the desired page
+          }, 6000); // Navigate to the desired pagee
         })
         .catch((err) => {
           console.log(err.response.data);

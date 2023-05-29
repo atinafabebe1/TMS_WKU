@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const DriverInfoSchema = new Schema({
-  yearsOfExperience: { type: Number, required: true },
+  yearsOfExperience: { type: Number },
   licenses: {
-    id: { type: Number, required: true },
-    stateIssued: { type: String, required: true },
+    id: { type: Number },
+    stateIssued: { type: String },
   },
   vehiclePlateNumber: {
     type: String,

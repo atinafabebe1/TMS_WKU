@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import VehicleRegistrationForm from "../../common/vehicle/vehicleRegistrationForm";
+import Loading from "../../common/Provider/LoadingProvider";
 import api from "../../../api/api";
 
 const EditVehicleRecord = () => {
@@ -26,7 +27,9 @@ const EditVehicleRecord = () => {
           <VehicleRegistrationForm title={"Edit Request"} data={data[0]} />
         </>
       ) : (
-        <p>Loading...</p>
+        <p>
+          <Loading />
+        </p>
       )}
     </div>
   );

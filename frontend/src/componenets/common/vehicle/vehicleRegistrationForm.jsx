@@ -119,25 +119,30 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   };
 
   const handleSubmit = async () => {
-    try {
-      if (data) {
+    if (data) {
+      try {
         await api.put(`/VehicleRecord/${data._id}`, vehicleData);
-        setSuccess("Vehicle details updated successfully.");
+        setSuccess("Vehicle Details Updated successfully.");
         setTimeout(() => {
           navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
         }, 6000);
-      } else {
-        await api.post("/VehicleRecord", vehicleData);
-        setSuccess("Vehicle registered successfully.");
-        setTimeout(() => {
-          navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
-        }, 6000);
+        onSubmit();
+      } catch (error) {
+        setSuccess("");
+        setError("Please Provide Valid Data and Try Again");
       }
-      onSubmit();
-      setError("");
-    } catch (error) {
-      setError("Please Provide Valid Data and Try Again");
-      setSuccess("");
+    } else {
+      try {
+        await api.post("/VehicleRecord", vehicleData);
+        setSuccess("Vehicle Registered successfully.");
+        setTimeout(() => {
+          navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
+        }, 6000);
+        onSubmit();
+      } catch (error) {
+        setSuccess("");
+        setError("Please Provide Valid Data and Try Again");
+      }
     }
   };
 
