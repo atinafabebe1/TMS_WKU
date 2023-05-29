@@ -92,19 +92,30 @@ const MaintenanceRequestPage = ({ filter }) => {
     setSelectedRequest(request);
     setKilometerOncounter(request?.kilometerOnCounter || null);
     setShowModal(false);
-    setShowEditModal(true);
+    if (request.status === "canceled") {
+      setShowModal(false); // Close the existing modal
+      const reason = request.rejectReason || "No reason provided";
+      // Set the selected request with the rejection reason
+      setSelectedRequest({ ...request, reason });
+      setShowEditModal(true); // Reopen the modal with the rejection reason
+    } else {
+      setShowEditModal(true);
+    }
+    
   };
   
   const handleEditRequest = (selectedRequest) => {
     if (selectedRequest.kilometerOnCounter < 0) {
-      setKilometerError("Kilometer On Counter cannot be negative.");
+      setError("Kilometer On Counter cannot be negative.");
       return;
     }
+  
     const updatedRequest = {
       plateNumber: selectedRequest?.plateNumber,
       kilometerOnCounter: selectedRequest?.kilometerOnCounter || null,
       description: selectedRequest?.description,
     };
+  
     api
       .put(`/Request/maintenance/${selectedRequest._id}`, updatedRequest)
       .then(() => {
@@ -113,12 +124,12 @@ const MaintenanceRequestPage = ({ filter }) => {
         });
       })
       .then(() => {
-        setRequests((requests) =>
-          requests.map((request) =>
-            request._id === selectedRequest._id ? selectedRequest : request
-          )
-        );
+        
         setShowEditModal(false);
+        setSuccess("Maintenance request successfully updated.");
+        setTimeout(() => {
+          navigate("/driver/request/maintenance"); // Navigate to the desired page after 6 seconds
+        }, 6000);
       })
       .catch((error) =>
         console.error(
@@ -222,8 +233,12 @@ const MaintenanceRequestPage = ({ filter }) => {
       <strong>Status:</strong> {selectedRequest?.status}
     </p>
     <p>
+      <strong>Kilometer On Counter: </strong>{selectedRequest?.kilometerOnCounter}
+    </p>
+    <p>
       <strong>Description:</strong> {selectedRequest?.description}
     </p>
+  
     {selectedRequest?.status === "canceled" && (
       <p>
         <strong>Rejection Reason:</strong> {selectedRequest?.reason}
@@ -231,7 +246,7 @@ const MaintenanceRequestPage = ({ filter }) => {
     )}
   </Modal.Body>
   <Modal.Footer>
-  {selectedRequest?.status === "canceled" || selectedRequest?.status === "pending" && (
+  {selectedRequest?.status === "canceled" && (
   <Button
     variant="primary"
     className="btn btn-sm"
@@ -256,6 +271,12 @@ const MaintenanceRequestPage = ({ filter }) => {
         <Modal.Body>
           
         <FormGroup>
+        {selectedRequest?.status === "canceled" && (
+  <p>
+    <strong>Rejection Reason:</strong> {selectedRequest?.reason}
+  </p>
+)}
+
   <FormLabel>Description:</FormLabel>
   <FormControl
   as="textarea"
@@ -300,7 +321,7 @@ const MaintenanceRequestPage = ({ filter }) => {
           onClick={handleModalClose}>
             Close
           </Button>
-          {selectedRequest?.status === "canceled"||"pending" && (
+          {(selectedRequest?.status === "canceled"||selectedRequest?.status==="pending") && (
          <Button
          variant="primary"
          className="btn btn-sm"

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Modal,Row,Col } from "react-bootstrap";
 import api from "../../../api/api";
 import Loading from "../Provider/LoadingProvider";
+import { useNavigate } from "react-router-dom";
 import "../../common/css/formStyles.css";
 const MaintenanceRequestTables = ({ filter }) => {
   const [startIndex, setStartIndex] = useState(0);
@@ -12,6 +13,7 @@ const MaintenanceRequestTables = ({ filter }) => {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [reason,setReason]=useState("");
+  const navigate=useNavigate();
 
   useEffect(() => {
     api
@@ -41,7 +43,11 @@ const MaintenanceRequestTables = ({ filter }) => {
       await api.patch(`/Request/maintenance/${request._id}`, {
         status: "canceled",
         rejectReason: reason, // Add the reason to the patch request
-      });
+      })
+      setTimeout(() => {
+        navigate("/hd/request/maintenance"); // Navigate to the desired page after 6 seconds
+      }, 6000);
+      setShowRejectModal(false);
       const response = await api.get("/Request/maintenance");
       setRequests(response.data.data);
     } catch (error) {
@@ -179,6 +185,9 @@ const MaintenanceRequestTables = ({ filter }) => {
     </p>
     <p>
       <strong>Status:</strong> {selectedRequest?.status}
+    </p>
+    <p>
+      <strong>Kilometer On Counter: </strong>{selectedRequest?.kilometerOnCounter}
     </p>
     <p>
       <strong>Description:</strong> {selectedRequest?.description}
