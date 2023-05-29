@@ -19,27 +19,22 @@ const updateServiceSchedule = async (req, res, next) => {
 const deleteServiceSchedule = async (req, res, next) => {};
 
 //create a service schedule
+
 const createServiceSchedule = asyncHandler(async (req, res, next) => {
   const { vehicles, trips } = req.body;
-  console.log(req.body);
-
-  //sort a trips by their departing time
-  trips.sort((a, b) => {
-    return new Date('1970/01/01 ' + a.departing.time) - new Date('1970/01/01 ' + b.departing.time);
-  });
-
   validateVehicles(vehicles);
   validateTrips(trips);
 
   const createdTrips = await assignVehiclesToTrips(vehicles, trips);
+  console.log(createdTrips);
   res.status(201).json({
     createdTrips,
     message: 'Schedule is succesfully created'
   });
 });
 
-// One vehicle will be assigned for a trip at most once at a time.
 let session;
+// One vehicle will be assigned for a trip at most once at a time.
 const assignVehiclesToTrips = asyncHandler(async (vehicles, trips) => {
   const createdTrips = [];
 
@@ -56,7 +51,7 @@ const assignVehiclesToTrips = asyncHandler(async (vehicles, trips) => {
         throw new ErrorResponse(`Could not find enough vehicles for trip departing address: ${trip.departing?.address}`, 500);
       }
 
-      trip.vehicles = selectedVehicles.map((vehicle) => vehicle.plateNumber);
+      trip.vehicles = selectedVehicles.map((vehicle) => vehicle.id);
 
       const destinationTime = new Date(`${dateString}T${trip.destination?.time ?? '00:00'}:00`);
       const departingTime = new Date(`${dateString}T${trip.departing?.time ?? '00:00'}:00`);
@@ -70,11 +65,9 @@ const assignVehiclesToTrips = asyncHandler(async (vehicles, trips) => {
       const tripDuration = (destinationTime - departingTime) / (1000 * 60); // calculate the difference in minutes
 
       const createdTrip = await Trip.create([trip], { session });
-
       createdTrips.push(createdTrip);
-
       for (let vehicle of selectedVehicles) {
-        await Vehicle.findByIdAndUpdate(
+        const updatedVehicle = await Vehicle.findByIdAndUpdate(
           vehicle.id,
           {
             $push: {
@@ -87,7 +80,7 @@ const assignVehiclesToTrips = asyncHandler(async (vehicles, trips) => {
               duration: tripDuration
             },
             $set: {
-              serviceLocation: trip.destination.address
+              location: trip.destination.address
             }
           },
           { session, new: true }
@@ -120,7 +113,7 @@ const assignVehiclesToTrips = asyncHandler(async (vehicles, trips) => {
               vehicle.id,
               {
                 $pull: { assignedTrips: { tripId: trip._id } },
-                $set: { serviceLocation: vehicle.serviceLocation, duration: 0 }
+                $set: { location: vehicle.location, duration: 0 }
               },
               { session }
             );
@@ -133,7 +126,7 @@ const assignVehiclesToTrips = asyncHandler(async (vehicles, trips) => {
   }
 });
 
-// A vehicle assigned for a trip should have the same serviceLocation as the departing address of that trip.
+// A vehicle assigned for a trip should have the same location as the departing address of that trip.
 // Vehicle assigning should be fair, each vehicle should be assigned, it shouldn't be assigned for another trip if there is a vehicle not assigned yet.
 const getVehicles = async (vehicles, trip) => {
   const availableVehicles = [];
@@ -150,10 +143,10 @@ const getVehicles = async (vehicles, trip) => {
         vehicles: { $in: vehicle._id }
       }).populate('vehicles');
 
-      if (!vehicle.serviceLocation) {
-        vehicle.serviceLocation = trip.departing.address;
+      if (!vehicle.location) {
+        vehicle.location = trip.departing.address;
       }
-      if (vehicle.serviceLocation !== trip.departing.address) {
+      if (vehicle.location !== trip.departing.address) {
         return false;
       }
 
@@ -164,12 +157,14 @@ const getVehicles = async (vehicles, trip) => {
         const assignedDestinationTime = new Date(`${dateString}T${assignedTrip.destination?.time ?? '00:00'}:00`);
 
         const tripOverlapDuration = Math.min(assignedDestinationTime, tripDestinationTime) - Math.max(assignedDepartingTime, tripDepartingTime);
+        console.log('trip overlaps' + tripOverlapDuration);
         if (tripOverlapDuration > 0) {
           return true;
         }
         return false;
       });
       if (overlap) {
+        console.log('Ovelaps');
         return false;
       }
       return true;
@@ -179,10 +174,11 @@ const getVehicles = async (vehicles, trip) => {
     .filter((vehicle, index) => filteredVehicles[index])
     .sort((a, b) => a.duration - b.duration)
     .slice(0, trip.numVehiclesRequired);
+
   return selectedVehicles;
 };
 
-// Load should be greater than zero
+// Load should be greater than one
 const validateVehicles = (vehicles) => {
   for (const vehicle of vehicles) {
     if (vehicle.load <= 0) {
@@ -192,11 +188,17 @@ const validateVehicles = (vehicles) => {
 };
 
 // Destination time is greater than departing time
+// If destination time and departing time difference is less than 5, it should return a warning
 const validateTrips = (trips) => {
   for (const trip of trips) {
     if (trip.departing.time >= trip.destination.time) {
       throw new ErrorResponse('Departing time cannot be after or equal to destination time', 403);
     }
+    // else if (trip.destination.time - trip.departing.time < 5) {
+    //   console.warn(
+    //     "Warning: departing and destination time difference is less than five"
+    //   );
+    // }
   }
 };
 
