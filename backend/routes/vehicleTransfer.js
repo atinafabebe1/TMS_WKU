@@ -22,7 +22,7 @@ router.get(
 );
 router.post("/transfer", Authorize("ROLE_DRIVER"), createVehicleTransfer);
 router.delete("/transfer/:id", Authorize("ROLE_DRIVER"), deletevehicleTransfer);
-router.patch("/transfer/:id", Authorize("ROLE_DRIVER"), updatevehicleTransfer);
+router.put("/transfer/:id", updatevehicleTransfer);
 router.patch("/transfer/backup/:id", backupDeletedDocument(VehicleTransfer));
 
 module.exports = router;

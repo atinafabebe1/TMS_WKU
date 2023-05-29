@@ -12,6 +12,7 @@ const TransferVehicle = ({ link }) => {
   const [selectedDriver, setSelectedDriver] = useState("");
   const [drivers, setDrivers] = useState([]);
   const [sender, setSender] = useState({});
+  const [selectedRequest, setSelectedRequest] = useState("");
   const [user, setUser] = useState({});
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
@@ -26,7 +27,7 @@ const TransferVehicle = ({ link }) => {
 
   const fetchTransfer = async () => {
     try {
-      const response = await api.get("/Request/transfer");
+      const response = await api.get("/Request/transfer?status=Pending");
       setTransfer(response.data.data);
       setIsLoading(false);
     } catch (error) {
@@ -50,6 +51,18 @@ const TransferVehicle = ({ link }) => {
       setDrivers(response.data.data);
     } catch (error) {
       console.error("Error Fetching Drivers:", error);
+    }
+  };
+
+  const handleCompleteTransfer = async (transfer) => {
+    try {
+      const response = await api.put(`/Request/transfer/${transfer._id}`, {
+        status: "Approved",
+      });
+      console.log(response.data);
+      fetchTransfer();
+    } catch (error) {
+      console.error("Error completing transfer:", error);
     }
   };
 
@@ -120,7 +133,6 @@ const TransferVehicle = ({ link }) => {
             <th>Plate Number</th>
             <th>Description</th>
             <th>Date</th>
-            <th>Driver</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -137,20 +149,21 @@ const TransferVehicle = ({ link }) => {
                 <td>{item.plateNumber}</td>
                 <td>{item.description}</td>
                 <td>{new Date(item.updatedAt).toLocaleString()}</td>
-                <td>{item.driver}</td>
                 <td>{item.status}</td>
                 <td>
-                  <Button variant="info" size="sm">
-                    See More
-                  </Button>
-                </td>
-                <td>
                   <Button
-                    variant="success"
+                    variant="primary"
                     size="sm"
                     onClick={() => handleApproveTransfer(item)}
                   >
-                    Approve Transfer
+                    Transfer
+                  </Button>{" "}
+                  <Button
+                    variant="success"
+                    size="sm"
+                    onClick={() => handleCompleteTransfer(item)}
+                  >
+                    Complete
                   </Button>
                 </td>
               </tr>
