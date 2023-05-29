@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../../common/header/Navbar';
 import { Routes, Route } from 'react-router-dom';
 import DetailVehicleInfo from './approvedVehiclePermission';
+import UserProfile from '../../common/profile/profile';
 const links = [
   {
     name: 'Home',
@@ -22,6 +23,7 @@ const GuardPage = () => {
       </div>
       <Routes>
         <Route path="approve" element={<DetailVehicleInfo />} />
+        <Route path="profile" element={<UserProfile />} />
       </Routes>
     </div>
   );

@@ -8,6 +8,7 @@ import CreateVehicleRequestForm from './CreateVehicleRequest';
 import EditVehicleRequest from './EditVehicleRequest';
 import VpHomePage from './VpHome';
 import { useAuth } from '../../../context/AuthContext';
+import UserProfile from '../../common/profile/profile';
 
 const links = [
   {
@@ -62,6 +63,7 @@ const VicePresidentPage = () => {
       <Routes>
         <Route path="request/vehicle" element={<VehiclesRequests link={`/Request/vehicle`} />} />
         <Route path="complain" element={<SendComplain />} />
+        <Route path="profile" element={<UserProfile />} />
         <Route path="/" element={<VpHomePage />} />
         <Route path="/request/vehicle-request" element={<VehicleRequestListPage />} />
         <Route path="/request/vehicle-request/create" element={<CreateVehicleRequestForm />} />

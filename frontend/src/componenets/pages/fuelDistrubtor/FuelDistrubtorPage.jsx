@@ -8,6 +8,7 @@ import ApproveAndRegisterFuelRequest from './CompleteFuelRequest';
 import RegisterResourceForm from './RegisterFuelResource';
 import FuelResourceList from './FuelResourceList';
 import { Routes, Route } from 'react-router-dom';
+import UserProfile from '../../common/profile/profile';
 const links = [
   {
     name: 'Home',
@@ -32,7 +33,7 @@ const FuelDistrubtorPage = () => {
       <div>
         <Routes>
           <Route path="/" element={<FDHomePage />} />
-
+          <Route path="profile" element={<UserProfile />} />
           <Route path="fuel-resources" element={<FuelResourceList />} />
           <Route path="register-daily-fuel" element={<RegisterDailyFuel />} />
           <Route path="registered-fuel" element={<DetailFuelInfo />} />

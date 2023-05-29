@@ -5,6 +5,7 @@ import SparePartPurchasingRequest from './ApproveSparePartPurchasing';
 import SparePartReports from './SparePartReport';
 import StoreHome from './Home';
 import { Routes, Route } from 'react-router-dom';
+import UserProfile from '../../common/profile/profile';
 
 const links = [
   {
@@ -42,6 +43,7 @@ const StorePage = () => {
       </div>
       <Routes>
         <Route path="/" element={<StoreHome />} />
+        <Route path="profile" element={<UserProfile />} />
         <Route path="approve/sparePart-purchasing-request" element={<SparePartPurchasingRequest />} />
         <Route path="Report" element={<SparePartsHomeReport />} />
         <Route path="Report/generate-report/:fromDate/:toDate/:season" element={<SparePartReports />} />

@@ -1,32 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { Form, Button, Container, Row, Col } from "react-bootstrap";
-import ErrorProvider from "../../common/Provider/ErrorProvider";
-import SuccessProvider from "../../common/Provider/SuccessProvider";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import ErrorProvider from '../../common/Provider/ErrorProvider';
+import SuccessProvider from '../../common/Provider/SuccessProvider';
+import { useNavigate } from 'react-router-dom';
 
-import api from "../../../api/api";
+import api from '../../../api/api';
 
 const RegisterForm = () => {
   const [vehicles, setVehicles] = useState([]);
   const navigate = useNavigate();
 
   const [user, setUser] = useState({
-    userName: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
-    address: "",
-    password: "",
-    photo: "",
+    userName: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    address: '',
+    password: '',
+    photo: ''
   });
   const [driverinfo, setDriverinfo] = useState({
-    vehiclePlateNumber: "",
-    yearsOfExperience: "",
+    vehiclePlateNumber: '',
+    yearsOfExperience: '',
     licenses: {
-      id: "",
-      stateIssued: "",
-    },
+      id: '',
+      stateIssued: ''
+    }
   });
   const [succes, setSucces] = useState(null);
   const [error, setError] = useState(null);
@@ -36,7 +36,7 @@ const RegisterForm = () => {
   }, []);
   const fetchVehicles = async () => {
     try {
-      const response = await api.get("/VehicleRecord?select=plateNumber");
+      const response = await api.get('/VehicleRecord?select=plateNumber');
       setVehicles(response.data.data);
     } catch (error) {
       console.log(error);
@@ -46,7 +46,7 @@ const RegisterForm = () => {
     const { name, value } = event.target;
     setUser((prevUser) => ({
       ...prevUser,
-      [name]: value,
+      [name]: value
     }));
   };
 
@@ -54,16 +54,16 @@ const RegisterForm = () => {
     const { name, value } = event.target;
     setUser((prevUser) => ({
       ...prevUser,
-      [name]: value,
+      [name]: value
     }));
-    if (value === "ROLE_DRIVER") {
+    if (value === 'ROLE_DRIVER') {
       setDriverinfo({
-        vehiclePlateNumber: "",
-        yearsOfExperience: "",
+        vehiclePlateNumber: '',
+        yearsOfExperience: '',
         licenses: {
-          id: "",
-          stateIssued: "",
-        },
+          id: '',
+          stateIssued: ''
+        }
       });
     } else {
       setDriverinfo(null);
@@ -71,23 +71,23 @@ const RegisterForm = () => {
   };
   const handleDriverInfoChange = (event) => {
     const { name, value } = event.target;
-    if (name === "vehiclePlateNumber") {
+    if (name === 'vehiclePlateNumber') {
       setDriverinfo((prevDriverinfo) => ({
         ...prevDriverinfo,
-        [name]: value,
+        [name]: value
       }));
-    } else if (name === "id" || name === "stateIssued") {
+    } else if (name === 'id' || name === 'stateIssued') {
       setDriverinfo((prevDriverinfo) => ({
         ...prevDriverinfo,
         licenses: {
           ...prevDriverinfo.licenses,
-          [name]: value,
-        },
+          [name]: value
+        }
       }));
     } else {
       setDriverinfo((prevDriverinfo) => ({
         ...prevDriverinfo,
-        [name]: value,
+        [name]: value
       }));
     }
   };
@@ -96,13 +96,14 @@ const RegisterForm = () => {
     event.preventDefault();
     const userInformation = { ...user, driverinfo };
     await api
-      .post("user/register", { ...userInformation })
+      .post('user/register', { ...userInformation })
       .then((response) => {
         if (response.success) {
           setSucces(response.data?.message);
           setError(null);
         } else {
         }
+        navigate('/admin/user');
       })
       .catch((err) => {
         console.log(err.response);
@@ -114,10 +115,7 @@ const RegisterForm = () => {
   return (
     <Container>
       <Row>
-        <Form
-          onSubmit={handleSubmit}
-          className="p-4 rounded shadow-sm bg-white"
-        >
+        <Form onSubmit={handleSubmit} className="p-4 rounded shadow-sm bg-white">
           {/* <Col xs={12} md={6} lg={4}> */}
           <Col md={{ span: 6, offset: 3 }}>
             <h2 className="text-center mb-4">Register User</h2>
@@ -126,56 +124,28 @@ const RegisterForm = () => {
               <Form.Label className="font-weight-bold">
                 Username <span className="text-danger">*</span>
               </Form.Label>
-              <Form.Control
-                type="text"
-                required
-                placeholder="Enter username"
-                name="userName"
-                value={user.userName}
-                onChange={handleChange}
-              />
+              <Form.Control type="text" required placeholder="Enter username" name="userName" value={user.userName} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="firstName">
               <Form.Label className="font-weight-bold">
                 First Name <span className="text-danger">*</span>
               </Form.Label>
-              <Form.Control
-                type="text"
-                required
-                placeholder="Enter first name"
-                name="firstName"
-                value={user.firstName}
-                onChange={handleChange}
-              />
+              <Form.Control type="text" required placeholder="Enter first name" name="firstName" value={user.firstName} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="lastName">
               <Form.Label className="font-weight-bold">
                 Last Name <span className="text-danger">*</span>
               </Form.Label>
-              <Form.Control
-                type="text"
-                required
-                placeholder="Enter last name"
-                name="lastName"
-                value={user.lastName}
-                onChange={handleChange}
-              />
+              <Form.Control type="text" required placeholder="Enter last name" name="lastName" value={user.lastName} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="email">
               <Form.Label className="font-weight-bold">
                 Email address <span className="text-danger">*</span>
               </Form.Label>
-              <Form.Control
-                type="email"
-                required
-                placeholder="Enter email"
-                name="email"
-                value={user.email}
-                onChange={handleChange}
-              />
+              <Form.Control type="email" required placeholder="Enter email" name="email" value={user.email} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="phoneNumber">
@@ -195,52 +165,31 @@ const RegisterForm = () => {
               <Form.Label className="font-weight-bold">
                 Address <span className="text-danger">*</span>
               </Form.Label>
-              <Form.Control
-                type="text"
-                required
-                placeholder="Enter address"
-                name="address"
-                value={user.address}
-                onChange={handleChange}
-              />
+              <Form.Control type="text" required placeholder="Enter address" name="address" value={user.address} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="password">
               <Form.Label className="font-weight-bold">
                 Password <span className="text-danger">*</span>
               </Form.Label>
-              <Form.Control
-                type="password"
-                required
-                placeholder="Enter password"
-                name="password"
-                value={user.password}
-                onChange={handleChange}
-              />
+              <Form.Control type="password" required placeholder="Enter password" name="password" value={user.password} onChange={handleChange} />
             </Form.Group>
             <Form.Group className="mb-3" controlId="role">
               <Form.Label className="font-weight-bold">Role</Form.Label>
-              <Form.Control
-                as="select"
-                name="role"
-                value={user.role}
-                onChange={handleRoleChange}
-              >
+              <Form.Control as="select" name="role" value={user.role} onChange={handleRoleChange}>
                 <option value="ROLE_EMPLOYEE">Employee</option>
                 <option value="ROLE_DIRECTOR">Director</option>
                 <option value="ROLE_DRIVER">Driver</option>
                 <option value="ROLE_FUELDISTRUBTOR">Fuel Distributor</option>
                 <option value="ROLE_GARAGEDIRECTOR">Garage Director</option>
-                <option value="ROLE_HEADOFDEPLOYMENT">
-                  Head of Deployment
-                </option>
+                <option value="ROLE_HEADOFDEPLOYMENT">Head of Deployment</option>
                 <option value="ROLE_MECHANIC">Mechanic</option>
                 <option value="ROLE_STORE">Store</option>
                 <option value="ROLE_VICEPRESIDENT">Vice President</option>
                 <option value="ROLE_GUARD">Guard</option>
               </Form.Control>
             </Form.Group>
-            {user.role === "ROLE_DRIVER" && (
+            {user.role === 'ROLE_DRIVER' && (
               <div>
                 <Form.Group className="mb-3" controlId="assignedvehicle">
                   <Form.Label>Assign Vehicle</Form.Label>
@@ -254,10 +203,7 @@ const RegisterForm = () => {
                   >
                     <option value="">Select a Vehicle</option>
                     {vehicles?.map((vehicle) => (
-                      <option
-                        key={vehicle.plateNumber}
-                        value={vehicle.plateNumber}
-                      >
+                      <option key={vehicle.plateNumber} value={vehicle.plateNumber}>
                         {vehicle.plateNumber}
                       </option>
                     ))}
@@ -306,12 +252,7 @@ const RegisterForm = () => {
 
             <Form.Group className="mb-3" controlId="photo">
               <Form.Label className="font-weight-bold">Photo</Form.Label>
-              <Form.Control
-                type="file"
-                accept="image/*"
-                name="photo"
-                onChange={handleChange}
-              />
+              <Form.Control type="file" accept="image/*" name="photo" onChange={handleChange} />
             </Form.Group>
 
             {error && <ErrorProvider error={error} />}
@@ -322,14 +263,14 @@ const RegisterForm = () => {
                 size="sm"
                 className="btn-secondary me-2"
                 onClick={(e) => {
-                  navigate("/admin/user");
+                  navigate('/admin/user');
                 }}
               >
                 Cancel
-              </Button>{" "}
+              </Button>{' '}
               <Button type="reset" size="sm" className="btn-danger me-2">
                 Clear
-              </Button>{" "}
+              </Button>{' '}
               <Button variant="primary" type="submit">
                 Submit
               </Button>

@@ -8,6 +8,7 @@ import VehicleRequestListPage from './VehicleRequests';
 import CreateVehicleRequestForm from './CreateVehicleRequest';
 import EditRequest from './EditVehicleRequest';
 import EmployeeHome from './Home';
+import UserProfile from '../../common/profile/profile';
 const links = [
   {
     name: 'Home',
@@ -31,6 +32,7 @@ const EmployeePage = () => {
       <Navbar links={links} title="TMS" profile={profileUrl} />
       <Routes>
         <Route path="/" element={<EmployeeHome />} />
+        <Route path="profile" element={<UserProfile />} />
         <Route path="vehicle-request" element={<CreateVehicleRequestForm />} />
         <Route path="edit-vehicle-request/:id" element={<EditRequest />} />
         <Route path="request/vehicle" element={<VehicleRequestListPage />} />

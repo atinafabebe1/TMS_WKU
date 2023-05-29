@@ -12,6 +12,7 @@ import EditEmergencyReport from './EditEmergencyReport';
 import DriverReceiveVehicle from './ReceiveVehicle';
 import DriverHomePage from './DriverHomePage';
 import { Routes, Route } from 'react-router-dom';
+import UserProfile from '../../common/profile/profile';
 const links = [
   {
     name: 'Home',
@@ -64,6 +65,7 @@ const DriverPage = () => {
       <Navbar links={links} title="TMS" profile={profileUrl} />
       <Routes>
         <Route path="" element={<DriverHomePage />} />
+        <Route path="profile" element={<UserProfile />} />
         <Route path="report/emmergency" element={<EmmergencyReport />} />
         <Route path="report/emmergency/create" element={<CreateEmergencyReport />} />
         <Route path="report/emmergency/edit/:id" element={<EditEmergencyReport />} />
