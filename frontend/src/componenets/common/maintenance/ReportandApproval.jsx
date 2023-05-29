@@ -7,11 +7,13 @@ import api from '../../../api/api';
 const MaintenanceReportForm = () => {
   const [mechanics, setMechanics] = useState([]);
   const [selectedMechanic, setSelectedMechanic] = useState("");
+  const [formErrors, setFormErrors] = useState({});
 
   function handleMechanicChange(event) {
     setSelectedMechanic(event.target.value);
     console.log(selectedMechanic);
   }
+
   const fetchMechanics = async () => {
     try {
       const response = await api.get("/user/getusers?select=role,firstName");
@@ -20,6 +22,7 @@ const MaintenanceReportForm = () => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     fetchMechanics();
   }, []);
@@ -82,13 +85,78 @@ const MaintenanceReportForm = () => {
     }));
   };
 
+  const validateForm = () => {
+    let errors = {};
+    let isValid = true;
+
+    // Validate plateNumber
+    if (reportData.plateNumber.trim() === '') {
+      errors.plateNumber = 'Plate Number is required';
+      isValid = false;
+    }
+
+    // Validate spareparts
+    const sparepartsErrors = [];
+    reportData.spareparts.forEach((part, index) => {
+      const partErrors = {};
+
+      // Validate spareId
+      if (part.spareId.trim() === '') {
+        partErrors.spareId = 'Spare ID is required';
+        isValid = false;
+      }
+
+      // Validate spareName
+      if (part.spareName.trim() === '') {
+        partErrors.spareName = 'Spare Name is required';
+        isValid = false;
+      }
+
+      // Validate itemPrice
+      if (part.itemPrice <= 0) {
+        partErrors.itemPrice = 'Item Price must be greater than 0';
+        isValid = false;
+      }
+
+      // Validate quantity
+      if (part.quantity <= 0) {
+        partErrors.quantity = 'Quantity must be greater than 0';
+        isValid = false;
+      }
+
+      sparepartsErrors.push(partErrors);
+    });
+
+    if (sparepartsErrors.length > 0) {
+      errors.spareparts = sparepartsErrors;
+    }
+
+    // Validate exchangedMaintenanceTotalPrice
+    if (reportData.exchangedMaintenanceTotalPrice <= 0) {
+      errors.exchangedMaintenanceTotalPrice = 'Exchanged Maintenance Total Price must be greater than 0';
+      isValid = false;
+    }
+
+    // Validate examination
+    if (reportData.examination.trim() === '') {
+      errors.examination = 'Examination is required';
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
+
     console.log(reportData);
+
     try {
-      const response = await api.post('/MaintenanceReport', { ...reportData,
-        expertExamined: selectedMechanic }
-      );
+      const response = await api.post('/MaintenanceReport', { ...reportData, expertExamined: selectedMechanic });
       console.log('Maintenance report submitted successfully:', response.data);
       // Handle success, e.g., show a success message or redirect to another page
     } catch (error) {
@@ -106,7 +174,7 @@ const MaintenanceReportForm = () => {
               Maintenance Report Need For Approval
             </Card.Header>
             <Card.Body>
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handleSubmit} validated={Object.keys(formErrors).length === 0}>
                 <Form.Group as={Row} controlId="plateNumber">
                   <Form.Label column sm={2}>
                     Plate Number:
@@ -118,7 +186,11 @@ const MaintenanceReportForm = () => {
                       value={reportData.plateNumber}
                       onChange={handleChange}
                       required
+                      isInvalid={!!formErrors.plateNumber}
                     />
+                    <Form.Control.Feedback type="invalid">
+                      {formErrors.plateNumber}
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
 
@@ -136,7 +208,11 @@ const MaintenanceReportForm = () => {
                             value={part.spareId}
                             onChange={(e) => handleChange(e, index)}
                             required
+                            isInvalid={!!formErrors.spareparts?.[index]?.spareId}
                           />
+                          <Form.Control.Feedback type="invalid">
+                            {formErrors.spareparts?.[index]?.spareId}
+                          </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
 
@@ -149,7 +225,11 @@ const MaintenanceReportForm = () => {
                             value={part.spareName}
                             onChange={(e) => handleChange(e, index)}
                             required
+                            isInvalid={!!formErrors.spareparts?.[index]?.spareName}
                           />
+                          <Form.Control.Feedback type="invalid">
+                            {formErrors.spareparts?.[index]?.spareName}
+                          </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
 
@@ -162,7 +242,11 @@ const MaintenanceReportForm = () => {
                             value={part.itemPrice}
                             onChange={(e) => handleChange(e, index)}
                             required
+                            isInvalid={!!formErrors.spareparts?.[index]?.itemPrice}
                           />
+                          <Form.Control.Feedback type="invalid">
+                            {formErrors.spareparts?.[index]?.itemPrice}
+                          </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -177,7 +261,11 @@ const MaintenanceReportForm = () => {
                             value={part.quantity}
                             onChange={(e) => handleChange(e, index)}
                             required
+                            isInvalid={!!formErrors.spareparts?.[index]?.quantity}
                           />
+                          <Form.Control.Feedback type="invalid">
+                            {formErrors.spareparts?.[index]?.quantity}
+                          </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
 
@@ -194,11 +282,11 @@ const MaintenanceReportForm = () => {
                     </Row>
                   </div>
                 ))}
-<br></br>
+
                 <Button variant="secondary" onClick={handleAddItem}>
                   Add Item
                 </Button>
-                <br></br>
+
                 <Form.Group as={Row} controlId="exchangedMaintenanceTotalPrice">
                   <Form.Label column sm={8}>
                     Exchanged Maintenance Total Price:
@@ -210,11 +298,15 @@ const MaintenanceReportForm = () => {
                       value={reportData.exchangedMaintenanceTotalPrice}
                       onChange={handleChange}
                       required
+                      isInvalid={!!formErrors.exchangedMaintenanceTotalPrice}
                       readOnly
                     />
+                    <Form.Control.Feedback type="invalid">
+                      {formErrors.exchangedMaintenanceTotalPrice}
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
-                <br></br>
+
                 <Form.Group as={Row} controlId="examination">
                   <Form.Label column sm={4}>
                     Examination:
@@ -226,29 +318,40 @@ const MaintenanceReportForm = () => {
                       value={reportData.examination}
                       onChange={handleChange}
                       required
+                      isInvalid={!!formErrors.examination}
                     />
+                    <Form.Control.Feedback type="invalid">
+                      {formErrors.examination}
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
+
                 <Form.Group controlId="mechanic">
-      <Form.Label>Select a Mechanic</Form.Label>
-      <Form.Control
-        as="select"
-        value={selectedMechanic}
-        required
-        onChange={handleMechanicChange}
-      >
-        <option value="">Select a Mechanic</option>
-        {mechanics
-          .filter((mechanic) => mechanic.role === 'ROLE_MECHANIC')
-          .map((mechanic) => (
-            <option key={mechanic.id} value={mechanic.id}>
-              {mechanic.firstName}
-            </option>
-          ))}
-      </Form.Control>
-    </Form.Group>
-    <br></br>
-                <Button type="submit">Submit</Button>
+                  <Form.Label>Select a Mechanic</Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={selectedMechanic}
+                    required
+                    onChange={handleMechanicChange}
+                    isInvalid={!!formErrors.mechanic}
+                  >
+                    <option value="">Select a Mechanic</option>
+                    {mechanics
+                      .filter((mechanic) => mechanic.role === 'ROLE_MECHANIC')
+                      .map((mechanic) => (
+                        <option key={mechanic.id} value={mechanic.id}>
+                          {mechanic.firstName}
+                        </option>
+                      ))}
+                  </Form.Control>
+                  <Form.Control.Feedback type="invalid">
+                    {formErrors.mechanic}
+                  </Form.Control.Feedback>
+                </Form.Group>
+
+                <Button variant="primary" type="submit">
+                  Submit
+                </Button>
               </Form>
             </Card.Body>
           </Card>
