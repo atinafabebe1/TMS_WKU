@@ -104,40 +104,39 @@ const MaintenanceRequestPage = ({ filter }) => {
     
   };
   
-  const handleEditRequest = (selectedRequest) => {
-    if (selectedRequest.kilometerOnCounter < 0) {
-      setError("Kilometer On Counter cannot be negative.");
-      return;
-    }
+  const handleEditRequest = async (selectedRequest) => {
+    try {
+      if (selectedRequest.kilometerOnCounter < 0) {
+        setError("Kilometer On Counter cannot be negative.");
+        return;
+      }
   
-    const updatedRequest = {
-      plateNumber: selectedRequest?.plateNumber,
-      kilometerOnCounter: selectedRequest?.kilometerOnCounter || null,
-      description: selectedRequest?.description,
-    };
+      const updatedRequest = {
+        plateNumber: selectedRequest?.plateNumber,
+        kilometerOnCounter: selectedRequest?.kilometerOnCounter || null,
+        description: selectedRequest?.description,
+      };
   
-    api
-      .put(`/Request/maintenance/${selectedRequest._id}`, updatedRequest)
-      .then(() => {
-        return api.patch(`/Request/maintenance/${selectedRequest._id}`, {
-          status: "pending",
-        });
-      })
-      .then(() => {
-        
-        setShowEditModal(false);
-        setSuccess("Maintenance request successfully updated.");
-        setTimeout(() => {
-          navigate("/driver/request/maintenance"); // Navigate to the desired page after 6 seconds
-        }, 6000);
-      })
-      .catch((error) =>
-        console.error(
-          `Error editing Maintenance request with ID ${selectedRequest._id}:`,
-          error
-        )
+      await api.put(`/Request/maintenance/${selectedRequest._id}`, updatedRequest);
+      await api.patch(`/Request/maintenance/${selectedRequest._id}`, {
+        status: "pending",
+      });
+  
+      const response = await api.get(`/Request/maintenance?user=${user.id}`);
+      setRequests(response.data.data);
+      setShowEditModal(false);
+      setSuccess("Maintenance request successfully updated.");
+      setTimeout(() => {
+        navigate("/driver/request/maintenance"); // Navigate to the desired page after 6 seconds
+      }, 6000);
+    } catch (error) {
+      console.error(
+        `Error editing Maintenance request with ID ${selectedRequest._id}:`,
+        error
       );
+    }
   };
+  
   
   
 

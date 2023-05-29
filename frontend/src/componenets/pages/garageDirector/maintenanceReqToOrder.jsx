@@ -22,7 +22,10 @@ const GDMaintenanceRequestTables = ({ filter }) => {
   const [kilometerOnCounter,setKilometerOncounter]=useState("");
   const [description, setCrashType]=useState("");
   const [plateNumber,setPlateNumber]=useState("");
+  const [showRejectModal, setShowRejectModal] = useState(false);
   const [selectedMechanic, setSelectedMechanic] = useState();
+  const [reason,setReason]=useState("");
+
 
   function handleMechanicChange(event) {
     setSelectedMechanic(event.target.value);
@@ -47,20 +50,29 @@ const GDMaintenanceRequestTables = ({ filter }) => {
   };
   
   const handleRejectClick = async (request) => {
-    const reason = prompt("Please enter a reason for rejection:");
-    if (!reason) return; // If the user cancels the prompt, do nothing
+   
+    if (!reason)
+    {
+    return; 
+    }else{// If the user cancels the prompt, do nothing
     try {
       await api.patch(`/Request/maintenance/${request._id}`, {
         status: "canceled",
-        rejectReason: reason,
-      });
+        rejectReason: reason, // Add the reason to the patch request
+      })
       const response = await api.get("/Request/maintenance");
       setRequests(response.data.data);
+      setShowRejectModal(false);
+   
     } catch (error) {
       console.log(error);
-    }
+    }}
   };
-  
+  const handleRejectModal=(request)=>{
+    setSelectedRequest(request);
+    setShowRejectModal(true);
+    setShowModal(false);
+  }
 
   const handleMore = (request) => {
     setSelectedRequest(request);
@@ -83,6 +95,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
   const handleModalClose = () => {
     setShowModal(false);
     setTransferModal(false);
+    setShowRejectModal(false);
     setSelectedRequest(null);
   };
 
@@ -190,7 +203,7 @@ const GDMaintenanceRequestTables = ({ filter }) => {
                     <Button
                       variant="danger"
                       className="btn btn-sm"
-                      onClick={() => handleRejectClick(request)}
+                      onClick={() => handleRejectModal(request)}
                     >
                       Reject
                     </Button>
@@ -247,7 +260,38 @@ const GDMaintenanceRequestTables = ({ filter }) => {
     )}
   </Modal.Footer>
 </Modal>
-
+<Modal show={showRejectModal} onHide={handleModalClose}>
+  <Modal.Header closeButton>
+    <Modal.Title>Provide Reject Reason</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+   
+  <Form.Label>Reject Reason</Form.Label>
+        <Form.Control
+          type="text"
+           value={reason}
+           onChange={(event) => setReason(event.target.value)}
+          required
+          className="mb-3"
+        />
+         </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" 
+    className="btn btn-sm"
+    onClick={handleModalClose}>
+      Close
+    </Button>
+    {selectedRequest?.status === "in-progress" && (
+      <Button
+        variant="primary"
+        className="btn btn-sm"
+        onClick={() => handleRejectClick(selectedRequest)}
+      >
+        Reject
+      </Button>
+    )}
+  </Modal.Footer>
+</Modal>
 
 
 
