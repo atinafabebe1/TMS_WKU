@@ -44,12 +44,13 @@ const MaintenanceRequestTables = ({ filter }) => {
         status: "canceled",
         rejectReason: reason, // Add the reason to the patch request
       })
+      const response = await api.get("/Request/maintenance");
+      setRequests(response.data.data);
       setTimeout(() => {
         navigate("/hd/request/maintenance"); // Navigate to the desired page after 6 seconds
       }, 6000);
       setShowRejectModal(false);
-      const response = await api.get("/Request/maintenance");
-      setRequests(response.data.data);
+
     } catch (error) {
       console.log(error);
     }}
