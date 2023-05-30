@@ -37,6 +37,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
     if (data) {
       setVehicleData(data);
     } else {
+      const currentDate = new Date().toISOString().split("T")[0]; // Get current date in yyyy-mm-dd format
       setVehicleData({
         modelNo: "",
         chassisNo: "",
@@ -47,7 +48,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
         typeOfFuel: "",
         purchasePrice: "",
         maxPerson: "",
-        purchaseDate: "",
+        purchaseDate: currentDate, // Set the purchaseDate to the current date
         maxLoad: "",
         maxLitres: "",
         proprietaryIdNumber: "",
@@ -119,28 +120,30 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   };
 
   const handleSubmit = async () => {
-    try {
-      if (data) {
+    if (data) {
+      try {
         await api.put(`/VehicleRecord/${data._id}`, vehicleData);
         setSuccess("Vehicle details updated successfully.");
+        setError("");
         setTimeout(() => {
           navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
         }, 6000);
-      } else {
-        await api.post("/VehicleRecord", vehicleData);
-        setSuccess("Vehicle registered successfully.");
-        setTimeout(() => {
-          navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
-        }, 6000);
+      } catch (error) {
+        setError("Error");
       }
-      onSubmit();
-      setError("");
-    } catch (error) {
-      setError("Please Provide Valid Data and Try Again");
-      setSuccess("");
+    } else {
+      try {
+        await api.post("/VehicleRecord", vehicleData);
+        setSuccess("Please Provide Valid Data and Try Again");
+        setError("");
+        setTimeout(() => {
+          navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
+        }, 6000);
+      } catch (error) {
+        setError("Please Provide Valid Data and Try Again");
+      }
     }
   };
-
   console.log(vehicleData);
   const renderItemFields = () => {
     return vehicleData.itemsWithVehicle.map((item, index) => (
@@ -342,11 +345,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               Please provide a valid Fuel Type.
             </Form.Control.Feedback>
           </Form.Group>
-        </Row>
-        <br></br>
-        <h5 className="form-control-custom">Purchasing Information</h5>
-        <hr></hr>
-        <Row className="mb-3">
+
           <Form.Group as={Col} controlId="purchaseprice">
             <span> </span>
             <Form.Label className="form-control-custom">
@@ -364,23 +363,6 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             />
             <Form.Control.Feedback type="invalid">
               Please provide a valid Price.
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group as={Col} controlId="date">
-            <span> </span>
-            <Form.Label className="form-control-custom">
-              Purchased Date
-            </Form.Label>
-
-            <Form.Control
-              type="date"
-              name="purchaseDate"
-              required
-              value={vehicleData.purchaseDate}
-              onChange={handleInputChange}
-            />
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid Date.
             </Form.Control.Feedback>
           </Form.Group>
         </Row>
