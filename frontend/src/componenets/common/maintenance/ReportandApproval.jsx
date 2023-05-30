@@ -156,7 +156,7 @@ const MaintenanceReportForm = () => {
     console.log(reportData);
 
     try {
-      const response = await api.post('/MaintenanceReport', { ...reportData, expertExamined: selectedMechanic });
+      const response = await api.post('/maintenanceReports/maintenance-reports', { ...reportData, expertExamined: selectedMechanic });
       console.log('Maintenance report submitted successfully:', response.data);
       // Handle success, e.g., show a success message or redirect to another page
     } catch (error) {
@@ -167,6 +167,7 @@ const MaintenanceReportForm = () => {
 
   return (
     <Container className="my-3">
+      
       <Row>
         <Col>
           <Card>
