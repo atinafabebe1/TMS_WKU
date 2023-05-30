@@ -18,7 +18,7 @@ const MaintenanceOrderTable = () => {
   useEffect(() => {
     // Fetch the  reports from your server API
     api
-      .get("/MaintenanceReport")
+      .get("/maintenanceReports/maintenance-reports")
       .then((response) => {
         console.log(response.data.data);
         setReports(response.data.data);

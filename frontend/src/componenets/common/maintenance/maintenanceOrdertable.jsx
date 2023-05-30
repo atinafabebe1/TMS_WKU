@@ -122,7 +122,8 @@ const MaintenanceOrderTable = ({ filter }) => {
                 {request.status === "UnderMaintenance" && (
                   <>
                             <Link to="/mechanic/maintenance/approval-report">
-            <Button variant="primary">Send For Approvements </Button>
+            <Button className="btn btn-sm"
+             variant="primary">Send For Approvements </Button>
           </Link>
                 {" "}
                 <Button
