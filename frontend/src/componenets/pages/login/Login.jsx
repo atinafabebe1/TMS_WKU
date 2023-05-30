@@ -134,13 +134,13 @@ const LoginPage = () => {
           <Row className="justify-content-center">
             <Col xs={12} md={6} lg={4}>
               <div className="text-center mb-4">
-                <h2>Login</h2>
+                <h2 className="form-control-custom">Login</h2>
               </div>
               <Form onSubmit={handleSubmit} className="p-4 rounded shadow-sm">
                 <Form.Group controlId="formEmail">
                   <div className="d-flex align-items-center mb-3">
                     <FaEnvelope className="mr-3" />
-                    <Form.Label>Email Address</Form.Label>
+                    <Form.Label className="form-control-custom">Email Address</Form.Label>
                   </div>
                   <Form.Control
                     type="email"
@@ -152,10 +152,11 @@ const LoginPage = () => {
                     required
                   />
                 </Form.Group>
+                <br></br>
                 <Form.Group controlId="formPassword">
                   <div className="d-flex align-items-center mb-3">
                     <FaLock className="mr-3" />
-                    <Form.Label>Password</Form.Label>
+                    <Form.Label className="form-control-custom">Password</Form.Label>
                   </div>
                   <Form.Control
                     type="password"
@@ -169,14 +170,14 @@ const LoginPage = () => {
                   />
                   {errorMessage && <p className="text-danger my-2">{errorMessage}</p>}
                   {successMessage && <p className="text-success my-2">{successMessage}</p>}
-                  <Form.Text className="text-muted">
+                  {/* <Form.Text className="text-muted">
                     <a href="/forgot" className="text-decoration-none">
                       Forgot password?
                     </a>
-                  </Form.Text>
+                  </Form.Text> */}
                 </Form.Group>
                 <Form.Group controlId="formRememberMe" className="my-3">
-                  <Form.Check type="checkbox" label="Remember me" name="rememberMe" checked={formData.rememberMe} onChange={handleInputChange} />
+                  <Form.Check type="checkbox" className="form-control-custom" label="Remember me" name="rememberMe" checked={formData.rememberMe} onChange={handleInputChange} />
                 </Form.Group>
                 <Button variant="primary" type="submit" className="w-100" title="Login">
                   Login
