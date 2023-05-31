@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from '../../common/header/Navbar';
 import WeeklyReport from '../../common/report/weeklyReport';
 import DailyReport from '../../common/report/dailyReport';
-import MonthlyReportList from '../../common/report/monthlyReport';
+import HDMaintenanceReport from '../../common/report/MaintenanceReport';
 import ServiceScheduleForm from './ServiceScheduleForm';
 import TransferVehicle from './TransferVehicle';
 import TrackVehicle from '../../common/vehicle/TrackVehicle';
@@ -27,6 +27,7 @@ import FuelCost from '../../common/fuel/RegisterFuelCost';
 import FuelCostListPage from '../../common/fuel/DisplayFuelCost';
 import EditFuelCost from '../../common/fuel/EditFuelCost';
 import UserProfile from '../../common/profile/profile';
+
 const links = [
   {
     name: 'Home',
@@ -87,16 +88,16 @@ const links = [
     url: '/report',
     children: [
       {
-        name: 'Monthly',
-        url: '/hd/report/monthly'
+        name: 'Maintenance',
+        url: '/hd/report/maintenance'
       },
       {
-        name: 'Daily',
-        url: '/hd/report/daily'
+        name: 'Fuel',
+        url: '/hd/report/Fuel'
       },
       {
-        name: 'Weekly',
-        url: '/hd/report/weekly'
+        name: 'Spare Part',
+        url: '/hd/report/spare'
       },
       {
         name: 'Emergency',
@@ -128,7 +129,7 @@ const HeadOfDeploymentPage = () => {
         <Route path="schedule/workday-new" element={<ServiceScheduleForm />} />
         <Route path="report/weekly" element={<WeeklyReport />} />
         <Route path="report/daily" element={<DailyReport />} />
-        <Route path="report/monthly" element={<MonthlyReportList />} />
+        <Route path="report/maintenance" element={<HDMaintenanceReport />} />
         <Route path="report/emergence" element={<EmmergencyReport />} />
         <Route path="report/detail/:id" element={<DetailEmmergecy />} />
         <Route path="vehicles" element={<DetailVehicleInfo />} />

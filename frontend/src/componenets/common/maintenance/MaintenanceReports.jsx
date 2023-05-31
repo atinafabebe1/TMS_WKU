@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col } from 'react-bootstrap';
+import { Card, Row, Col, Tabs, Tab, Button, Table } from 'react-bootstrap';
 import api from '../../../api/api';
 
 const GDMaintenanceReportPage = () => {
-  const [duration, setDuration] = useState('daily');
+  const [duration, setDuration] = useState('Daily');
   const [maintenanceReports, setMaintenanceReports] = useState([]);
 
   useEffect(() => {
@@ -25,17 +25,14 @@ const GDMaintenanceReportPage = () => {
     <div>
       <h1>Maintenance Reports</h1>
 
-      <div>
-        <label htmlFor="duration">Duration:</label>
-        <select id="duration" value={duration} onChange={(e) => setDuration(e.target.value)}>
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-        </select>
-      </div>
+      <Tabs activeKey={duration} onSelect={(selectedDuration) => setDuration(selectedDuration)}>
+        <Tab eventKey="Daily" title="Daily" />
+        <Tab eventKey="Weekly" title="Weekly" />
+        <Tab eventKey="Monthly" title="Monthly" />
+      </Tabs>
 
       <div>
-        <h2>Reports:</h2>
+        <h2>{duration} Reports</h2>
         {maintenanceReports.length === 0 ? (
           <p>No completed maintenance reports found.</p>
         ) : (
@@ -43,24 +40,32 @@ const GDMaintenanceReportPage = () => {
             {maintenanceReports.map((report) => (
               <Card key={report._id} className="mb-3">
                 <Card.Body>
-                  <Card.Title className="text-primary">Plate Number: {report.plateNumber}</Card.Title>
+                  <Card.Title className="text-primary">Plate Number: {report?.plateNumber}</Card.Title>
                   <Card.Text className="mb-4">Examination: {report.examination}</Card.Text>
                   <Card.Text className="mb-4">Status: {report.status}</Card.Text>
 
-                  <Row>
-                    {report.spareparts.map((sparepart) => (
-                      <Col key={sparepart.spareId} md={4}>
-                        <Card className="mb-3">
-                          <Card.Body>
-                            <Card.Title>Spare Name: {sparepart.spareName}</Card.Title>
-                            <Card.Text>Item Price: {sparepart.itemPrice}</Card.Text>
-                            <Card.Text>Quantity: {sparepart.quantity}</Card.Text>
-                            <Card.Text>Total Price: {sparepart.totalPrice}</Card.Text>
-                          </Card.Body>
-                        </Card>
-                      </Col>
-                    ))}
-                  </Row>
+                  <Table striped bordered hover>
+                    <thead>
+                      <tr>
+                        <th>Spare Id</th>
+                        <th>Spare Name</th>
+                        <th>Item Price</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {report.spareparts.map((sparepart) => (
+                        <tr key={sparepart.spareId}>
+                          <td>{sparepart.spareId}</td>
+                          <td>{sparepart.spareName}</td>
+                          <td>{sparepart.itemPrice}</td>
+                          <td>{sparepart.quantity}</td>
+                          <td>{sparepart.totalPrice}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
 
                   <Card.Text className="mt-4">Exchanged Total Cost: {report.exchangedMaintenanceTotalPrice}</Card.Text>
                 </Card.Body>

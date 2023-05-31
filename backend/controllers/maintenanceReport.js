@@ -91,14 +91,15 @@ const getMaintenanceReports = asyncHandler(async (req, res) => {
   let startDate, endDate;
 
   // Calculate the start and end date based on the selected duration
-  if (duration === 'daily') {
+  if (duration === 'Daily') {
     startDate = new Date();
+    startDate.setDate(startDate.getDate() - 1);
     endDate = new Date();
-  } else if (duration === 'weekly') {
+  } else if (duration === 'Weekly') {
     startDate = new Date();
     startDate.setDate(startDate.getDate() - 7);
     endDate = new Date();
-  } else if (duration === 'monthly') {
+  } else if (duration === 'Monthly') {
     startDate = new Date();
     startDate.setMonth(startDate.getMonth() - 1);
     endDate = new Date();

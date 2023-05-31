@@ -22,7 +22,7 @@ router.get("/", Authorize("ROLE_MECHANIC", "ROLE_GARAGEDIRECTOR"), advancedResul
 //@desc      to get Maintenance Reports based on duration
 //@route     GET /http://localhost:3500/MaintenanceReport/maintenance-reports/:duration
 //@access    MECHANIC, GARAGEDIRECTOR
-router.get("/maintenance-reports/:duration", Authorize("ROLE_MECHANIC", "ROLE_GARAGEDIRECTOR"), getMaintenanceReports);
+router.get("/maintenance-reports/:duration", Authorize("ROLE_MECHANIC", "ROLE_GARAGEDIRECTOR","ROLE_HEADOFDEPLOYMENT"), getMaintenanceReports);
 
 //@desc      to Create Maintenance Report
 //@route     POST /http://localhost:3500/MaintenanceReport
