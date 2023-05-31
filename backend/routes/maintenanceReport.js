@@ -24,12 +24,15 @@
 const express = require('express');
 const router = express.Router();
 const maintenanceReportController = require('../controllers/maintenanceReport');
+const { Auth, Authorize } = require('../middleware/auth');
 
-// Create a maintenance report
-router.post('/maintenance-reports', maintenanceReportController.create);
+router.use(Auth); // Apply the Auth middleware to all routes in this router
 
-// Get all maintenance reports
-router.get('/maintenance-reports', maintenanceReportController.getAll);
+// Create a maintenance report (requires ROLE_MECHANIC authorization)
+router.post('/maintenance-reports', Authorize('ROLE_MECHANIC'), maintenanceReportController.create);
+
+// Get all maintenance reports (requires ROLE_MECHANIC authorization)
+router.get('/maintenance-reports', Authorize('ROLE_MECHANIC'), maintenanceReportController.getAll);
 
 // Get a maintenance report by ID
 router.get('/maintenance-reports/:id', maintenanceReportController.getById);

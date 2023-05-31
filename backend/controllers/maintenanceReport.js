@@ -1,11 +1,10 @@
 const MaintenanceReport = require('../models/maintenanceReport');
+const ErrorResponse = require('../utils/errorResponse');
 
-// Define controller methods
 const maintenanceReportController = {
   create: async (req, res) => {
     try {
       const maintenanceReport = new MaintenanceReport(req.body);
-      // Save the maintenance report to the database
       await maintenanceReport.save();
       res.status(201).json({ success: true, data: maintenanceReport });
     } catch (error) {
@@ -16,7 +15,6 @@ const maintenanceReportController = {
 
   getAll: async (req, res) => {
     try {
-      // Retrieve all maintenance reports from the database
       const maintenanceReports = await MaintenanceReport.find();
       res.json({ success: true, data: maintenanceReports });
     } catch (error) {
@@ -28,7 +26,6 @@ const maintenanceReportController = {
   getById: async (req, res) => {
     const { id } = req.params;
     try {
-      // Find maintenance report by ID in the database
       const maintenanceReport = await MaintenanceReport.findById(id);
       if (!maintenanceReport) {
         return res.status(404).json({ success: false, error: 'Maintenance report not found' });
@@ -43,10 +40,9 @@ const maintenanceReportController = {
   update: async (req, res) => {
     const { id } = req.params;
     try {
-      // Find maintenance report by ID in the database and update it
       const maintenanceReport = await MaintenanceReport.findByIdAndUpdate(
         id,
-        { $set: req.body },
+        req.body,
         { new: true }
       );
       if (!maintenanceReport) {
@@ -63,10 +59,9 @@ const maintenanceReportController = {
     const { id } = req.params;
     const { status } = req.body;
     try {
-      // Find maintenance report by ID in the database and update the status
       const maintenanceReport = await MaintenanceReport.findByIdAndUpdate(
         id,
-        { $set: { status } },
+        { status },
         { new: true }
       );
       if (!maintenanceReport) {
@@ -81,8 +76,6 @@ const maintenanceReportController = {
 };
 
 module.exports = maintenanceReportController;
-
-
 
 
 

@@ -1,58 +1,79 @@
 const mongoose = require('mongoose');
 
-const maintenanceReportSchema = new mongoose.Schema({
-  plateNumber: {
-    type: String,
-    required: true,
-  },
-  spareparts: [
-    {
-      spareId: {
-        type: String,
-        required: true,
-      },
-      spareName: {
-        type: String,
-        required: true,
-      },
-      itemPrice: {
-        type: Number,
-        required: true,
-      },
-      quantity: {
-        type: Number,
-        required: true,
-      },
-      totalPrice: {
-        type: Number,
-        required: true,
-      },
+const maintenanceReportSchema = new mongoose.Schema(
+  {
+    plateNumber: {
+      type: String,
+      required: true,
     },
-  ],
-  exchangedMaintenanceTotalPrice: {
-    type: Number,
-    required: true,
+    spareparts: [
+      {
+        spareId: {
+          type: String,
+          required: true,
+        },
+        spareName: {
+          type: String,
+          required: true,
+        },
+        itemPrice: {
+          type: Number,
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+        },
+        totalPrice: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    exchangedMaintenanceTotalPrice: {
+      type: Number,
+      required: true,
+    },
+    examination: {
+      type: String,
+      required: true,
+    },
+    expertExamined: {
+      type: String,
+    },
+    status: {
+      type: String,
+      default: 'Waiting-Mech-To-Approve',
+      enum: ['pending', 'Waiting-Mech-To-Approve', 'Waiting-GD-To-Approve', 'canceled', 'completed'],
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      immutable: true,
+    },
+    vehicle: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'VehicleRecord',
+    },
+    expertWorked: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    garageDirector: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-  examination: {
-    type: String,
-    required: true,
-  },
-  expertExamined: {
-    type: String,
-  },
-  status: {
-    type: String,
-    default: 'pending',
-    enum: ['pending', 'inprogress', 'completed'],
-  },
-});
+  { timestamps: true }
+);
 
 const MaintenanceReport = mongoose.model('MaintenanceReport', maintenanceReportSchema);
 
 module.exports = MaintenanceReport;
-
-
-
 
 
 
@@ -83,7 +104,7 @@ module.exports = MaintenanceReport;
 //         message: (props) => `${props.value} is not a valid plate number`,
 //       },
 //     },
-//     spareparts: {
+//     spareparts: [{
 //       identificationNumber: {
 //         type: String,
 //         required: true,
@@ -107,7 +128,7 @@ module.exports = MaintenanceReport;
 //         required: true,
 //         min: [0, "Price must be positive"],
 //       },
-//     },
+//     }],
 //     exchangedMaintenanceTotalPrice: {
 //       type: Number,
 //       required: true,

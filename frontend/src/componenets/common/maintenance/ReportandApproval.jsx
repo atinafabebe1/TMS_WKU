@@ -96,8 +96,7 @@ const MaintenanceReportForm = () => {
     }
 
     // Validate spareparts
-    const sparepartsErrors = [];
-    reportData.spareparts.forEach((part, index) => {
+    const sparepartsErrors = reportData.spareparts.map((part, index) => {
       const partErrors = {};
 
       // Validate spareId
@@ -124,7 +123,7 @@ const MaintenanceReportForm = () => {
         isValid = false;
       }
 
-      sparepartsErrors.push(partErrors);
+      return partErrors;
     });
 
     if (sparepartsErrors.length > 0) {
@@ -156,7 +155,11 @@ const MaintenanceReportForm = () => {
     console.log(reportData);
 
     try {
-      const response = await api.post('/maintenanceReports/maintenance-reports', { ...reportData, expertExamined: selectedMechanic });
+      const response = await api.post('/maintenanceReports/maintenance-reports', {
+        ...reportData,
+        expertExamined: selectedMechanic,
+      });
+      
       console.log('Maintenance report submitted successfully:', response.data);
       // Handle success, e.g., show a success message or redirect to another page
     } catch (error) {
@@ -167,7 +170,6 @@ const MaintenanceReportForm = () => {
 
   return (
     <Container className="my-3">
-      
       <Row>
         <Col>
           <Card>
