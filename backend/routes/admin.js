@@ -5,6 +5,7 @@ const {
   updateUser,
   removeUser,
   getUser,
+  resetPassword,
 } = require("../controllers/admin");
 const { Auth, Authorize } = require("../middleware/auth");
 const advancedResult = require("../middleware/advancedResult");
@@ -28,7 +29,7 @@ router.get(
 router.post("/register", registerUser);
 router.put("/:id", updateUser);
 router.put("/remove/:id", removeUser);
-
+router.put("/reset/:id", resetPassword);
 router.get("/getusers", advancedResult(User), getUsers);
 router.get("/getuser/:id", advancedResult(User), getUser);
 router.post("/register", registerUser);

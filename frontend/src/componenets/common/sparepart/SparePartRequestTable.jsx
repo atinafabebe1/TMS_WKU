@@ -105,7 +105,7 @@ const SparePartRequestTable = ({
             <tr key={request._id}>
               <td>
                 <a href="#" onClick={() => handleRequestClick(request)}>
-                  {console.log(request.user.firstName)}
+                  {console.log("user is " + request.user)}
                   {request.user.firstName} {request.user.lastName}
                   <p>{request.user}</p>
                 </a>

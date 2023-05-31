@@ -254,7 +254,9 @@ const FuelCostListPage = () => {
 
           {showEditForm && (
             <Form>
+              <hr></hr>
               <h5 className="form-control-custom">Edit Fuel Cost</h5>
+              <hr></hr>
               <Form.Group controlId="editUnitPrice">
                 <Form.Label className="form-control-custom">
                   {editData.type} Unit Price Per Litre
