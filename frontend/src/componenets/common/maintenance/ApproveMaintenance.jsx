@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Row, Col, Form, Modal, Card } from "react-bootstrap";
+import { Table, Button, Row, Col, Form, Modal, Card,Alert } from "react-bootstrap";
 import api from "../../../api/api";
 import "../../common/css/formStyles.css";
 import { useAuth } from "../../../context/AuthContext";
@@ -12,6 +12,8 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
   const [selectedReport, setSelectedReport] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+  const [action,setAction]=useState("");
+
 
   useEffect(() => {
     const fetchMaintenanceReports = async () => {
@@ -38,33 +40,79 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
     setShowModal(false);
   };
 
-  const handleApprove = async (selectedReportId) => {
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+const handleApprove = (selectedReportId) => {
+  setShowConfirmation(true);
+  setAction('approve');
+};
+
+const handleReject = (selectedReportId) => {
+  setAction('reject');
+  setShowConfirmation(true);
+};
+
+const handleConfirmationClose = () => {
+  setShowConfirmation(false);
+};
+
+const handleConfirmationConfirm = async(action, selectedReportId) => {
+  if (action === 'approve') {
     try {
       const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
         status: "Waiting-GD-To-Approve",
       });
 
       console.log("Maintenance report submitted successfully:", response.data);
-      // Handle success, e.g., show a success message or redirect to another page
     } catch (error) {
       console.error("Failed to submit maintenance report:", error);
-      // Handle error, e.g., show an error message
     }
-  };
-
-  const handleReject = async (selectedReportId) => {
+   
+    console.log('Approved report:', selectedReportId);
+  } else if (action === 'reject') {
     try {
       const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
         status: "canceled",
       });
 
       console.log("Maintenance report submitted successfully:", response.data);
-      // Handle success, e.g., show a success message or redirect to another page
+  
     } catch (error) {
       console.error("Failed to submit maintenance report:", error);
-      // Handle error, e.g., show an error message
     }
-  };
+    console.log('Rejected report:', selectedReportId);
+  }
+  setShowConfirmation(false);
+};
+
+
+  // const handleApprove = async (selectedReportId) => {
+  //   try {
+  //     const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
+  //       status: "Waiting-GD-To-Approve",
+  //     });
+
+  //     console.log("Maintenance report submitted successfully:", response.data);
+  //     // Handle success, e.g., show a success message or redirect to another page
+  //   } catch (error) {
+  //     console.error("Failed to submit maintenance report:", error);
+  //     // Handle error, e.g., show an error message
+  //   }
+  // };
+
+  // const handleReject = async (selectedReportId) => {
+  //   try {
+  //     const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
+  //       status: "canceled",
+  //     });
+
+  //     console.log("Maintenance report submitted successfully:", response.data);
+  //     // Handle success, e.g., show a success message or redirect to another page
+  //   } catch (error) {
+  //     console.error("Failed to submit maintenance report:", error);
+  //     // Handle error, e.g., show an error message
+  //   }
+  // };
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -108,8 +156,8 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
           {filteredReports.map((report) => (
             <tr key={report._id}>
               <td>{report.plateNumber}</td>
-              <td>{report.createdAt}</td>
-              <td>{report.status}</td>
+              <td>{new Date(report.createdAt).toLocaleString()}</td>
+               <td>{report.status}</td>
               <td>
                 {report.status === "Waiting-Mech-To-Approve" && (
                   <>
@@ -301,6 +349,30 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
           <Button variant="secondary" onClick={handleModalClose}>
             Close
           </Button>
+          {showConfirmation && (
+    <Modal show={showConfirmation} onHide={handleConfirmationClose} centered>
+      <Modal.Body>
+        <Alert variant="warning">
+          Are you sure you want to {selectedReport?.status === 'Waiting-Mech-To-Approve'
+            ? action
+            : 'cancel'} the report?
+        </Alert>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button
+          variant="secondary"
+          onClick={() => handleConfirmationConfirm(action, selectedReport)}
+        >
+          Confirm
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => handleConfirmationClose()}
+        >
+          Cancel
+        </Button>
+      </Modal.Footer>
+    </Modal>)}
         </Modal.Footer>
       </Modal>
     </div>
