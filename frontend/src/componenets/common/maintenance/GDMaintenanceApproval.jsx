@@ -36,10 +36,23 @@ const GDMaintenanceApprovalTable = ({ filter, data }) => {
     setShowModal(false);
   };
 
-  const handleApprove = async (report) => {
+  const handleApprove = async (selectedReportId) => {
     try {
-      const response = await api.put(`/maintenanceReports/${report._id}`, {
+      const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
         status: "completed",
+      });
+
+      console.log("Maintenance report submitted successfully:", response.data);
+      // Handle success, e.g., show a success message or redirect to another page
+    } catch (error) {
+      console.error("Failed to submit maintenance report:", error);
+      // Handle error, e.g., show an error message
+    }
+  };
+  const handleReject = async (selectedReportId) => {
+    try {
+      const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
+        status: "canceled",
       });
 
       console.log("Maintenance report submitted successfully:", response.data);
@@ -100,12 +113,12 @@ const GDMaintenanceApprovalTable = ({ filter, data }) => {
               <td>{report.createdAt}</td>
               <td>{report.status}</td>
               <td>
-                {report.status === "Waiting-GD-To-Approve" && (
+              {report.status === "Waiting-GD-To-Approve" && (
                   <>
                     <Button
                       variant="success"
                       className="btn btn-sm"
-                      onClick={() => handleApprove(report)}
+                      onClick={() => handleMore(report)}
                     >
                       Approve
                     </Button>{" "}
@@ -179,26 +192,13 @@ const GDMaintenanceApprovalTable = ({ filter, data }) => {
                     />
                   </Col>
                 </Form.Group>
+
                 <Form.Group as={Row}>
                   <Form.Label column sm="3">
-                    Report Status:
+                    Examination:
                   </Form.Label>
                   <Col sm="9">
                     <Form.Control
-                      plaintext
-                      readOnly
-                      value={selectedReport?.reportStatus}
-                    />
-                  </Col>
-                </Form.Group>
-                <Form.Group as={Row}>
-                  <Form.Label column sm="3">
-                    Description:
-                  </Form.Label>
-                  <Col sm="9">
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
                       plaintext
                       readOnly
                       value={selectedReport?.examination}
@@ -265,12 +265,44 @@ const GDMaintenanceApprovalTable = ({ filter, data }) => {
                       </Card>
                     ))}
                   </Col>
+                    <Form.Group as={Row}>
+                  <Form.Label column sm="3">
+                    Overall Total Price:
+                  </Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      plaintext
+                      readOnly
+                      value={selectedReport?.exchangedMaintenanceTotalPrice}
+                    />
+                  </Col>
+                </Form.Group>
                 </Form.Group>
               </Form>
             </Card.Body>
           </Card>
         </Modal.Body>
         <Modal.Footer>
+        {selectedReport?.status === "Waiting-GD-To-Approve" && (
+            <>
+              <Button
+                variant="success"
+                className="btn btn-sm"
+                onClick={() => handleApprove(selectedReport)}
+              >
+                Approve
+              </Button>{" "}
+              <Button
+                variant="secondary"
+                className="btn btn-sm"
+                onClick={() => handleReject(selectedReport)}
+              >
+                Reject
+              </Button>
+            </>
+          )}
           <Button variant="secondary" onClick={handleModalClose}>
             Close
           </Button>
