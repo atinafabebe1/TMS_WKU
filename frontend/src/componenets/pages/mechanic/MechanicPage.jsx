@@ -3,7 +3,6 @@ import Navbar from '../../common/header/Navbar';
 import SparePartRequest from './CreateAccessoryRequest';
 import SparePartRequestListPage from './SparePartRequestList';
 import EditSparePartRequest from './EditAccessoryRequest';
-import MecMaintenanceReport from './maintenanceReport';
 import MechApproval from './MechanicApprovalPage';
 import MechMaintenanceOrder from './MechMaintenanceOrder';
 import MaintenanceReportForm from '../../common/maintenance/ReportandApproval';
@@ -28,10 +27,10 @@ const links = [
         name: 'Approve Maintenance',
         url: '/mechanic/maintenance/approve-maintenance'
       },
-      {
-        name: 'Maintenance Report',
-        url: '/mechanic/maintenance/send-maintenance-report'
-      }
+      // {
+      //   name: 'Maintenance Report',
+      //   url: '/mechanic/maintenance/send-maintenance-report'
+      // }
     ]
   },
   {
@@ -60,7 +59,6 @@ const MechanicPage = () => {
         <Route path="maintenance/receive-maintenance-order" element={<MechMaintenanceOrder />} />
         <Route path="maintenance/approval-report" element={<MaintenanceReportForm />} />
         <Route path="maintenance/approve-maintenance" element={<MechApproval />} />
-        <Route path="maintenance/send-maintenance-report" element={<MecMaintenanceReport />} />
         <Route path="request/create-accessory" element={<SparePartRequest />} />
         <Route path="request/edit-vehicle-request/:id" element={<EditSparePartRequest />} />
       </Routes>

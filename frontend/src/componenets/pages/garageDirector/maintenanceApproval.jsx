@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import MaintenanceApprovalTable from "../../common/maintenance/ApproveMaintenance";
+import GDMaintenanceApprovalTable from "../../common/maintenance/GDMaintenanceApproval";
 import {Tabs, Tab } from "react-bootstrap";
 
 const GDMaintenanceApproveTable = () => {
@@ -28,7 +28,7 @@ const GDMaintenanceApproveTable = () => {
         </Tab>
       </Tabs>
 
-      <MaintenanceApprovalTable filter={filter} />
+      <GDMaintenanceApprovalTable filter={filter} />
     </>
   );
 };

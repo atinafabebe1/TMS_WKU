@@ -5,7 +5,7 @@ import "../../common/css/formStyles.css";
 import { useAuth } from "../../../context/AuthContext";
 import Loading from "../Provider/LoadingProvider";
 
-const MaintenanceApprovalTable = ({ filter, data }) => {
+const GDMaintenanceApprovalTable = ({ filter, data }) => {
   const [reports, setReports] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -15,7 +15,7 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
 
   useEffect(() => {
     api
-      .get(`/maintenanceReports?expertExamined=${user.id}`)
+      .get(`/maintenanceReports`)
       .then((response) => {
         console.log(response.data.data);
         setReports(response.data.data);
@@ -39,7 +39,7 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
   const handleApprove = async (report) => {
     try {
       const response = await api.put(`/maintenanceReports/${report._id}`, {
-        status: "Waiting-GD-To-Approve",
+        status: "completed",
       });
 
       console.log("Maintenance report submitted successfully:", response.data);
@@ -54,15 +54,16 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredReports = reports
-    .filter((report) => {
-      if (filter === "all") {
-        return report.status.toLowerCase() !== "pending";
-      } else {
-        return report.status.toLowerCase() === filter;
-      }
-    })
-    .filter((report) => {
+  const filteredReports = reports.filter((report) => {
+    if (filter === "all") {
+      return (
+        report.status.toLowerCase() !== "pending" &&
+        report.status.toLowerCase() !== "waiting-mech-to-approve"
+      );
+    } else {
+      return report.status.toLowerCase() === filter;
+    }
+  }).filter((report) => {
       return report.plateNumber
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
@@ -99,7 +100,7 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
               <td>{report.createdAt}</td>
               <td>{report.status}</td>
               <td>
-                {report.status === "Waiting-Mech-To-Approve" && (
+                {report.status === "Waiting-GD-To-Approve" && (
                   <>
                     <Button
                       variant="success"
@@ -279,4 +280,4 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
   );
 };
 
-export default MaintenanceApprovalTable;
+export default GDMaintenanceApprovalTable;
