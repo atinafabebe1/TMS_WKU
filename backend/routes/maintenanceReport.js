@@ -15,7 +15,7 @@ const router = express.Router({ mergeParams: true });
 router.use(Auth);
 
 router.post("/",Authorize("ROLE_MECHANIC"), createMaintenanceReport);
-router.get("/", Authorize("ROLE_MECHANIC"),advancedResult(MaintenanceReport, ""), getMaintenanceReports);
+router.get("/", Authorize("ROLE_MECHANIC","ROLE_GARAGEDIRECTOR"),advancedResult(MaintenanceReport, ""), getMaintenanceReports);
 router.put("/:id", updateMaintenanceReport);
 router.delete("/:id", deleteMaintenanceReport);
 router.patch("/backup/:id", backupDeletedDocument(MaintenanceReport));

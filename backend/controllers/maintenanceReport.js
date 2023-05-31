@@ -129,15 +129,7 @@ const updateMaintenanceReport = asyncHandler(async (req, res, next) => {
       )
     );
   }
-  //Make sure user is vehicle owner
-  if (maintenanceReport.user.toString() !== req.user.id) {
-    return next(
-      new ErrorResponse(
-        `User ${req.params.id} is not authorized to update this maintenance Order`,
-        404
-      )
-    );
-  }
+
   maintenanceReport = await MaintenanceReport.findByIdAndUpdate(
     req.params.id,
     req.body,
