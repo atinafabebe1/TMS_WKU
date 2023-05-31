@@ -1,23 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
+import { Table, Button, Row, Col, Form, Modal, Card } from "react-bootstrap";
 import api from "../../../api/api";
 import "../../common/css/formStyles.css";
 import Loading from "../Provider/LoadingProvider";
 
-const MaintenanceApprovalTable = ({ filter,data }) => {
-
-
-  const [requests, setRequests] = useState([]);
+const MaintenanceApprovalTable = ({ filter, data }) => {
+  const [reports, setReport] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [isLoading,setIsLoading]=useState(true);
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     api
-      .get("/MaintenanceReport")
+      .get("/maintenanceReports/maintenance-reports")
       .then((response) => {
         console.log(response.data.data);
-        setRequests(response.data.data);
+        setReport(response.data.data);
         setIsLoading(false);
       })
       .catch((error) =>
@@ -25,42 +24,41 @@ const MaintenanceApprovalTable = ({ filter,data }) => {
       );
   }, []);
 
-  const handleMore = (request) => {
-    console.log(request);
-    setSelectedRequest(request);
+  const handleMore = (report) => {
+    console.log(report);
+    setSelectedReport(report);
     setShowModal(true);
   };
-const handleModalClose=()=>{
+
+  const handleModalClose = () => {
     setShowModal(false);
-}
+  };
+
   const handleApprove = async (event) => {
-event.preventDefault();
-  
-      try {
+    event.preventDefault();
+    try {
+      // Update status logic
+    } catch (error) {
+      console.error("Error updating/approve:", error);
+    }
+  };
 
-         //Update status place
-  
-      } catch (error) {
-        console.error("Error updating/approve:", error);
-
-      }
-    };
-  
-  
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredRequests = requests
-    .filter((request) => {
+  const filteredReports = reports
+    .filter((report) => {
       if (filter === "all") {
-        return true;
+        return report.status.toLowerCase() !== "pending";
       } else {
-        return request.status.toLowerCase() === filter;
+        return report.status.toLowerCase() === filter;
       }
     })
-    .filter((request) => {
-      return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
+    .filter((report) => {
+      return report.plateNumber
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
     });
 
   return (
@@ -77,46 +75,46 @@ event.preventDefault();
           </Col>
         </Row>
       </Form>
-      {isLoading && <Loading/> }
+      {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
         <thead>
-        <tr className="form-control-custom">
+          <tr className="form-control-custom">
             <th>Plate Number</th>
             <th>Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
-        <tbody >
-          {filteredRequests.map((request) => (
-            <tr key={request._id}>
-              <td>{request.plateNumber}</td>
-              <td>{request.createdAt}</td>
-              <td>{request.status}</td>
+        <tbody>
+          {filteredReports.map((report) => (
+            <tr key={report._id}>
+              <td>{report.plateNumber}</td>
+              <td>{report.createdAt}</td>
+              <td>{report.status}</td>
               <td>
-                {(request.status === "Waiting-Mech-To-Approve"|| request.status === "Waiting-GD-To-Approve") && (
+                {(report.status === "Waiting-Mech-To-Approve" ||
+                  report.status === "Waiting-GD-To-Approve") && (
                   <>
-                     <Button
-                  variant="success"
-                  className="btn btn-sm"
-                  onClick={() => handleApprove(request)}
-                >
-                  Approve
-                </Button>
-                {" "}
-                <Button
-                  variant="secondary"
-                  className="btn btn-sm"
-                  onClick={() => handleMore(request)}
-                >
-                  Reject
-                </Button>
+                    <Button
+                      variant="success"
+                      className="btn btn-sm"
+                      onClick={() => handleApprove(report)}
+                    >
+                      Approve
+                    </Button>{" "}
+                    <Button
+                      variant="secondary"
+                      className="btn btn-sm"
+                      onClick={() => handleMore(report)}
+                    >
+                      Reject
+                    </Button>
                   </>
                 )}{" "}
                 <Button
                   variant="info"
                   className="btn btn-sm"
-                  onClick={() => handleMore(request)}
+                  onClick={() => handleMore(report)}
                 >
                   More
                 </Button>
@@ -126,23 +124,180 @@ event.preventDefault();
         </tbody>
       </Table>
 
-      <Modal show={showModal} onHide={handleModalClose}>
+      <Modal show={showModal} onHide={handleModalClose} size="xl">
         <Modal.Header closeButton>
-          <Modal.Title>Maintenance Orders Details</Modal.Title>
+          <Modal.Title>Maintenance Report Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>
-            <strong>Plate Number:</strong> {selectedRequest?.plateNumber}
-          </p>
-          <p>
-            <strong>Date:</strong> {selectedRequest?.createdAt}
-          </p>
-          <p>
-            <strong>Status:</strong> {selectedRequest?.status}
-          </p>
-          <p>
-            <strong>Description:</strong> {selectedRequest?.crashType}
-          </p>
+          <Card>
+            <Card.Body>
+              <Form>
+                <Form.Group as={Row}>
+                  <Form.Label column sm="3">
+                    Plate Number:
+                  </Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      plaintext
+                      readOnly
+                      value={selectedReport?.plateNumber}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group as={Row}>
+                  <Form.Label column sm="3">
+                    Date:
+                  </Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      plaintext
+                      readOnly
+                      value={
+                        selectedReport
+                          ? new Date(selectedReport.createdAt).toLocaleString()
+                          : ""
+                      }
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group as={Row}>
+                  <Form.Label column sm="3">
+                    Status:
+                  </Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      plaintext
+                      readOnly
+                      value={selectedReport?.status}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group as={Row}>
+                  <Form.Label column sm="3">
+                    Report Status:
+                  </Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      plaintext
+                      readOnly
+                      value={selectedReport?.reportStatus}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group as={Row}>
+                  <Form.Label column sm="3">
+                    Description:
+                  </Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      plaintext
+                      readOnly
+                      value={selectedReport?.examination}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group as={Row}>
+                  <Form.Label column sm="3">
+                    Spare Parts:
+                  </Form.Label>
+                  <Col sm="9">
+                    {selectedReport?.spareparts?.map((sparepart) => (
+                      <Card key={sparepart.spareId} className="mb-3">
+                        <Card.Body>
+                          <Form.Group as={Row}>
+                            <Form.Label column sm="3">
+                              Spare ID:
+                            </Form.Label>
+                            <Col sm="9">
+                              <Form.Control
+                                plaintext
+                                readOnly
+                                value={sparepart.spareId}
+                              />
+                            </Col>
+                          </Form.Group>
+                          <Form.Group as={Row}>
+                            <Form.Label column sm="3">
+                              Spare Name:
+                            </Form.Label>
+                            <Col sm="9">
+                              <Form.Control
+                                plaintext
+                                readOnly
+                                value={sparepart.spareName}
+                              />
+                            </Col>
+                          </Form.Group>
+                          <Form.Group as={Row}>
+                            <Form.Label column sm="3">
+                              Item Price:
+                            </Form.Label>
+                            <Col sm="9">
+                              <Form.Control
+                                plaintext
+                                readOnly
+                                value={sparepart.itemPrice}
+                              />
+                            </Col>
+                          </Form.Group>
+                          <Form.Group as={Row}>
+                            <Form.Label column sm="3">
+                              Quantity:
+                            </Form.Label>
+                            <Col sm="9">
+                              <Form.Control
+                                plaintext
+                                readOnly
+                                value={sparepart.quantity}
+                              />
+                            </Col>
+                          </Form.Group>
+                          <Form.Group as={Row}>
+                            <Form.Label column sm="3">
+                              Total Price:
+                            </Form.Label>
+                            <Col sm="9">
+                              <Form.Control
+                                plaintext
+                                readOnly
+                                value={sparepart.totalPrice}
+                              />
+                            </Col>
+                          </Form.Group>
+                        </Card.Body>
+                      </Card>
+                    ))}
+                  </Col>
+                </Form.Group>
+                <Form.Group as={Row}>
+                  <Form.Label column sm="3">
+                    Exchanged Maintenance Total Price:
+                  </Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      plaintext
+                      readOnly
+                      value={selectedReport?.exchangedMaintenanceTotalPrice}
+                    />
+                  </Col>
+                </Form.Group>
+                <Form.Group as={Row}>
+                  <Form.Label column sm="3">
+                    Expert Examined:
+                  </Form.Label>
+                  <Col sm="9">
+                    <Form.Control
+                      plaintext
+                      readOnly
+                      value={selectedReport?.expertExamined}
+                    />
+                  </Col>
+                </Form.Group>
+              </Form>
+            </Card.Body>
+          </Card>
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -154,9 +309,6 @@ event.preventDefault();
           </Button>
         </Modal.Footer>
       </Modal>
-
-      
-
     </div>
   );
 };

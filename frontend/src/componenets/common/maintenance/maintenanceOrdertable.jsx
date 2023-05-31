@@ -46,13 +46,15 @@ const MaintenanceOrderTable = ({ filter }) => {
   useEffect(() => {
     fetchMechanics();
   }, []);
+  console.log(user.id)
   useEffect(() => {
     api
-      .get(`/MaintenanceOrder?receiver=${user.id}`)
+      .get(`/MaintenanceOrder?reciever=${user.id}`)
       .then((response) => {
         console.log(response.data.data);
         setRequests(response.data.data);
         setIsLoading(false);
+
       })
       .catch((error) =>
         console.error("Error fetching vehicle requests:", error)

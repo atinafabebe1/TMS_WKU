@@ -4,6 +4,7 @@ import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import axios from "axios";
 import api from "../../../api/api";
 import Loading from "../Provider/LoadingProvider";
+
 const MaintenanceOrderTable = () => {
   const [reports, setReports] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -12,11 +13,10 @@ const MaintenanceOrderTable = () => {
   const [selectedReport, setSelectedReport] = useState(null);
   const [maintenanceOrder, setMaintenanceOrder] = useState("");
   const [mechanics, setMechanics] = useState([]);
-  const [isLoading, setIsLoading]=useState(true);
-
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the  reports from your server API
+    // Fetch the reports from your server API
     api
       .get("/maintenanceReports/maintenance-reports")
       .then((response) => {
@@ -34,16 +34,19 @@ const MaintenanceOrderTable = () => {
     setSelectedReport(report);
     setShowModal(true);
   };
+
   const handleReportModal = (report) => {
     console.log(report);
     setSelectedReport(report);
     setShowModal(false);
     setReportModal(true);
   };
+
   const handleReportModalClose = () => {
     setReportModal(false);
     setSelectedReport(null);
   };
+
   const handleModalClose = () => {
     setShowModal(false);
     setSelectedReport(null);
@@ -63,7 +66,7 @@ const MaintenanceOrderTable = () => {
   });
 
   const handleReport = (id) => {
-    // Send a POST report to the server API to transfer maintenance order
+    // Send a POST request to the server API to transfer maintenance order
     axios
       .post(`/MaintenanceReport`, { maintenanceOrder })
       .then((response) => {
@@ -89,7 +92,9 @@ const MaintenanceOrderTable = () => {
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h2 className="form-control-custom" align="center">Maintenance Reports</h2>
+          <h2 className="form-control-custom" align="center">
+            Maintenance Reports
+          </h2>
         </Col>
       </Row>
       <Form>
@@ -104,9 +109,8 @@ const MaintenanceOrderTable = () => {
           </Col>
         </Row>
       </Form>
-      {isLoading && <Loading/> }
+      {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
-      
         <thead>
           <tr className="form-control-custom">
             <th>Plate Number</th>
@@ -124,19 +128,15 @@ const MaintenanceOrderTable = () => {
               <td>{report.status}</td>
               <td>{report.reportStatus}</td>
               <td>
-                {
-                  //report.status === "approved" && (
-                  <>
-                    <Button
-                      variant="success"
-                      className="btn btn-sm"
-                      onClick={() => handleReportModal(report._id)}
-                    >
-                      Report
-                    </Button>{" "}
-                  </>
-                  // )
-                }{" "}
+                <>
+                  <Button
+                    variant="success"
+                    className="btn btn-sm"
+                    onClick={() => handleReportModal(report._id)}
+                  >
+                    Report
+                  </Button>{" "}
+                </>{" "}
                 <Button
                   variant="info"
                   className="btn btn-sm"
@@ -159,7 +159,10 @@ const MaintenanceOrderTable = () => {
             <strong>Plate Number:</strong> {selectedReport?.plateNumber}
           </p>
           <p>
-            <strong>Date:</strong> {selectedReport?.createdAt}
+            <strong>Date:</strong>{" "}
+            {selectedReport
+              ? new Date(selectedReport.createdAt).toLocaleString()
+              : ""}
           </p>
           <p>
             <strong>Status:</strong> {selectedReport?.status}
@@ -168,7 +171,36 @@ const MaintenanceOrderTable = () => {
             <strong>Report Status:</strong> {selectedReport?.reportStatus}
           </p>
           <p>
-            <strong>Description:</strong> {selectedReport?.description}
+            <strong>Description:</strong> {selectedReport?.examination}
+          </p>
+          <p>
+            <strong>Spare Parts:</strong>{" "}
+            {selectedReport?.spareparts?.map((sparepart) => (
+              <div key={sparepart.spareId}>
+                <p>
+                  <strong>Spare ID:</strong> {sparepart.spareId}
+                </p>
+                <p>
+                  <strong>Spare Name:</strong> {sparepart.spareName}
+                </p>
+                <p>
+                  <strong>Item Price:</strong> {sparepart.itemPrice}
+                </p>
+                <p>
+                  <strong>Quantity:</strong> {sparepart.quantity}
+                </p>
+                <p>
+                  <strong>Total Price:</strong> {sparepart.totalPrice}
+                </p>
+              </div>
+            ))}
+          </p>
+          <p>
+            <strong>Exchanged Maintenance Total Price:</strong>{" "}
+            {selectedReport?.exchangedMaintenanceTotalPrice}
+          </p>
+          <p>
+            <strong>Expert Examined:</strong> {selectedReport?.expertExamined}
           </p>
         </Modal.Body>
         <Modal.Footer>
@@ -192,7 +224,7 @@ const MaintenanceOrderTable = () => {
       </Modal>
       <Modal show={reportModal} onHide={handleReportModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title>MaintenanceReport Details</Modal.Title>
+          <Modal.Title>Maintenance Report Details</Modal.Title>
         </Modal.Header>
         <Modal.Body></Modal.Body>
         <Modal.Footer>
