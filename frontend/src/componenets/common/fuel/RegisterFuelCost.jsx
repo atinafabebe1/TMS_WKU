@@ -64,19 +64,29 @@ const FuelCost = ({ title, data, onSubmit }) => {
 
   const handleSubmit = async () => {
     try {
-      if (data) {
-        await api.put(`/Resources/${data._id}`, fuelCostData);
-        setSuccess("Fuel Cost Updated Successfully.");
-        setTimeout(() => {
-          navigate(""); // Navigate to the desired page after 6 seconds
-        }, 6000);
+      if (validated) {
+        if (data) {
+          await api.put(`/Resources/${data._id}`, fuelCostData);
+          setSuccess("Fuel Cost Updated Successfully.");
+          setError("");
+          setTimeout(() => {
+            navigate("/hd/fuel"); // Navigate to the desired page after 6 seconds
+          }, 6000);
+        } else {
+          await api.post("/Resources/", fuelCostData);
+          setSuccess("Fuel Registered Successfully.");
+          setTimeout(() => {
+            navigate("/hd/fuel"); // Navigate to the desired page after 6 seconds
+          }, 6000);
+          setError("");
+        }
+        onSubmit();
       } else {
-        await api.post("/Resources/", fuelCostData);
-        setSuccess("Fuel Registered Successfully.");
+        setError("Please Provide Valid Data And Try Again");
       }
-      onSubmit();
-      setError("");
-    } catch (error) {}
+    } catch (error) {
+      setError("Please Provide Valid Data And Try Again");
+    }
   };
 
   return (
@@ -124,27 +134,10 @@ const FuelCost = ({ title, data, onSubmit }) => {
             </Form.Group>
           </Col>
 
-          <Form.Group as={Col} controlId="motornumber">
-            <span> </span>
-            <Form.Label className="form-control-custom">Amount</Form.Label>
-            <Form.Control
-              min={0}
-              type="number"
-              required
-              minLength={3}
-              maxLength={25}
-              name="amount"
-              value={fuelCostData.amount}
-              onChange={handleInputChange}
-            />
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid Motor Number.
-            </Form.Control.Feedback>
-          </Form.Group>
           <Col>
             <Form.Group controlId="chassisNo">
               <Form.Label className="form-control-custom">
-                Unit Price
+                Unit Price Per Litre
               </Form.Label>
               <Form.Control
                 type="number"
@@ -156,7 +149,7 @@ const FuelCost = ({ title, data, onSubmit }) => {
                 onChange={handleInputChange}
               />
               <Form.Control.Feedback type="invalid">
-                Please provide the chassis number.
+                Please provide the unit price.
               </Form.Control.Feedback>
             </Form.Group>
           </Col>
