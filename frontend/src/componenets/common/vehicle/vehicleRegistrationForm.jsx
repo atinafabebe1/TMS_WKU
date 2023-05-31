@@ -37,7 +37,6 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
     if (data) {
       setVehicleData(data);
     } else {
-      const currentDate = new Date().toISOString().split("T")[0]; // Get current date in yyyy-mm-dd format
       setVehicleData({
         modelNo: "",
         chassisNo: "",
@@ -48,7 +47,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
         typeOfFuel: "",
         purchasePrice: "",
         maxPerson: "",
-        purchaseDate: currentDate, // Set the purchaseDate to the current date
+        purchaseDate: "",
         maxLoad: "",
         maxLitres: "",
         proprietaryIdNumber: "",
@@ -134,7 +133,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
     } else {
       try {
         await api.post("/VehicleRecord", vehicleData);
-        setSuccess("Please Provide Valid Data and Try Again");
+        setSuccess("Please ProvidevProvideProvide Valid Data and Try Again");
         setError("");
         setTimeout(() => {
           navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
