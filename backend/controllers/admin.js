@@ -75,6 +75,21 @@ const updateUser = asyncHanlder(async (req, res, next) => {
   }
 });
 
+const resetPassword = asyncHanlder(async (req, res, next) => {
+  let user = await User.findById(req.user.id).select("+password");
+
+  if (!validator.isStrongPassword(req.body.newPassword)) {
+    return res.status(400).json({ error: "Weak password" });
+  }
+
+  const hashedPassword = await bcrpyt.hash(req.body.newPassword, 11);
+  user = await User.findByIdAndUpdate(req.user.id, {
+    password: hashedPassword,
+  });
+
+  sendTokenResponse(user, 200, res);
+});
+
 const removeUser = asyncHanlder(async (req, res, next) => {
   const { password } = req.body;
   if (!password) {
@@ -106,4 +121,5 @@ module.exports = {
   getUsers,
   removeUser,
   getUser,
+  resetPassword,
 };

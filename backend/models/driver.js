@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const DriverInfoSchema = new Schema({
   yearsOfExperience: { type: Number },
   licenses: {
-    id: { type: Number },
+    id: { type: String },
     stateIssued: { type: String },
   },
   vehiclePlateNumber: {
