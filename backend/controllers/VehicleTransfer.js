@@ -64,16 +64,16 @@ const deletevehicleTransfer = asyncHandler(async (req, res, next) => {
 // @desc      Update a Vehicle Request
 // @route     Put /Request/Vehicle/Transfer/:id
 // @access    Private/Driver
-const updatevehicleTransfer = asyncHandler(async (req, res, next) => {
-  let vehicleTransfers = await VehicleTransfer.findById(req.params.id);
+const updateVehicleTransfer = asyncHandler(async (req, res, next) => {
+  let vehicleTransfer = await VehicleTransfer.findById(req.params.id);
 
-  if (!vehicleTransfers) {
+  if (!vehicleTransfer) {
     return next(
       new ErrorResponse(`Request not found with id of ${req.params.id}`, 404)
     );
   }
 
-  vehicleTransfers = await VehicleTransfer.findByIdAndUpdate(
+  vehicleTransfer = await VehicleTransfer.findByIdAndUpdate(
     req.params.id,
     req.body,
     {
@@ -81,7 +81,8 @@ const updatevehicleTransfer = asyncHandler(async (req, res, next) => {
       runValidators: true,
     }
   );
-  res.status(200).json(vehicleTransfers);
+
+  res.status(200).json(vehicleTransfer);
 });
 
 // @desc      Update a Vehicle Transfer Status
@@ -145,6 +146,6 @@ const updateVehicleTransferststatus = asyncHandler(async (req, res, next) => {
 module.exports = {
   getVehicleTransfers,
   createVehicleTransfer,
-  updatevehicleTransfer,
+  updateVehicleTransfer,
   deletevehicleTransfer,
 };

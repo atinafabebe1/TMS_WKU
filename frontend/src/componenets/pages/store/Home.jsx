@@ -43,13 +43,12 @@ const StoreHome = () => {
             alignItems: "center",
           }}
         >
-          <h4 style={{ textAlign: "center", color: "#4682B4" }}>
-            Get And Track Request To Provide Reliable and
-          </h4>
           <h5 style={{ textAlign: "center", color: "#4682B4" }}>
-            Ontime Response To User
+            Get And Track Request To Provide Reliable and <br></br>Ontime
+            Response To User
           </h5>
           <br />
+          <hr></hr>
           <div className="d-flex justify-content-center align-items-center">
             <div className="p-4">
               <Link to="/store/approve/sparePart-purchasing-request">
