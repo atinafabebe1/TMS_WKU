@@ -39,7 +39,8 @@ const maintenanceReportSchema = new mongoose.Schema(
       required: true,
     },
     expertExamined: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
     status: {
       type: String,

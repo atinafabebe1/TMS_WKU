@@ -2,21 +2,25 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Row, Col, Form, Modal, Card } from "react-bootstrap";
 import api from "../../../api/api";
 import "../../common/css/formStyles.css";
+import { useAuth } from "../../../context/AuthContext";
 import Loading from "../Provider/LoadingProvider";
 
 const MaintenanceApprovalTable = ({ filter, data }) => {
-  const [reports, setReport] = useState([]);
+  const [reports, setReports] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
 
+  console.log(user.id);
   useEffect(() => {
+
     api
-      .get("/maintenanceReports/maintenance-reports")
+      .get(`/maintenanceReports?expertExamined=${user.id}`)
       .then((response) => {
         console.log(response.data.data);
-        setReport(response.data.data);
+        setReports(response.data.data);
         setIsLoading(false);
       })
       .catch((error) =>

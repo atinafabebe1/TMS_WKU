@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import { Alert, Card, Container } from 'react-bootstrap';
-
+import { useAuth } from "../../../context/AuthContext";
 import api from '../../../api/api';
 
 const MaintenanceReportForm = () => {
   const [mechanics, setMechanics] = useState([]);
   const [selectedMechanic, setSelectedMechanic] = useState("");
   const [formErrors, setFormErrors] = useState({});
+  const { user } = useAuth();
 
   function handleMechanicChange(event) {
     setSelectedMechanic(event.target.value);
@@ -155,7 +156,7 @@ const MaintenanceReportForm = () => {
     console.log(reportData);
 
     try {
-      const response = await api.post('/maintenanceReports/maintenance-reports', {
+      const response = await api.post('/maintenanceReports', {
         ...reportData,
         expertExamined: selectedMechanic,
       });
@@ -340,7 +341,7 @@ const MaintenanceReportForm = () => {
                   >
                     <option value="">Select a Mechanic</option>
                     {mechanics
-                      .filter((mechanic) => mechanic.role === 'ROLE_MECHANIC')
+                      .filter((mechanic) => (mechanic.role === 'ROLE_MECHANIC'&& mechanic.id!==user.id))
                       .map((mechanic) => (
                         <option key={mechanic.id} value={mechanic.id}>
                           {mechanic.firstName}
