@@ -6,6 +6,7 @@ import GDMaintenanceApproveTable from './maintenanceApproval';
 import GDmaintenanceRequestPage from './maintenanceOrder';
 import GDHome from './Home';
 import UserProfile from '../../common/profile/profile';
+import GDMaintenanceReportPage from '../../common/maintenance/MaintenanceReports';
 const links = [
   {
     name: 'Home',
@@ -60,6 +61,7 @@ const GarageDirectorPag = () => {
         <Route path="profile" element={<UserProfile />} />
         <Route path="request/get-accessory-request" element={<AccessoryRequest />} />
         <Route path="maintenance/approve-maintenance" element={<GDMaintenanceApproveTable />} />
+        <Route path="report/receive-maintenance-report" element={<GDMaintenanceReportPage/>}/>
         <Route path="maintenance/maintenance-orders" element={<GDmaintenanceRequestPage link={`/Request/Maintenance`} />} />
       </Routes>
     </div>
