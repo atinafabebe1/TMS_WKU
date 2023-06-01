@@ -15,13 +15,6 @@ const WitnessSchema = new Schema({
   phoneNumber: {
     type: String,
     required: true,
-    validate: {
-      validator: function (v) {
-        const pattern = /^\d{10}$/;
-        return pattern.test(v);
-      },
-      message: (props) => `${props.value} is not a valid phone number`,
-    },
   },
 });
 

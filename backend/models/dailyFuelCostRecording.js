@@ -28,15 +28,6 @@ const DailyFuelCostRecordSchema = new Schema(
     },
     typeOfFuel: {
       type: String,
-      enum: [
-        "Diesel",
-        "Benzene",
-        "Motor Oil",
-        "Fren Oil",
-        "Other Oil",
-        "Grease",
-      ],
-      required: true,
     },
     approvedAmount: {
       type: Number,

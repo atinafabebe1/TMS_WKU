@@ -82,7 +82,7 @@ const ApproveFuelRequest = () => {
     if (
       selectedRequest.approvedAmount &&
       selectedRequest.approvedAmount > 0 &&
-      selectedRequest.approvedAmount < 100
+      selectedRequest.approvedAmount < selectedRequest.requestAmount + 1
     ) {
       const updatedRequest = {
         ...selectedRequest,
@@ -316,7 +316,7 @@ const ApproveFuelRequest = () => {
               <Form.Control
                 type="number"
                 min={1}
-                max={100}
+                max={selectedRequest?.requestAmount}
                 value={approvedAmount}
                 onChange={(event) => {
                   const value = event.target.value;

@@ -47,6 +47,9 @@ const AssignVehicleForm = ({ title, data, onSubmit }) => {
         `/VehicleRecord/${data._id}?isDeleted=false`,
         result
       );
+      setTimeout(() => {
+        navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
+      }, 6000);
       setSuccess("Successfuly Assigned");
       setError("");
       onSubmit();
