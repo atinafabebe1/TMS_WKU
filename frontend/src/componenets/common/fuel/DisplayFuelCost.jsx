@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Modal, Row, Col } from "react-bootstrap";
+import ErrorProvider from "../../common/Provider/ErrorProvider";
+import SuccessProvider from "../../common/Provider/SuccessProvider";
 import Loading from "../Provider/LoadingProvider";
 import api from "../../../api/api";
 
@@ -17,8 +19,10 @@ const FuelCostListPage = () => {
     type: "",
     unitPrice: "",
   });
+  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [validated, setValidated] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -84,30 +88,6 @@ const FuelCostListPage = () => {
     handleSubmit();
   };
 
-  const handleSubmit = async () => {
-    try {
-      if (fuelCostData.type && fuelCostData.unitPrice) {
-        const response = await api.post("Resources", fuelCostData);
-        if (response.status === 200) {
-          setFuelCostData({
-            type: "",
-            unitPrice: "",
-          });
-          setError("");
-          setShowAddForm(false);
-          fetchData();
-        } else {
-          setError(response.data.message || "Failed to add fuel cost data");
-        }
-      } else {
-        setError("Please provide valid data and try again");
-      }
-    } catch (error) {
-      console.error("Error submitting data:", error);
-      setError("An error occurred. Please try again.");
-    }
-  };
-
   const handleEdit = (data) => {
     setEditData(data);
     setShowAddForm(false);
@@ -115,9 +95,46 @@ const FuelCostListPage = () => {
     setError("");
   };
 
+  const handleSubmit = async () => {
+    try {
+      if (
+        fuelCostData.type &&
+        fuelCostData.unitPrice > 0 &&
+        fuelCostData.unitPrice < 10000
+      ) {
+        const response = await api.post("Resources", fuelCostData);
+        if (response.status === 200) {
+          setFuelCostData({
+            type: "",
+            unitPrice: "",
+          });
+          setError("");
+
+          setTimeout(() => {
+            setShowAddForm(false);
+          }, 6000);
+          setSuccess("Fuel Cost Successfuly Added");
+          fetchData();
+        } else {
+          setError(response.data.message || "Failed to add fuel cost data");
+        }
+      } else {
+        setError("Please provide valid data and try again");
+        setSuccess("");
+      }
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      setError("Fuel Cost Already Registered");
+    }
+  };
+
   const handleSaveEdit = async () => {
     try {
-      if (editData.type && editData.unitPrice) {
+      if (
+        editData.type &&
+        editData.unitPrice > 0 &&
+        editData.unitPrice < 10000
+      ) {
         const response = await api.put(`Resources/${editData._id}`, editData);
         if (response.status === 200) {
           setEditData({
@@ -125,7 +142,11 @@ const FuelCostListPage = () => {
             type: "",
             unitPrice: "",
           });
-          setShowEditForm(false);
+          setTimeout(() => {
+            setShowEditForm(false);
+          }, 6000);
+          setSuccess("Fuel Cost Successfuly Updated");
+
           fetchData();
         } else {
           setError(response.data.message || "Failed to update fuel cost data");
@@ -190,7 +211,12 @@ const FuelCostListPage = () => {
         </Col>
         <Col md={4}>
           {showAddForm && (
-            <Form>
+            <Form
+              style={{ padding: "10px" }}
+              noValidate
+              validated={validated}
+              onSubmit={(e) => e.preventDefault()}
+            >
               <hr></hr>
               <h5 className="form-control-custom">Add New Fuel Cost</h5>
               <hr></hr>
@@ -253,7 +279,12 @@ const FuelCostListPage = () => {
           )}
 
           {showEditForm && (
-            <Form>
+            <Form
+              style={{ padding: "10px" }}
+              noValidate
+              validated={validated}
+              onSubmit={(e) => e.preventDefault()}
+            >
               <hr></hr>
               <h5 className="form-control-custom">Edit Fuel Cost</h5>
               <hr></hr>
@@ -270,7 +301,8 @@ const FuelCostListPage = () => {
                 />
               </Form.Group>
               <br></br>
-              {error && <div className="text-danger">{error}</div>}
+              {error && <ErrorProvider error={error} />}
+              {success && <SuccessProvider success={success} />}
               <Button variant="secondary" size="sm" onClick={handleCancelEdit}>
                 Cancel
               </Button>{" "}
