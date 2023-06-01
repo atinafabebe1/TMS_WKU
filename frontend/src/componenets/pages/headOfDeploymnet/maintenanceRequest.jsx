@@ -10,12 +10,11 @@ const HODmaintenanceRequestPage = () => {
   };
 
   return (
-    <>
-      <div className="text-center">
-        <h2 className="form-control-custom" >Maintenance Requests</h2>
-      </div>
+    <div className="p-4">
+      <h4 className="form-control-custom">Maintenance Requests</h4>
+      <hr></hr>
       <Tabs
-      className="form-control-custom"
+        className="form-control-custom"
         activeKey={filter}
         onSelect={handleFilter}
         id="maintenance-request-tabs"
@@ -27,7 +26,7 @@ const HODmaintenanceRequestPage = () => {
         <Tab eventKey="canceled" title="Cancelled"></Tab>
       </Tabs>
       <MaintenanceRequestTables filter={filter} />
-    </>
+    </div>
   );
 };
 
