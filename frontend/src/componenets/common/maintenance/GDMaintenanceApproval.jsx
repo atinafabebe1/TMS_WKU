@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Row, Col, Form, Modal, Card,Alert } from "react-bootstrap";
+import {
+  Table,
+  Button,
+  Row,
+  Col,
+  Form,
+  Modal,
+  Card,
+  Alert,
+} from "react-bootstrap";
 import api from "../../../api/api";
 import "../../common/css/formStyles.css";
 import { useAuth } from "../../../context/AuthContext";
@@ -12,7 +21,7 @@ const GDMaintenanceApprovalTable = ({ filter, data }) => {
   const [selectedReport, setSelectedReport] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
-  const [action,setAction]=useState("");
+  const [action, setAction] = useState("");
 
   useEffect(() => {
     api
@@ -37,51 +46,61 @@ const GDMaintenanceApprovalTable = ({ filter, data }) => {
     setShowModal(false);
   };
 
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
-const [showConfirmation, setShowConfirmation] = useState(false);
+  const handleApprove = (selectedReportId) => {
+    setShowConfirmation(true);
+    setAction("approve");
+  };
 
-const handleApprove = (selectedReportId) => {
-  setShowConfirmation(true);
-  setAction('approve');
-};
+  const handleReject = (selectedReportId) => {
+    setAction("reject");
+    setShowConfirmation(true);
+  };
 
-const handleReject = (selectedReportId) => {
-  setAction('reject');
-  setShowConfirmation(true);
-};
+  const handleConfirmationClose = () => {
+    setShowConfirmation(false);
+  };
 
-const handleConfirmationClose = () => {
-  setShowConfirmation(false);
-};
+  const handleConfirmationConfirm = async (action, selectedReportId) => {
+    if (action === "approve") {
+      try {
+        const response = await api.put(
+          `/maintenanceReports/${selectedReportId._id}`,
+          {
+            status: "completed",
+          }
+        );
 
-const handleConfirmationConfirm = async(action, selectedReportId) => {
-  if (action === 'approve') {
-    try {
-      const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
-        status: "completed",
-      });
+        console.log(
+          "Maintenance report submitted successfully:",
+          response.data
+        );
+      } catch (error) {
+        console.error("Failed to submit maintenance report:", error);
+      }
 
-      console.log("Maintenance report submitted successfully:", response.data);
-    } catch (error) {
-      console.error("Failed to submit maintenance report:", error);
+      console.log("Approved report:", selectedReportId);
+    } else if (action === "reject") {
+      try {
+        const response = await api.put(
+          `/maintenanceReports/${selectedReportId._id}`,
+          {
+            status: "canceled",
+          }
+        );
+
+        console.log(
+          "Maintenance report submitted successfully:",
+          response.data
+        );
+      } catch (error) {
+        console.error("Failed to submit maintenance report:", error);
+      }
+      console.log("Rejected report:", selectedReportId);
     }
-   
-    console.log('Approved report:', selectedReportId);
-  } else if (action === 'reject') {
-    try {
-      const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
-        status: "canceled",
-      });
-
-      console.log("Maintenance report submitted successfully:", response.data);
-  
-    } catch (error) {
-      console.error("Failed to submit maintenance report:", error);
-    }
-    console.log('Rejected report:', selectedReportId);
-  }
-  setShowConfirmation(false);
-};
+    setShowConfirmation(false);
+  };
   // const handleApprove = async (selectedReportId) => {
   //   try {
   //     const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
@@ -113,16 +132,18 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredReports = reports.filter((report) => {
-    if (filter === "all") {
-      return (
-        report.status.toLowerCase() !== "pending" &&
-        report.status.toLowerCase() !== "waiting-mech-to-approve"
-      );
-    } else {
-      return report.status.toLowerCase() === filter;
-    }
-  }).filter((report) => {
+  const filteredReports = reports
+    .filter((report) => {
+      if (filter === "all") {
+        return (
+          report.status.toLowerCase() !== "pending" &&
+          report.status.toLowerCase() !== "waiting-mech-to-approve"
+        );
+      } else {
+        return report.status.toLowerCase() === filter;
+      }
+    })
+    .filter((report) => {
       return report.plateNumber
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
@@ -159,7 +180,7 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
               <td>{new Date(report.createdAt).toLocaleString()}</td>
               <td>{report.status}</td>
               <td>
-              {report.status === "Waiting-GD-To-Approve" && (
+                {report.status === "Waiting-GD-To-Approve" && (
                   <>
                     <Button
                       variant="success"
@@ -192,14 +213,16 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
 
       <Modal show={showModal} onHide={handleModalClose} size="xl">
         <Modal.Header closeButton>
-          <Modal.Title>Maintenance Report Details</Modal.Title>
+          <Modal.Title className="form-control-custom">
+            Maintenance Report Details
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Card>
             <Card.Body>
               <Form>
                 <Form.Group as={Row}>
-                  <Form.Label column sm="3">
+                  <Form.Label column sm="3" className="form-control-custom">
                     Plate Number:
                   </Form.Label>
                   <Col sm="9">
@@ -211,7 +234,7 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
                   </Col>
                 </Form.Group>
                 <Form.Group as={Row}>
-                  <Form.Label column sm="3">
+                  <Form.Label column sm="3" className="form-control-custom">
                     Date:
                   </Form.Label>
                   <Col sm="9">
@@ -227,7 +250,7 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
                   </Col>
                 </Form.Group>
                 <Form.Group as={Row}>
-                  <Form.Label column sm="3">
+                  <Form.Label column sm="3" className="form-control-custom">
                     Status:
                   </Form.Label>
                   <Col sm="9">
@@ -240,7 +263,7 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
                 </Form.Group>
 
                 <Form.Group as={Row}>
-                  <Form.Label column sm="3">
+                  <Form.Label column sm="3" className="form-control-custom">
                     Examination:
                   </Form.Label>
                   <Col sm="9">
@@ -252,7 +275,7 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
                   </Col>
                 </Form.Group>
                 <Form.Group as={Row}>
-                  <Form.Label column sm="3">
+                  <Form.Label column sm="3" className="form-control-custom">
                     Spare Parts:
                   </Form.Label>
                   <Col sm="9">
@@ -260,7 +283,11 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
                       <Card key={sparepart.spareId} className="mb-3">
                         <Card.Body>
                           <Form.Group as={Row}>
-                            <Form.Label column sm="3">
+                            <Form.Label
+                              column
+                              sm="3"
+                              className="form-control-custom"
+                            >
                               Spare ID:
                             </Form.Label>
                             <Col sm="9">
@@ -272,7 +299,11 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
                             </Col>
                           </Form.Group>
                           <Form.Group as={Row}>
-                            <Form.Label column sm="3">
+                            <Form.Label
+                              column
+                              sm="3"
+                              className="form-control-custom"
+                            >
                               Spare Name:
                             </Form.Label>
                             <Col sm="9">
@@ -284,7 +315,11 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
                             </Col>
                           </Form.Group>
                           <Form.Group as={Row}>
-                            <Form.Label column sm="3">
+                            <Form.Label
+                              column
+                              sm="3"
+                              className="form-control-custom"
+                            >
                               Item Price:
                             </Form.Label>
                             <Col sm="9">
@@ -311,27 +346,27 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
                       </Card>
                     ))}
                   </Col>
-                    <Form.Group as={Row}>
-                  <Form.Label column sm="3">
-                    Overall Total Price:
-                  </Form.Label>
-                  <Col sm="9">
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      plaintext
-                      readOnly
-                      value={selectedReport?.exchangedMaintenanceTotalPrice}
-                    />
-                  </Col>
-                </Form.Group>
+                  <Form.Group as={Row}>
+                    <Form.Label column sm="3">
+                      Overall Total Price:
+                    </Form.Label>
+                    <Col sm="9">
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        plaintext
+                        readOnly
+                        value={selectedReport?.exchangedMaintenanceTotalPrice}
+                      />
+                    </Col>
+                  </Form.Group>
                 </Form.Group>
               </Form>
             </Card.Body>
           </Card>
         </Modal.Body>
         <Modal.Footer>
-        {selectedReport?.status === "Waiting-GD-To-Approve" && (
+          {selectedReport?.status === "Waiting-GD-To-Approve" && (
             <>
               <Button
                 variant="success"
@@ -349,33 +384,46 @@ const handleConfirmationConfirm = async(action, selectedReportId) => {
               </Button>
             </>
           )}
-          <Button variant="secondary" className="btn btn-sm" onClick={handleModalClose}>
+          <Button
+            variant="secondary"
+            className="btn btn-sm"
+            onClick={handleModalClose}
+          >
             Close
           </Button>
           {showConfirmation && (
-    <Modal show={showConfirmation} onHide={handleConfirmationClose} centered>
-      <Modal.Body>
-        <Alert variant="warning">
-          Are you sure you want to {selectedReport?.status === 'Waiting-GD-To-Approve'
-            ? action
-            : 'cancel'} the report?
-        </Alert>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button
-          variant="secondary"
-          onClick={() => handleConfirmationConfirm(action, selectedReport)}
-        >
-          Confirm
-        </Button>
-        <Button
-          variant="secondary"
-          onClick={() => handleConfirmationClose()}
-        >
-          Cancel
-        </Button>
-      </Modal.Footer>
-    </Modal>)}
+            <Modal
+              show={showConfirmation}
+              onHide={handleConfirmationClose}
+              centered
+            >
+              <Modal.Body>
+                <Alert variant="warning">
+                  Are you sure you want to{" "}
+                  {selectedReport?.status === "Waiting-GD-To-Approve"
+                    ? action
+                    : "cancel"}{" "}
+                  the report?
+                </Alert>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    handleConfirmationConfirm(action, selectedReport)
+                  }
+                >
+                  Confirm
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => handleConfirmationClose()}
+                >
+                  Cancel
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          )}
         </Modal.Footer>
       </Modal>
     </div>

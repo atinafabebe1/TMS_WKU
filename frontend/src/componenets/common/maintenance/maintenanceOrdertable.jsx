@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Row, Col, Form, Modal } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+
 import api from "../../../api/api";
 import { useAuth } from "../../../context/AuthContext";
 import Loading from "../Provider/LoadingProvider";
 const MaintenanceOrderTable = ({ filter }) => {
   const [spareparts, setSpareParts] = useState([
     {
-      identificationNumber: '',
-      itemName: '',
+      identificationNumber: "",
+      itemName: "",
       itemPrice: 0,
       itemQuantity: 0,
       totalPrice: 0,
     },
   ]);
-  const [isLoading, setIsLoading]=useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [plateNumber, setPlateNumber] = useState("");
   const [selectedMechanic, setSelectedMechanic] = useState("");
   const [mechanics, setMechanics] = useState([]);
@@ -24,15 +25,12 @@ const MaintenanceOrderTable = ({ filter }) => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
-
-  
+  const navigate = useNavigate();
 
   function handleMechanicChange(event) {
     setSelectedMechanic(event.target.value);
     console.log(selectedMechanic);
   }
-
-
 
   const fetchMechanics = async () => {
     try {
@@ -46,7 +44,7 @@ const MaintenanceOrderTable = ({ filter }) => {
   useEffect(() => {
     fetchMechanics();
   }, []);
-  console.log(user.id)
+  console.log(user.id);
   useEffect(() => {
     api
       .get(`/MaintenanceOrder?reciever=${user.id}`)
@@ -54,7 +52,6 @@ const MaintenanceOrderTable = ({ filter }) => {
         console.log(response.data.data);
         setRequests(response.data.data);
         setIsLoading(false);
-
       })
       .catch((error) =>
         console.error("Error fetching vehicle requests:", error)
@@ -77,17 +74,18 @@ const MaintenanceOrderTable = ({ filter }) => {
   };
 
   const filteredRequests = requests
-  .filter((request) => {
-    if (filter === "all") {
-      return request.status.toLowerCase() !== "pending";
-    } else {
-      return request.status.toLowerCase() === filter;
-    }
-  })
-  .filter((request) => {
-    return request.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
-  });
-
+    .filter((request) => {
+      if (filter === "all") {
+        return request.status.toLowerCase() !== "pending";
+      } else {
+        return request.status.toLowerCase() === filter;
+      }
+    })
+    .filter((request) => {
+      return request.plateNumber
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+    });
 
   return (
     <div className="p-4">
@@ -103,11 +101,10 @@ const MaintenanceOrderTable = ({ filter }) => {
           </Col>
         </Row>
       </Form>
-      {isLoading && <Loading/> }
+      {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
-   
-        <thead>
-          <tr className="form-control-custom">
+        <thead className="form-control-custom">
+          <tr>
             <th>Plate Number</th>
             <th>Date</th>
             <th>Status</th>
@@ -123,18 +120,24 @@ const MaintenanceOrderTable = ({ filter }) => {
               <td>
                 {request.status === "UnderMaintenance" && (
                   <>
-                            <Link to="/mechanic/maintenance/approval-report">
-            <Button className="btn btn-sm"
-             variant="primary">Send For Approvements </Button>
-          </Link>
-                {" "}
-                <Button
-                  variant="secondary"
-                  className="btn btn-sm"
-                  onClick={() => handleMore(request)}
-                >
-                  Difficult
-                </Button>
+                    <Button
+                      className="btn btn-sm"
+                      variant="primary"
+                      onClick={(e) => {
+                        navigate(
+                          `/mechanic/maintenance/approval-report/${request.plateNumber}`
+                        );
+                      }}
+                    >
+                      Send For Approvements
+                    </Button>{" "}
+                    <Button
+                      variant="secondary"
+                      className="btn btn-sm"
+                      onClick={() => handleMore(request)}
+                    >
+                      Difficult
+                    </Button>
                   </>
                 )}{" "}
                 <Button
@@ -152,22 +155,27 @@ const MaintenanceOrderTable = ({ filter }) => {
 
       <Modal show={showModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Maintenance Orders Details</Modal.Title>
+          <Modal.Title className="form-control-custom">
+            Maintenance Orders Details
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-            <strong>Plate Number:</strong> {selectedRequest?.plateNumber}
+            <strong className="form-control-custom">Plate Number:</strong>{" "}
+            {selectedRequest?.plateNumber}
           </p>
           <p>
-            <strong>Date:</strong> {selectedRequest?.createdAt}
+            <strong className="form-control-custom">Date:</strong>{" "}
+            {selectedRequest?.createdAt}
           </p>
           <p>
-            <strong>Status:</strong> {selectedRequest?.status}
+            <strong className="form-control-custom">Status:</strong>{" "}
+            {selectedRequest?.status}
           </p>
           <p>
-            <strong>Description:</strong> {selectedRequest?.crashType}
+            <strong className="form-control-custom">Description:</strong>{" "}
+            {selectedRequest?.crashType}
           </p>
-        
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -179,7 +187,6 @@ const MaintenanceOrderTable = ({ filter }) => {
           </Button>
         </Modal.Footer>
       </Modal>
-
     </div>
   );
 };

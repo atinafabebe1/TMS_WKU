@@ -53,9 +53,9 @@ const RequestTable = ({
   }
 
   return (
-    <div>
+    <div style={{ paddingTop: "40px" }}>
       <Table striped bordered hover responsive className="table-sm">
-        <thead>
+        <thead className="form-control-custom">
           <tr>
             <th>Detail</th>
             <th>User</th>
@@ -71,6 +71,7 @@ const RequestTable = ({
               <td>
                 <Button
                   variant="link"
+                  className="form-control-custom"
                   onClick={() => handleShowDetailModal(request)}
                 >
                   Details
@@ -111,11 +112,15 @@ const RequestTable = ({
       </Table>
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Reject Request</Modal.Title>
+          <Modal.Title className="form-control-custom">
+            Reject Request
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group>
-            <Form.Label>Reason for Rejection:</Form.Label>
+            <Form.Label className="form-control-custom">
+              Reason for Rejection:
+            </Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
@@ -143,29 +148,55 @@ const RequestTable = ({
       </Modal>
       <Modal show={showDetailModal} onHide={handleCloseDetailModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Request Details</Modal.Title>
+          <Modal.Title className="form-control-custom">
+            Request Details
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {currentRequest && (
             <div>
               <p>
-                User: {currentRequest.user?.firstName}{" "}
-                {currentRequest.user?.lastName}
+                <strong className="form-control-custom">User: </strong>
+                <strong>
+                  {currentRequest.user?.firstName}{" "}
+                  {currentRequest.user?.lastName}
+                </strong>
               </p>
-              <p>Plate Number: {currentRequest.plateNumber}</p>
               <p>
-                Passengers:{" "}
-                {currentRequest.passengers
-                  .map((passenger) => passenger.name)
-                  .join(", ")}
+                <strong className="form-control-custom">Plate Number:</strong>{" "}
+                <strong>{currentRequest.plateNumber}</strong>
               </p>
-              <p>Destination: {currentRequest.destination}</p>
-              <p>Reason: {currentRequest.reason}</p>
               <p>
-                Date: {new Date(currentRequest.date.from).toLocaleDateString()}{" "}
-                - {new Date(currentRequest.date.to).toLocaleDateString()}
+                <strong className="form-control-custom"> Passengers: </strong>{" "}
+                <strong>
+                  {" "}
+                  {currentRequest.passengers
+                    .map((passenger) => passenger.name)
+                    .join(", ")}
+                </strong>
               </p>
-              <p>Status: {currentRequest.status}</p>
+              <p>
+                <strong className="form-control-custom">Destination:</strong>
+                <strong>{currentRequest.destination}</strong>
+              </p>
+              <p>
+                <strong className="form-control-custom">Reason: </strong>
+                <strong>{currentRequest.reason}</strong>
+              </p>
+              <p>
+                <strong className="form-control-custom"> Date: </strong>
+                <strong>
+                  {" "}
+                  {new Date(
+                    currentRequest.date.from
+                  ).toLocaleDateString()} -{" "}
+                  {new Date(currentRequest.date.to).toLocaleDateString()}
+                </strong>
+              </p>
+              <p>
+                <strong className="form-control-custom">Status: </strong>
+                <strong>{currentRequest.status}</strong>
+              </p>
             </div>
           )}
         </Modal.Body>

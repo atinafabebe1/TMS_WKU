@@ -10,12 +10,11 @@ const MechApproval = () => {
   };
 
   return (
-    <>
-      <div className="text-center">
-        <h2 className="form-control-custom">Approve Maintenance </h2>
-      </div>
+    <div className="p-4">
+      <h4 className="form-control-custom">Approve Maintenance </h4>
+      <hr></hr>
       <Tabs
-      className="form-control-custom"
+        className="form-control-custom"
         activeKey={filter}
         onSelect={handleFilter}
         id="maintenance-request-tabs"
@@ -26,7 +25,7 @@ const MechApproval = () => {
         <Tab eventKey="canceled" title="Cancelled"></Tab>
       </Tabs>
       <MaintenanceApprovalTable filter={filter} />
-    </>
+    </div>
   );
 };
 

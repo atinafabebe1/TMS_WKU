@@ -338,50 +338,52 @@ const SparePartRequestTable = ({
             <tbody>
               <tr>
                 <td>
-                  <strong>Sender</strong>
+                  <strong className="form-control-custom">Sender</strong>
                 </td>
                 <td>{selectedRequest?.user}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Spare Part Name</strong>
+                  <strong className="form-control-custom">
+                    Spare Part Name
+                  </strong>
                 </td>
                 <td>{selectedRequest?.sparePartName}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Plate Number</strong>
+                  <strong className="form-control-custom">Plate Number</strong>
                 </td>
                 <td>{selectedRequest?.plateNumber}</td>
               </tr>
 
               <tr>
                 <td>
-                  <strong>Quantity</strong>
+                  <strong className="form-control-custom">Quantity</strong>
                 </td>
                 <td>{selectedRequest?.quantity}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Unit Price</strong>
+                  <strong className="form-control-custom">Unit Price</strong>
                 </td>
                 <td>{selectedRequest?.unitPrice}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Total Price</strong>
+                  <strong className="form-control-custom">Total Price</strong>
                 </td>
                 <td>{selectedRequest?.totalPrice}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Status</strong>
+                  <strong className="form-control-custom">Status</strong>
                 </td>
                 <td>{selectedRequest?.status}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Date</strong>
+                  <strong className="form-control-custom"> Date</strong>
                 </td>
                 <td>{new Date(selectedRequest?.createdAt).toLocaleString()}</td>
               </tr>
