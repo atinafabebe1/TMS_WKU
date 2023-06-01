@@ -30,17 +30,6 @@ const FuelRequestSchema = new Schema(
     },
     typeOfFuel: {
       type: String,
-      enum: [
-        "Fuel",
-        "Benzene",
-        "Petrol",
-        "Kerosene",
-        "Biodiesel",
-        "Diesel",
-        "Fren Oil",
-        "Gear oil",
-        "Grease",
-      ],
       required: true,
     },
     requestAmount: {

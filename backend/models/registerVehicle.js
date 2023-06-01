@@ -47,7 +47,6 @@ const VehicleRecordSchema = new Schema(
     },
     type: {
       type: String,
-      enum: ["Bus", "Truck", "Pick Up", "Ambulace", "Automobile"],
       required: true,
     },
     cC: {
@@ -71,7 +70,6 @@ const VehicleRecordSchema = new Schema(
     },
     typeOfFuel: {
       type: String,
-      enum: ["diesel", "benzene", "motorOil", "frenOil", "otherOil", "grease"],
       required: true,
     },
 

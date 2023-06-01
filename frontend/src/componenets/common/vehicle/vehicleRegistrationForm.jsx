@@ -119,28 +119,32 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   };
 
   const handleSubmit = async () => {
-    if (data) {
-      try {
-        await api.put(`/VehicleRecord/${data._id}`, vehicleData);
-        setSuccess("Vehicle details updated successfully.");
-        setError("");
-        setTimeout(() => {
-          navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
-        }, 6000);
-      } catch (error) {
-        setError("Error");
+    if (validated) {
+      if (data) {
+        try {
+          await api.put(`/VehicleRecord/${data._id}`, vehicleData);
+          setSuccess("Vehicle details updated successfully.");
+          setError("");
+          setTimeout(() => {
+            navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
+          }, 6000);
+        } catch (error) {
+          setError("Please Provide Valid Data and Try Again");
+        }
+      } else {
+        try {
+          await api.post("/VehicleRecord", vehicleData);
+          setSuccess("Please ProvidevProvideProvide Valid Data and Try Again");
+          setError("");
+          setTimeout(() => {
+            navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
+          }, 6000);
+        } catch (error) {
+          setError("Please Provide Valid Data and Try Again");
+        }
       }
     } else {
-      try {
-        await api.post("/VehicleRecord", vehicleData);
-        setSuccess("Please ProvidevProvideProvide Valid Data and Try Again");
-        setError("");
-        setTimeout(() => {
-          navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
-        }, 6000);
-      } catch (error) {
-        setError("Please Provide Valid Data and Try Again");
-      }
+      setError("Please Provide Valid Data and Try Again");
     }
   };
   console.log(vehicleData);
@@ -154,6 +158,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
 
             <Form.Control
               type="text"
+              minLength={3}
+              maxLength={35}
               name="itemDetail"
               value={item.itemDetail}
               onChange={(e) => handleItemChange(e, index)}
@@ -166,6 +172,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             <Form.Control
               type="number"
               name="quantity"
+              min={1}
+              max={1000}
               value={item.quantity}
               onChange={(e) => handleItemChange(e, index)}
               required
@@ -255,6 +263,12 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                 <option value="Pick Up">Pick Up</option>
                 <option value="Ambulace">Ambulace</option>
                 <option value="Automobile">Automobile</option>
+                <option value="Single Cup">Single Cup</option>
+                <option value="Pajero">Pajero</option>
+                <option value="Nissan Patrol">Nissan Patrol</option>
+                <option value="Hard Top">Hard Top</option>
+                <option value="Mini Bus">Mini Bus</option>
+                <option value="Trackter">Trackter</option>
               </Form.Control>
               <Form.Control.Feedback type="invalid">
                 Please provide the vehicle type.
@@ -271,7 +285,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               min={0}
               type="number"
               required
-              minLength={3}
+              minLength={4}
               maxLength={25}
               name="motorNo"
               value={vehicleData.motorNo}
@@ -333,12 +347,10 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               onChange={handleInputChange}
             >
               <option value="">Choose</option>
-              <option value="diesel">Diesel</option>
-              <option value="benzene">Benzene</option>
-              <option value="motorOil">Motor Oil</option>
-              <option value="frenOil">Fren Oil</option>
-              <option value="grease">Grease</option>
-              <option value="otherOil">Other Oil</option>
+              <option value="Diesel">Diesel</option>
+              <option value="Benzene">Benzene</option>
+              <option value="Petrol">Petrol</option>
+              <option value="Biodiesel">Fren Oil</option>
             </Form.Control>
             <Form.Control.Feedback type="invalid">
               Please provide a valid Fuel Type.
@@ -376,7 +388,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             <Form.Control
               type="number"
               required
-              min={0}
+              min={2}
               max={80}
               name="maxPerson"
               value={vehicleData.maxPerson}
@@ -435,6 +447,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             <Form.Control
               type="number"
               name="proprietaryIdNumber"
+              maxLength={3}
+              minLength={10}
               required
               value={vehicleData.proprietaryIdNumber}
               onChange={handleInputChange}
@@ -444,7 +458,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             </Form.Control.Feedback>
           </Form.Group>
 
-          <Form.Group as={Col} controlId="vehicleimage">
+          {/* <Form.Group as={Col} controlId="vehicleimage">
             <span> </span>
             <Form.Label className="form-control-custom">
               Vehicle Image
@@ -456,7 +470,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               value={vehicleData.vehicleImage}
               onChange={handleInputChange}
             />
-          </Form.Group>
+          </Form.Group> */}
           <Form.Group as={Col} controlId="role">
             <Form.Label className="form-control-custom">
               Property Type
