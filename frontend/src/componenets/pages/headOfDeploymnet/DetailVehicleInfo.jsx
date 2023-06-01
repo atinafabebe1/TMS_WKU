@@ -97,7 +97,7 @@ const DetailVehicleInfo = ({ link }) => {
     <div className="p-4">
       <Row className="mb-4">
         <Col>
-          <h3>Vehicle Property Information</h3>
+          <h4 className="form-control-custom">Vehicle Property Information</h4>
         </Col>
         <Col className="text-end">
           <Link to="/hd/vehicles/Receive">
@@ -105,12 +105,12 @@ const DetailVehicleInfo = ({ link }) => {
           </Link>
         </Col>
       </Row>
-
+      <hr></hr>
       <Tabs
         activeKey={activeTab}
         onSelect={handleTabSelect}
         id="vehicle-request-tabs"
-        className="my-2"
+        className="form-control-custom"
       >
         <Tab eventKey="availableVehicles" title="Available Vehicles">
           <VehicleDisplayTable
@@ -145,7 +145,10 @@ const DetailVehicleInfo = ({ link }) => {
       >
         <div className="p-4">
           <Card>
-            <Card.Header style={{ backgroundColor: "dark" }}>
+            <Card.Header
+              className="form-control-custom"
+              style={{ textAlign: "center" }}
+            >
               Type of Vehicle
             </Card.Header>
             <Card.Body>
@@ -170,7 +173,10 @@ const DetailVehicleInfo = ({ link }) => {
         </div>
         <div className="p-4">
           <Card>
-            <Card.Header style={{ backgroundColor: "dark" }}>
+            <Card.Header
+              className="form-control-custom"
+              style={{ textAlign: "center" }}
+            >
               Property Type
             </Card.Header>
             <Card.Body>
@@ -195,7 +201,12 @@ const DetailVehicleInfo = ({ link }) => {
         </div>
         <div className="p-4">
           <Card>
-            <Card.Header>Vehicles Fuel Type</Card.Header>
+            <Card.Header
+              className="form-control-custom"
+              style={{ textAlign: "center" }}
+            >
+              Vehicles Fuel Type
+            </Card.Header>
             <Card.Body>
               <Card.Text>
                 <h6 style={{ textAlign: "center", color: "#4682B4" }}>

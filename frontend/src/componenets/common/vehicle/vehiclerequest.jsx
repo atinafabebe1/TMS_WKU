@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Tabs, Tab } from "react-bootstrap";
+import { Modal, Tabs, Tab, Row, Col } from "react-bootstrap";
 import Avatar from "react-avatar";
 import api from "../../../api/api";
 import RequestTable from "./vehicleRequestTable";
@@ -105,11 +105,18 @@ const VehiclesRequest = ({ link }) => {
 
   return (
     <div className="p-4">
+      <Row className="mb-4">
+        <Col>
+          <h4 className="form-control-custom">Last Sent Vehicle Request</h4>
+        </Col>
+      </Row>
+      <hr></hr>
+
       <Tabs
         activeKey={activeTab}
         onSelect={handleTabSelect}
         id="vehicle-request-tabs"
-        className="my-2"
+        className="form-control-custom"
       >
         <Tab eventKey="pending" title="Pending Requests">
           <RequestTable
@@ -132,6 +139,7 @@ const VehiclesRequest = ({ link }) => {
           />
         </Tab>
       </Tabs>
+
       {selectedRequest && (
         <Modal
           show={showUserModal}

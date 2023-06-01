@@ -116,16 +116,16 @@ const VehicleRequestForm = ({ title, request, onSubmit }) => {
   };
 
   const handleSubmit = () => {
-    const result = {
-      passengers,
-      plateNumber,
-      destination,
-      reason,
-      date: { from: fromDate, to: toDate },
-      driver,
-    };
-    if (request) {
-      if (validated) {
+    if (validated) {
+      const result = {
+        passengers,
+        plateNumber,
+        destination,
+        reason,
+        date: { from: fromDate, to: toDate },
+        driver,
+      };
+      if (request) {
         api
           .put(`/Request/vehicle/${request._id}?isDeleted=false`, result)
           .then((response) => {
@@ -136,12 +136,10 @@ const VehicleRequestForm = ({ title, request, onSubmit }) => {
                 navigate("/employee/request/vehicle"); // Navigate to the desired page after 6 seconds
               }, 6000);
             }
-            onSubmit();
           })
           .catch((err) => {
             console.log(err.response.data);
-            setError("");
-            setSucces("Please Provide Valid Data And Try Again");
+            setError("Please Provide Valid Data And Try Again");
           });
       } else {
         api
@@ -169,6 +167,8 @@ const VehicleRequestForm = ({ title, request, onSubmit }) => {
             setSucces("");
           });
       }
+    } else {
+      setError("Please Provide Valid Data And Try Again");
     }
   };
   const handleClear = () => {
