@@ -1,10 +1,8 @@
-
-import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "../../common/header/Navbar";
 import WeeklyReport from "../../common/report/weeklyReport";
 import DailyReport from "../../common/report/dailyReport";
-import MonthlyReportList from "../../common/report/monthlyReport";
+import HDMaintenanceReport from "../../common/report/MaintenanceReport";
 import ServiceScheduleForm from "./ServiceScheduleForm";
 import TransferVehicle from "./TransferVehicle";
 import TrackVehicle from "../../common/vehicle/TrackVehicle";
@@ -28,36 +26,6 @@ import FuelCost from "../../common/fuel/RegisterFuelCost";
 import FuelCostListPage from "../../common/fuel/DisplayFuelCost";
 import EditFuelCost from "../../common/fuel/EditFuelCost";
 import UserProfile from "../../common/profile/profile";
-
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Navbar from '../../common/header/Navbar';
-import WeeklyReport from '../../common/report/weeklyReport';
-import DailyReport from '../../common/report/dailyReport';
-import HDMaintenanceReport from '../../common/report/MaintenanceReport';
-import ServiceScheduleForm from './ServiceScheduleForm';
-import TransferVehicle from './TransferVehicle';
-import TrackVehicle from '../../common/vehicle/TrackVehicle';
-import Complain from './Complain';
-import WorkdaySchedule from '../../common/schedule/Workday';
-import VehiclesRequests from '../../common/vehicle/vehiclerequest';
-import RegisterVehicle from './RegisterVehicles';
-import EditVehicleRecord from './EditVehicleRecord';
-import DetailVehicleInfo from './DetailVehicleInfo';
-import SingleVehicleDetailInfoo from './SingleVehicleDetailInfo';
-import AssignVehicle from '../../common/vehicle/AssignVehicle';
-import HODMaintenanceRequestPage from './maintenanceRequest';
-import ApproveFuelRequest from './ApproveFuelRequest';
-import Example from './Home';
-import PropertyTypeList from './VehicleClassification/PropertyType';
-import ClassTypeVehicleList from './VehicleClassification/ClassType';
-import FuelTypeList from './VehicleClassification/ClassFuel';
-import EmmergencyReport from './EmmergencyReportList';
-import DetailEmmergecy from './DetailEmergency';
-import FuelCost from '../../common/fuel/RegisterFuelCost';
-import FuelCostListPage from '../../common/fuel/DisplayFuelCost';
-import EditFuelCost from '../../common/fuel/EditFuelCost';
-import UserProfile from '../../common/profile/profile';
 
 const links = [
   {
@@ -115,7 +83,6 @@ const links = [
     url: "/report",
     children: [
       {
-
         name: "Monthly",
         url: "/hd/report/monthly",
       },
@@ -127,17 +94,16 @@ const links = [
         name: "Weekly",
         url: "/hd/report/weekly",
 
-        name: 'Maintenance',
-        url: '/hd/report/maintenance'
+        name: "Maintenance",
+        url: "/hd/report/maintenance",
       },
       {
-        name: 'Fuel',
-        url: '/hd/report/Fuel'
+        name: "Fuel",
+        url: "/hd/report/Fuel",
       },
       {
-        name: 'Spare Part',
-        url: '/hd/report/spare'
-
+        name: "Spare Part",
+        url: "/hd/report/spare",
       },
       {
         name: "Emergency",
