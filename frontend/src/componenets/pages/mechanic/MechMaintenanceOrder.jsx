@@ -10,12 +10,11 @@ const MechMaintenanceOrder = () => {
   };
 
   return (
-    <>
-      <div className="text-center">
-        <h2 className="form-control-custom" >Maintenance Orders</h2>
-      </div>
+    <div className="p-4">
+      <h4 className="form-control-custom">Maintenance Orders</h4>
+      <hr></hr>
       <Tabs
-      className="form-control-custom"
+        className="form-control-custom"
         activeKey={filter}
         onSelect={handleFilter}
         id="maintenance-request-tabs"
@@ -26,7 +25,7 @@ const MechMaintenanceOrder = () => {
         <Tab eventKey="canceled" title="Cancelled"></Tab>
       </Tabs>
       <MaintenanceOrderTable filter={filter} />
-    </>
+    </div>
   );
 };
 
