@@ -46,7 +46,7 @@ const FuelTypeList = (property) => {
   return (
     <div className="p-4">
       <h2 className="form-control-custom" style={{ textAlign: "center" }}>
-        Vehicle Classified by Its Type
+        Vehicle Classified Fuel It Used
       </h2>
       <Form className="mb-3">
         <Form.Control

@@ -79,43 +79,39 @@ const ClassTypeVehicleList = (property) => {
                   <td>{vehicle.modelNo}</td>
                   <td>{vehicle.propertyType}</td>
                   <td>
-                    {vehicle.isDeleted === false &&
-                      vehicle.assignedTo === null &&
-                      vehicle.onMaintenance === false && (
-                        <>
-                          <Button
-                            className="btn btn-sm"
-                            variant="info"
-                            onClick={() =>
-                              navigate(`/hd/vehicles/detail/${vehicle._id}`)
-                            }
-                          >
-                            See Detail
-                          </Button>{" "}
-                          <Button
-                            className="btn btn-sm"
-                            variant="warning"
-                            onClick={() =>
-                              navigate(
-                                `/hd/vehicles/edit-vehicle/${vehicle._id}`
-                              )
-                            }
-                          >
-                            Edit
-                          </Button>{" "}
-                          <Button
-                            className="btn btn-sm"
-                            variant="success"
-                            onClick={() =>
-                              navigate(
-                                `/hd/vehicles/assign-vehicle/${vehicle._id}`
-                              )
-                            }
-                          >
-                            Assign
-                          </Button>{" "}
-                        </>
-                      )}
+                    {vehicle.isDeleted === false && (
+                      <>
+                        <Button
+                          className="btn btn-sm"
+                          variant="info"
+                          onClick={() =>
+                            navigate(`/hd/vehicles/detail/${vehicle._id}`)
+                          }
+                        >
+                          See Detail
+                        </Button>{" "}
+                        <Button
+                          className="btn btn-sm"
+                          variant="warning"
+                          onClick={() =>
+                            navigate(`/hd/vehicles/edit-vehicle/${vehicle._id}`)
+                          }
+                        >
+                          Edit
+                        </Button>{" "}
+                        <Button
+                          className="btn btn-sm"
+                          variant="success"
+                          onClick={() =>
+                            navigate(
+                              `/hd/vehicles/assign-vehicle/${vehicle._id}`
+                            )
+                          }
+                        >
+                          Assign
+                        </Button>{" "}
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
