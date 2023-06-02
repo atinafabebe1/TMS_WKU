@@ -1,6 +1,8 @@
 const express = require("express");
 
 const {
+  updateMaintenanceOrderStatusByPlateNumber,
+  getMaintenanceOrderById,
   getMaintenanceOrders,
   createMaintenanceOrder,
   updateMaintenanceOrder,
@@ -24,7 +26,9 @@ router.get(
   advancedResult(MaintenanceOrder, "vehicle"),
   getMaintenanceOrders
 );
+router.get("/:id", getMaintenanceOrderById);
 router.patch("/:id", updateMaintenanceOrderStatus);
+router.patch("/plate:plateNumber", updateMaintenanceOrderStatusByPlateNumber);
 router.put("/task/:maintenanceOrderId", addMaintenanceTask);
 router.put("/:id", updateMaintenanceOrder);
 router.delete("/:id", deleteMaintenanceOrder);

@@ -64,7 +64,7 @@ const MechanicPage = () => {
           element={<MechMaintenanceOrder />}
         />
         <Route
-          path="maintenance/approval-report/:plateNumber"
+          path="maintenance/approval-report/:id"
           element={<MaintenanceReportForm />}
         />
         <Route

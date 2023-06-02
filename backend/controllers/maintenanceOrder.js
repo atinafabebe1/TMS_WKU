@@ -61,7 +61,41 @@ const createMaintenanceOrder = asyncHandler(async (req, res, next) => {
    // totalCost: order.totalCost,
   });
 });
+const getMaintenanceOrderById = asyncHandler(async (req, res, next) => {
+  const orderId = req.params.id;
 
+  // Find the maintenance order by its ID
+  const maintenanceOrder = await MaintenanceOrder.findById(orderId);
+
+  if (!maintenanceOrder) {
+    return next(
+      new ErrorResponse(`Maintenance Order not found with ID ${orderId}`, 404)
+    );
+  }
+
+  // Return the maintenance order
+  res.status(200).json({ data: maintenanceOrder });
+});
+const updateMaintenanceOrderStatusByPlateNumber = asyncHandler(async (req, res, next) => {
+  const { plateNumber } = req.params;
+
+  let maintenanceOrder = await MaintenanceOrder.findOneAndUpdate(
+    { plateNumber, status: "UnderMaintenance" },
+    { status: "completed" },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  if (!maintenanceOrder) {
+    return next(
+      new ErrorResponse(`Maintenance Order not found for plate number ${plateNumber}`, 404)
+    );
+  }
+
+  res.status(200).json({ message: "Status updated successfully" });
+});
 const updateMaintenanceOrderStatus = asyncHandler(async (req, res, next) => {
   const requestId = req.params.id;
   const { status } = req.body;
@@ -69,7 +103,7 @@ const updateMaintenanceOrderStatus = asyncHandler(async (req, res, next) => {
   if (!requestId || !status) {
     return res.status(400).json({ message: "Missing required fields" });
   }
-  const validStatuses = ["pending", "in-progress", "UnderMaintenance","completed","Waiting-Mech-To-Approve","Waiting-GD-To-Approve", "canceled"];
+  const validStatuses = ["pending", "in-progress", "UnderMaintenance","Need-Higher-Maintenance","Maintained","completed","Waiting-Mech-To-Approve","Waiting-GD-To-Approve", "canceled"];
   if (!validStatuses.includes(status)) {
     return next(new ErrorResponse(`Invalid status: ${status}`, 400));
   }
@@ -295,6 +329,7 @@ const deleteMaintenanceOrder = asyncHandler(async (req, res, next) => {
 });
 
 module.exports = {
+  updateMaintenanceOrderStatusByPlateNumber,
   updateMaintenanceOrderStatus,
   createMaintenanceOrder,
   updateMaintenanceOrder,
@@ -302,4 +337,5 @@ module.exports = {
   deleteMaintenanceOrder,
   deleteMaintenanceTask,
   addMaintenanceTask,
+  getMaintenanceOrderById,
 };

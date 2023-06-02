@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../../../api/api";
 import { useAuth } from "../../../context/AuthContext";
 import Loading from "../Provider/LoadingProvider";
+
 const MaintenanceOrderTable = ({ filter }) => {
   const [spareparts, setSpareParts] = useState([
     {
@@ -25,6 +26,8 @@ const MaintenanceOrderTable = ({ filter }) => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
+  const [description, setDescription] = useState("");
+  const [isDescriptionValid, setIsDescriptionValid] = useState(true);
   const navigate = useNavigate();
 
   function handleMechanicChange(event) {
@@ -44,7 +47,7 @@ const MaintenanceOrderTable = ({ filter }) => {
   useEffect(() => {
     fetchMechanics();
   }, []);
-  console.log(user.id);
+
   useEffect(() => {
     api
       .get(`/MaintenanceOrder?reciever=${user.id}`)
@@ -67,8 +70,41 @@ const MaintenanceOrderTable = ({ filter }) => {
   const handleModalClose = () => {
     setShowModal(false);
     setSelectedRequest(null);
+    setDescription("");
+    setIsDescriptionValid(true);
   };
 
+  const handleModalSubmit = async () => {
+
+  
+    try {
+      await api.patch(`/MaintenanceOrder/${selectedRequest._id}`, {
+        status: "Need-Higher-Maintenance",
+      });
+      console.log("Maintenance Order status updated successfully");
+
+      window.location.reload();
+      setShowModal(false);
+    } catch (error) {
+      console.error("Failed to update maintenance request status:", error);
+      // Additional code to handle error
+    }
+  };
+  const handlMaintained= async (request) => {
+    try {
+      await api.patch(`/MaintenanceOrder/${request._id}`, {
+        status: "Maintained",
+      });
+      console.log("Maintenance request status updated successfully");
+
+      // Additional code to handle successful submission
+      window.location.reload();
+   
+    } catch (error) {
+      console.error("Failed to update maintenance request status:", error);
+      // Additional code to handle error
+    }
+  };
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -118,19 +154,20 @@ const MaintenanceOrderTable = ({ filter }) => {
               <td>{new Date(request.createdAt).toLocaleString()}</td>
               <td>{request.status}</td>
               <td>
-                {request.status === "UnderMaintenance" && (
+                {request.status === "Maintained" && (
                   <>
-                    <Button
-                      className="btn btn-sm"
-                      variant="primary"
-                      onClick={(e) => {
-                        navigate(
-                          `/mechanic/maintenance/approval-report/${request.plateNumber}`
-                        );
-                      }}
-                    >
-                      Send For Approvements
-                    </Button>{" "}
+                  <Button
+  className="btn btn-sm"
+  variant="primary"
+  onClick={(e) => {
+    navigate(
+      `/mechanic/maintenance/approval-report/${request._id}`
+    );
+  }}
+>
+  Send For Approvements
+</Button>
+{" "}
                     <Button
                       variant="secondary"
                       className="btn btn-sm"
@@ -140,6 +177,17 @@ const MaintenanceOrderTable = ({ filter }) => {
                     </Button>
                   </>
                 )}{" "}
+                 {request.status === "UnderMaintenance" && (
+                 <Button
+  variant="success"
+  disabled={request.status === "Maintained"}
+  className="btn btn-sm"
+  onClick={() => handlMaintained(request)}
+>
+  Maintained
+</Button>
+                 )}
+{" "}
                 <Button
                   variant="info"
                   className="btn btn-sm"
@@ -172,10 +220,19 @@ const MaintenanceOrderTable = ({ filter }) => {
             <strong className="form-control-custom">Status:</strong>{" "}
             {selectedRequest?.status}
           </p>
-          <p>
-            <strong className="form-control-custom">Description:</strong>{" "}
-            {selectedRequest?.crashType}
-          </p>
+          <Form.Group controlId="description">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              isInvalid={!isDescriptionValid}
+            />
+            <Form.Control.Feedback type="invalid">
+              Please enter a valid description.
+            </Form.Control.Feedback>
+          </Form.Group>
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -184,6 +241,13 @@ const MaintenanceOrderTable = ({ filter }) => {
             onClick={handleModalClose}
           >
             Close
+          </Button>
+          <Button
+            variant="primary"
+            className="btn btn-sm"
+            onClick={handleModalSubmit}
+          >
+            Submit
           </Button>
         </Modal.Footer>
       </Modal>

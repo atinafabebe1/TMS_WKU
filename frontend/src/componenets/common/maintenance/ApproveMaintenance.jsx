@@ -13,6 +13,7 @@ import api from "../../../api/api";
 import "../../common/css/formStyles.css";
 import { useAuth } from "../../../context/AuthContext";
 import Loading from "../Provider/LoadingProvider";
+import { useNavigate } from "react-router-dom";
 
 const MaintenanceApprovalTable = ({ filter, data }) => {
   const [reports, setReports] = useState([]);
@@ -22,6 +23,8 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const [action, setAction] = useState("");
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchMaintenanceReports = async () => {
@@ -80,6 +83,12 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
           "Maintenance report submitted successfully:",
           response.data
         );
+        setShowConfirmation(false);
+        setTimeout(() => {
+        navigate("/mechanic/maintenance/approve-maintenance"); 
+      }, 4000);
+      setShowModal(false);
+
       } catch (error) {
         console.error("Failed to submit maintenance report:", error);
       }
@@ -97,42 +106,26 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
         console.log(
           "Maintenance report submitted successfully:",
           response.data
+          
         );
+        setShowConfirmation(false);
+        setTimeout(() => {
+        navigate("/mechanic/maintenance/approve-maintenance"); 
+      }, 4000);
+      setShowModal(false);
       } catch (error) {
         console.error("Failed to submit maintenance report:", error);
       }
       console.log("Rejected report:", selectedReportId);
     }
+  
     setShowConfirmation(false);
+            setTimeout(() => {
+            navigate("/mechanic/maintenance/approve-maintenance"); 
+          }, 4000);
+        
   };
 
-  // const handleApprove = async (selectedReportId) => {
-  //   try {
-  //     const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
-  //       status: "Waiting-GD-To-Approve",
-  //     });
-
-  //     console.log("Maintenance report submitted successfully:", response.data);
-  //     // Handle success, e.g., show a success message or redirect to another page
-  //   } catch (error) {
-  //     console.error("Failed to submit maintenance report:", error);
-  //     // Handle error, e.g., show an error message
-  //   }
-  // };
-
-  // const handleReject = async (selectedReportId) => {
-  //   try {
-  //     const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
-  //       status: "canceled",
-  //     });
-
-  //     console.log("Maintenance report submitted successfully:", response.data);
-  //     // Handle success, e.g., show a success message or redirect to another page
-  //   } catch (error) {
-  //     console.error("Failed to submit maintenance report:", error);
-  //     // Handle error, e.g., show an error message
-  //   }
-  // };
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
