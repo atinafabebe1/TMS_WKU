@@ -72,7 +72,7 @@ const SparePartPurchasingRequestTable = ({
   }
 
   return (
-    <>
+    <div className="p-4">
       <Form>
         <Row className="mb-3">
           <Col>
@@ -87,9 +87,9 @@ const SparePartPurchasingRequestTable = ({
       </Form>
       {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
-        <thead>
+        <thead className="form-control-custom">
           <tr>
-            <th>User</th>
+            
             <th>Spare Part Name </th>
             <th>Quantity</th>
             <th>Date</th>
@@ -100,12 +100,7 @@ const SparePartPurchasingRequestTable = ({
         <tbody>
           {filteredRequests?.map((request) => (
             <tr key={request._id}>
-              <td>
-                <a href="#" onClick={() => handleRequestClick(request)}>
-                  {console.log(request.user.firstName)}
-                  {request.user} {request.user?.lastName}
-                </a>
-              </td>
+           
 
               <td>{request.sparePartName}</td>
               <td>{request.quantity}</td>
@@ -188,10 +183,10 @@ const SparePartPurchasingRequestTable = ({
       </Table>
       <Modal show={showConfirmModal} onHide={handleCloseConfirmModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Approval</Modal.Title>
+          <Modal.Title className="form-control-custom">Confirm Approval</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Are You Sure to Approve This Request</p>
+          <p className="form-control-custom">Are You Sure to Approve This Request</p>
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -215,7 +210,7 @@ const SparePartPurchasingRequestTable = ({
           <Modal.Title>Confirm Approval</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Are You Sure to Approve This To Buy Request</p>
+          <p className="form-control-custom">Are You Sure to Approve This To Buy Request</p>
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -236,11 +231,11 @@ const SparePartPurchasingRequestTable = ({
       </Modal>
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Reject Request</Modal.Title>
+          <Modal.Title className="form-control-custom">Reject Request</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group>
-            <Form.Label>Reason for rejection:</Form.Label>
+            <Form.Label className="form-control-custom">Reason for rejection:</Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
@@ -274,7 +269,7 @@ const SparePartPurchasingRequestTable = ({
         onHide={handleCloseDetailModal}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Detail Request Information</Modal.Title>
+          <Modal.Title className="form-control-custom">Detail Request Information</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedRequest.status === "canceled" && (
@@ -292,57 +287,52 @@ const SparePartPurchasingRequestTable = ({
 
           <Table striped bordered>
             <tbody>
+         
               <tr>
                 <td>
-                  <strong>Sender</strong>
-                </td>
-                <td>{selectedRequest?.user}</td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Spare Part Name</strong>
+                  <strong className="form-control-custom">Spare Part Name</strong>
                 </td>
                 <td>{selectedRequest?.sparePartName}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Plate Number</strong>
+                  <strong className="form-control-custom">Plate Number</strong>
                 </td>
                 <td>{selectedRequest?.plateNumber}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Type</strong>
+                  <strong className="form-control-custom">Type</strong>
                 </td>
                 <td>{selectedRequest?.type}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Quantity</strong>
+                  <strong className="form-control-custom">Quantity</strong>
                 </td>
                 <td>{selectedRequest?.quantity}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Unit Price</strong>
+                  <strong className="form-control-custom">Unit Price</strong>
                 </td>
                 <td>{selectedRequest?.unitPrice}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Total Price</strong>
+                  <strong className="form-control-custom">Total Price</strong>
                 </td>
                 <td>{selectedRequest?.totalPrice}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Status</strong>
+                  <strong className="form-control-custom">Status</strong>
                 </td>
                 <td>{selectedRequest?.status}</td>
               </tr>
               <tr>
                 <td>
-                  <strong>Date</strong>
+                  <strong className="form-control-custom">Date</strong>
                 </td>
                 <td>
                   {new Date(selectedRequest?.createdAt).toLocaleDateString()}
@@ -363,7 +353,7 @@ const SparePartPurchasingRequestTable = ({
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
       </Modal>
-    </>
+    </div>
   );
 };
 

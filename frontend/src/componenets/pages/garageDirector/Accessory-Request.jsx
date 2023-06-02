@@ -117,25 +117,28 @@ const AccessoryRequest = ({ link }) => {
   return (
     <>
       <div className="p-4">
+        <div>
+        <h4 className="form-control-custom">Last Sent Fuel Request</h4>
+        </div>
+      <hr></hr>
+        <br></br>
         <Tabs
           activeKey={activeTab}
           onSelect={handleTabSelect}
           id="vehicle-request-tabs"
-          className="my-2"
+          className="form-control-custom"
         >
           <Tab eventKey="pending" title="Pending Requests">
             <SparePartRequestTable
               requests={pendingRequests}
               handleApproveClick={handleApproveClick}
               handleRejectClick={handleRejectClick}
-              handleRequestClick={handleRequestClick}
             />
           </Tab>
           <Tab eventKey="requested-to-buy" title="To Buy Request">
             <SparePartRequestTable
               requests={requestingToBuy}
               handleCompletedtoBuyClick={handleCompletedtoBuyClick}
-              handleRequestClick={handleRequestClick}
             />
           </Tab>
           <Tab eventKey="approved" title="Completed Requests">
@@ -147,7 +150,6 @@ const AccessoryRequest = ({ link }) => {
           <Tab eventKey="canceled" title="Canceled Requests">
             <SparePartRequestTable
               requests={canceledRequests}
-              handleRequestClick={handleRequestClick}
             />
           </Tab>
         </Tabs>

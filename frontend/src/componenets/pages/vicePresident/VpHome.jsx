@@ -53,7 +53,7 @@ const VpHomePage = () => {
           <div className="d-flex justify-content-center align-items-center">
             <div className="p-4">
               <Card>
-                <Card.Header style={{ backgroundColor: "dark" }}>
+                <Card.Header className="form-control-custom" style={{ backgroundColor: "dark" }}>
                   Request For Vehicle
                 </Card.Header>
                 <Card.Body>
@@ -81,7 +81,7 @@ const VpHomePage = () => {
             </div>
             <div className="p-4">
               <Card>
-                <Card.Header>Approval</Card.Header>
+                <Card.Header className="form-control-custom">Approval</Card.Header>
                 <Card.Body>
                   <Card.Text>
                     <h6 style={{ textAlign: "center", color: "#4682B4" }}>
@@ -119,7 +119,7 @@ const VpHomePage = () => {
             </div>
             <div className="p-4">
               <Card>
-                <Card.Header>Make A Complain</Card.Header>
+                <Card.Header className="form-control-custom">Make A Complain</Card.Header>
                 <Card.Body>
                   <Card.Text>
                     <h6 style={{ textAlign: "center", color: "#4682B4" }}>

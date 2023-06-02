@@ -190,7 +190,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                       <Form.Control
                         name="plateNumber"
                         value={plateNumber}
-                        pattern=" /^(4-[0-9]{5}|UN [0-9]{3})$/i"
+                        pattern="^(\d{1}-\d{5}|UN \d{3})$"
                         onChange={handlePlateNumberChange}
                         required
                         className="mb-3"

@@ -74,7 +74,7 @@ const SparePartRequestTable = ({
   }
 
   return (
-    <>
+    <div className="p-4">
       <Form>
         <Row className="mb-3">
           <Col>
@@ -88,9 +88,9 @@ const SparePartRequestTable = ({
         </Row>
       </Form>
       <Table striped bordered hover responsive className="table-sm">
-        <thead>
+        <thead   className="form-control-custom">
           <tr>
-            <th>User</th>
+         
             <th>Plate Number</th>
             <th>SparePart Name </th>
             <th>Quantity</th>
@@ -103,13 +103,7 @@ const SparePartRequestTable = ({
         <tbody>
           {filteredRequests.slice(startIndex, startIndex + 7).map((request) => (
             <tr key={request._id}>
-              <td>
-                <a href="#" onClick={() => handleRequestClick(request)}>
-                  {console.log("user is " + request.user)}
-                  {request.user.firstName} {request.user.lastName}
-                  <p>{request.user}</p>
-                </a>
-              </td>
+         
               <td>{request.plateNumber}</td>
               <td>{request.sparePartName}</td>
               <td>{request.quantity}</td>
@@ -233,10 +227,10 @@ const SparePartRequestTable = ({
       </div>
       <Modal show={showConfirmModal} onHide={handleCloseConfirmModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Approval</Modal.Title>
+          <Modal.Title className="form-control-custom">Confirm Approval</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Are You Sure to Approve This Request</p>
+          <p className="form-control-custom">Are You Sure to Approve This Request</p>
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -319,7 +313,7 @@ const SparePartRequestTable = ({
         onHide={handleCloseDetailModal}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Detail Request Information</Modal.Title>
+          <Modal.Title className="form-control-custom">Detail Request Information</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedRequest.status === "canceled" && (
@@ -400,7 +394,7 @@ const SparePartRequestTable = ({
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
       </Modal>
-    </>
+    </div>
   );
 };
 

@@ -46,13 +46,14 @@ const GDHome = () => {
             alignItems: "center",
           }}
         >
-          <h4 style={{ textAlign: "center", color: "#4682B4" }}>
+          <h5 style={{ textAlign: "center", color: "#4682B4" }}>
             Get And Track Request To Provide Reliable and
-          </h4>
+          </h5>
           <h5 style={{ textAlign: "center", color: "#4682B4" }}>
             Ontime Response To User
           </h5>
           <br />
+          <hr></hr>
           <div className="d-flex justify-content-center align-items-center">
             <div className="p-4">
               <Link to="/gd/request/get-accessory-request">
@@ -80,7 +81,7 @@ const GDHome = () => {
                   <div className="text-center">
                     <Link to="/gd/maintenance/maintenance-orders">
                       <Button
-                        variant="outline-secondary"
+                        variant="success"
                         size="sm"
                         style={{ width: "200px" }}
                       >
@@ -105,7 +106,7 @@ const GDHome = () => {
                   <div className="text-center">
                     <Link to="/gd/maintenance/approve-maintenance">
                       <Button
-                        variant="outline-secondary"
+                        variant="success"
                         size="sm"
                         style={{ width: "200px" }}
                       >
@@ -130,7 +131,7 @@ const GDHome = () => {
                   <div className="text-center">
                     <Link to="/gd/report/receive-maintenance-report">
                       <Button
-                        variant="outline-secondary"
+                        variant="success"
                         size="sm"
                         style={{ width: "200px" }}
                       >
