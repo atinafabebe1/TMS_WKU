@@ -389,15 +389,7 @@ const EditUserForm = () => {
                   </div>
                 )}
                 <br></br> */}
-                <Form.Group className="mb-3" controlId="photo">
-                  <Form.Label className="form-control-custom">Photo</Form.Label>
-                  <Form.Control
-                    type="file"
-                    accept="image/*"
-                    name="photo"
-                    onChange={handleChange}
-                  />
-                </Form.Group>
+            
 
                 {error && <ErrorProvider error={error} />}
                 {succes && <SuccessProvider success={succes} />}

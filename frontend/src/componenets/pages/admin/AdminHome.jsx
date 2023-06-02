@@ -66,34 +66,13 @@ function AdminHome() {
                   fontWeight: "bold",
                 }}
               >
-                Total User<br></br>
-                {totalCount}
+               {totalCount} Total User Found<br></br>
+                
               </Card.Text>
             </Card.Body>
           </Card>
         </animated.div>
-        <animated.div style={fadeIn}>
-          <Card
-            style={{ width: "18rem" }}
-            className="mb-2"
-            padding="1px"
-            bg="success"
-          >
-            <Card.Body>
-              <Card.Text
-                style={{
-                  color: "white",
-                  fontSize: "24px",
-                  fontWeight: "bold",
-                }}
-              >
-                Active User
-                <br />
-                {totalActiveCount}
-              </Card.Text>
-            </Card.Body>
-          </Card>
-        </animated.div>
+        
       </div>
       <div>
         <UserPieChart />
