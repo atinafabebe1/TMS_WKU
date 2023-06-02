@@ -5,7 +5,8 @@ const {
   createFuelRequest,
   updateFuelRequest,
   deleteFuelRequest,
-  updateFuelRequestStatus,
+  getFuelRequestReport,
+  // updateFuelRequestStatus,
 } = require("../controllers/fuelRequest");
 
 const backupDeletedDocument = require("../middleware/backupdeleted");
@@ -21,4 +22,5 @@ router.get("/fuel", advancedResult(FuelRequest, ""), getfuelRequests);
 router.put("/fuel/:id", updateFuelRequest);
 router.delete("/fuel/:id", deleteFuelRequest);
 router.patch("/fuel/backup/:id", backupDeletedDocument(FuelRequest));
+router.get('/fuelRequests/report/:duration', getFuelRequestReport);
 module.exports = router;
