@@ -9,6 +9,56 @@ const asyncHandler = require("../middleware/async");
 //   ROLE_DIRECTOR,
 //   ROLE_VICEPRESIDENT,
 // } = require("../../frontend/src/constants");
+const getFuelRequestReport = async (req, res, next) => {
+  try {
+    const { duration } = req.params;
+    let startDate, endDate;
+
+    // Calculate the start and end date based on the selected duration
+    if (duration === 'Daily') {
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 1);
+      endDate = new Date();
+    } else if (duration === 'Weekly') {
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 7);
+      endDate = new Date();
+    } else if (duration === 'Monthly') {
+      startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - 1);
+      endDate = new Date();
+    } else {
+      return res.status(400).json({ message: 'Invalid duration' });
+    }
+
+    // Fetch fuel requests within the specified duration and with status "Completed"
+    const fuelRequests = await FuelRequest.find({
+      createdAt: { $gte: startDate, $lte: endDate },
+      status: 'Completed', // Add status filter here
+    }).populate('user', 'name').populate('vehicle', 'plateNumber');
+
+    // Check if there are fuel requests
+    if (fuelRequests.length === 0) {
+      return res.status(200).json({ message: 'No fuel requests found' });
+    }
+
+    // Generate report data
+    const reportData = fuelRequests.map((request) => ({
+      user: request.user.name,
+      vehiclePlateNumber: request.vehicle.plateNumber,
+      typeOfFuel: request.typeOfFuel,
+      requestAmount: request.requestAmount,
+      approvedAmount: request.approvedAmount || 0,
+      price:request.price,
+    }));
+
+    res.status(200).json({ success: true, data: reportData });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse('Error retrieving fuel request report', 500));
+  }
+};
+
 
 //@desc      to get all created fuel requests
 //@route     GET request/fuel/all
@@ -265,6 +315,7 @@ const deleteFuelRequest = asyncHandler(async (req, res, next) => {
 // };
 
 module.exports = {
+  getFuelRequestReport,
   createFuelRequest,
   getfuelRequests,
   updateFuelRequest,
