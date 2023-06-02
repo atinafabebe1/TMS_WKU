@@ -79,11 +79,7 @@ const ApproveFuelRequest = () => {
   };
 
   const handleApprove = async () => {
-    if (
-      selectedRequest.approvedAmount &&
-      selectedRequest.approvedAmount > 0 &&
-      selectedRequest.approvedAmount < selectedRequest.requestAmount + 1
-    ) {
+  
       const updatedRequest = {
         ...selectedRequest,
         approvedAmount: parseInt(approvedAmount),
@@ -116,9 +112,6 @@ const ApproveFuelRequest = () => {
         setError(err.message);
         console.error(err.message);
       }
-    } else {
-      setError("Please provide valid data and try again");
-    }
   };
 
   const handleSearch = (event) => {

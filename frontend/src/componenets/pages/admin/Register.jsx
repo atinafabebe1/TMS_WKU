@@ -39,7 +39,7 @@ const RegisterForm = (data) => {
   });
   const [succes, setSucces] = useState(null);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [validated, setValidated] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -89,6 +89,7 @@ const RegisterForm = (data) => {
     }
     setValidated(true);
     event.preventDefault();
+    setIsLoading(true)
     setShowModal(false);
     handleSubmit();
   };
@@ -116,24 +117,24 @@ const RegisterForm = (data) => {
   };
 
   const handleSubmit = async (event) => {
-    if (validated) {
+
       const userInformation = { ...user, driverinfo };
       try {
         const response = await api.post("user/register", {
           ...userInformation,
         });
-        if (response.success) {
           setSucces("Successfuly Sent");
-          setError(null);
-        }
+          setTimeout(() => {
+            navigate("/admin/user"); // Navigate to the desired page after 6 seconds
+          }, 6000);
+          setIsLoading(false)
+          setError("");
       } catch (err) {
         console.log(err.response);
         setError(err.response.data);
-        setSucces(null);
+        setIsLoading(false)
+        setSucces("Please Provide Valid Data and Try Again");
       }
-    } else {
-      setError("Please Provide Valid Data and Try again");
-    }
   };
 
   return (
@@ -145,7 +146,7 @@ const RegisterForm = (data) => {
               <h5 style={{ textAlign: "center" }}>User Registration Form</h5>
             </Card.Header>
             <Card.Body>
-              {isLoading && <Loading />}
+              
               <Form
                 noValidate
                 validated={validated}
@@ -171,6 +172,7 @@ const RegisterForm = (data) => {
                       type="text"
                       minLength={3}
                       maxLength={20}
+                      pattern="^[a-zA-Z]+$"
                       required
                       placeholder="Enter username"
                       name="userName"
@@ -191,6 +193,7 @@ const RegisterForm = (data) => {
                       required
                       minLength={3}
                       maxLength={20}
+                      pattern="^[a-zA-Z]+$"
                       placeholder="Enter first name"
                       name="firstName"
                       value={user.firstName}
@@ -210,6 +213,7 @@ const RegisterForm = (data) => {
                     <Form.Control
                       type="text"
                       required
+                      pattern="^[a-zA-Z]+$"
                       minLength={3}
                       maxLength={20}
                       placeholder="Enter last name"
@@ -247,13 +251,15 @@ const RegisterForm = (data) => {
                       Phone Number <span className="text-danger">*</span>
                     </Form.Label>
                     <Form.Control
-                      type="text"
+                      type="number"
                       required
                       placeholder="Enter phone number"
+                      maxLength={13}
+                      minLength={10}
                       name="phoneNumber"
                       value={user.phoneNumber}
                       onChange={handleChange}
-                      pattern="[0-9]{10}"
+                      pattern="[0-9]"
                       title="Please enter a 10-digit phone number"
                     />
                     <Form.Control.Feedback type="invalid">
@@ -440,18 +446,8 @@ const RegisterForm = (data) => {
                   </div>
                 )}
                 <br></br>
-                <Form.Group className="mb-3" controlId="photo">
-                  <Form.Label className="form-control-custom">Photo</Form.Label>
-                  <Form.Control
-                    type="file"
-                    accept="image/*"
-                    name="photo"
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-
-                {error && <ErrorProvider error={error} />}
-                {succes && <SuccessProvider success={succes} />}
+            
+       
                 <div className="d-flex justify-content-center my-4">
                   <Button
                     type="reset"

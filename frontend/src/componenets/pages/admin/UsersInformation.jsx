@@ -5,6 +5,9 @@ import DeleteConfirmationModal from "../../common/confirmDelete/confirmModal";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserPlus } from "react-icons/fa";
 import Loading from "../../common/Provider/LoadingProvider";
+
+
+import ErrorProvider from "../../common/Provider/ErrorProvider";
 import RejectModal from "./RejectModal";
 
 const UsersInformation = () => {
@@ -97,10 +100,7 @@ const UsersInformation = () => {
     setShowDetailModal(true);
   };
 
-  const handleActivateUser = (id) => {
-    setShowPasswordModal(true);
-    setCurrentUserId(id);
-  };
+
   const filterUser = users.filter((user) => {
     const userName = user?.userName ?? "";
     const firstName = user?.firstName ?? "";
@@ -112,16 +112,16 @@ const UsersInformation = () => {
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Users List</h2>
+        <h4 className="form-control-custom">Users List</h4>
         <div>
           <Link to="/admin/register">
             <Button variant="success" className="btn-sm">
-              <FaUserPlus /> Register new user
+              <FaUserPlus /> Register New User
             </Button>
           </Link>
         </div>
       </div>
-
+<hr></hr>
       <Form>
         <Row className="mb-3">
           <Col>
@@ -138,7 +138,7 @@ const UsersInformation = () => {
         <Loading />
       ) : filterUser.length !== 0 ? (
         <Table striped bordered hover responsive className="table-sm">
-          <thead>
+          <thead className="form-control-custom">
             <tr>
               <th>Username</th>
               <th>Full Name</th>
@@ -191,15 +191,15 @@ const UsersInformation = () => {
                       className="btn-sm"
                       onClick={() => handleDeleteUser(user.id)}
                     >
-                      Deactivate
+                      Remove
                     </Button>
                   ) : (
                     <Button
-                      variant="success"
+                      variant="danger"
                       className="btn-sm"
-                      onClick={() => handleActivateUser(user.id)}
-                    >
-                      Activate
+                      disabled                    
+                      >
+                      Removed
                     </Button>
                   )}
                 </td>
@@ -209,7 +209,7 @@ const UsersInformation = () => {
         </Table>
       ) : (
         <div>
-          <h5>User Not Found</h5>
+          <h5 className="form-control-custom">User Not Found</h5>
         </div>
       )}
 
@@ -232,31 +232,31 @@ const UsersInformation = () => {
           </Modal.Header>
           <Modal.Body>
             <p>
-              <strong>User Name: </strong>
+              <strong className="form-control-custom">User Name: </strong>
               {selectedUser.userName}
             </p>
             <p>
-              <strong>Full Name: </strong>
+              <strong className="form-control-custom">Full Name: </strong>
               {selectedUser.firstName + " " + selectedUser.lastName}
             </p>
             <p>
-              <strong>Email: </strong>
+              <strong className="form-control-custom">Email: </strong>
               {selectedUser.email}
             </p>
             <p>
-              <strong>Address: </strong>
+              <strong className="form-control-custom">Address: </strong>
               {selectedUser.address}
             </p>
             <p>
-              <strong>Phone Number: </strong>
+              <strong className="form-control-custom">Phone Number: </strong>
               {selectedUser.phoneNumber}
             </p>
             <p>
-              <strong>Role: </strong>
+              <strong className="form-control-custom">Role: </strong>
               {selectedUser.role}
             </p>
             <p>
-              <strong>Status: </strong>
+              <strong className="form-control-custom">Status: </strong>
               <Badge
                 variant={selectedUser.isActive ? "success" : "danger"}
                 className={
@@ -283,12 +283,12 @@ const UsersInformation = () => {
           onHide={() => setShowResetPasswordModal(false)}
         >
           <Modal.Header closeButton>
-            <Modal.Title>Reset Password</Modal.Title>
+            <Modal.Title className="form-control-custom">Reset Password</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
               <Form.Group controlId="newPassword">
-                <Form.Label>New Password</Form.Label>
+                <Form.Label className="form-control-custom">New Password</Form.Label>
                 <Form.Control
                   type="password"
                   value={newPassword}
@@ -296,7 +296,7 @@ const UsersInformation = () => {
                 />
               </Form.Group>
               <Form.Group controlId="confirmPassword">
-                <Form.Label>Confirm Password</Form.Label>
+                <Form.Label className="form-control-custom">Confirm Password</Form.Label>
                 <Form.Control
                   type="password"
                   value={confirmPassword}
@@ -305,6 +305,7 @@ const UsersInformation = () => {
               </Form.Group>
             </Form>
           </Modal.Body>
+          {passwordMismachError && <ErrorProvider error={passwordMismachError} />}
           <Modal.Footer>
             <Button
               variant="secondary"

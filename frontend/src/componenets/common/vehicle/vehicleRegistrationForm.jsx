@@ -134,7 +134,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
       } else {
         try {
           await api.post("/VehicleRecord", vehicleData);
-          setSuccess("Please ProvidevProvideProvide Valid Data and Try Again");
+          setSuccess("One Vehicle Successfuly Added");
           setError("");
           setTimeout(() => {
             navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
@@ -282,7 +282,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               Motor Number
             </Form.Label>
             <Form.Control
-              min={0}
+              min={10}
+              max={999999999}
               type="number"
               required
               minLength={4}
@@ -304,6 +305,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             <Form.Control
               type="number"
               required
+              min={100}
+              max={9999999}
               minLength={3}
               maxLength={25}
               name="cC"
@@ -323,6 +326,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               type="string"
               required
               minLength={3}
+              pattern="^(\d{1}-\d{5}|UN \d{3})$"
               maxLength={25}
               name="plateNumber"
               value={vehicleData.plateNumber}
@@ -367,6 +371,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               type="number"
               required
               min={10000}
+              max={9999999999}
               maxLength={10}
               name="purchasePrice"
               value={vehicleData.purchasePrice}
