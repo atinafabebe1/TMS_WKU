@@ -100,7 +100,7 @@ app.use(errorHandler);
 
 // connect to MongoDB
 mongoose
-  .connect(`mongodb://localhost:27017/${process.env.DB_NAME}`, {
+  .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
