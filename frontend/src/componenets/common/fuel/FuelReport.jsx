@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table } from 'react-bootstrap';
-import { PieChart, Pie, Cell, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import api from '../../../api/api';
 
 const FuelReport = () => {
@@ -40,6 +40,11 @@ const FuelReport = () => {
   const pieChartData = reportData.map(data => ({
     name: data.plateNumber,
     value: data.approvedAmount,
+  }));
+
+  const barChartData = reportData.map(data => ({
+    name: data.plateNumber,
+    amount: data.approvedAmount,
   }));
 
   return (
@@ -87,6 +92,14 @@ const FuelReport = () => {
               </text>
             )}
           </PieChart>
+
+          <BarChart width={600} height={300} data={barChartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="amount" fill="#8884d8" />
+          </BarChart>
 
           <Table bordered>
             <thead>
