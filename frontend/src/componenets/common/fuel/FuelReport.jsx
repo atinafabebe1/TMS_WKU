@@ -38,14 +38,31 @@ const FuelReport = () => {
   }
 
   const pieChartData = reportData.map(data => ({
-    name: data.plateNumber,
-    value: data.approvedAmount,
+    plateNumber: data.plateNumber,
+    approvedAmount: data.approvedAmount,
+    typeOfFuel: data.typeOfFuel
   }));
 
   const barChartData = reportData.map(data => ({
-    name: data.plateNumber,
-    amount: data.approvedAmount,
+    plateNumber: data.plateNumber,
+    approvedAmount: data.approvedAmount,
+    typeOfFuel: data.typeOfFuel
   }));
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="custom-tooltip">
+          <p>{`Plate Number: ${data.plateNumber}`}</p>
+          <p>{`Approved Amount: ${data.approvedAmount}`}</p>
+          <p>{`Fuel Type: ${data.typeOfFuel}`}</p>
+        </div>
+      );
+    }
+  
+    return null;
+  };
 
   return (
     <Container>
@@ -65,8 +82,8 @@ const FuelReport = () => {
           <PieChart width={400} height={300}>
             <Pie
               data={pieChartData}
-              dataKey="value"
-              nameKey="name"
+              dataKey="approvedAmount"
+              nameKey="plateNumber"
               cx="50%"
               cy="50%"
               outerRadius={80}
@@ -88,17 +105,18 @@ const FuelReport = () => {
                 dominantBaseline="middle"
                 style={{ fontSize: '18px', fontWeight: 'bold' }}
               >
-                {`${pieChartData[activeSlice].name}: ${pieChartData[activeSlice].value}`}
+                {`${pieChartData[activeSlice].plateNumber}: ${pieChartData[activeSlice].approvedAmount}`}
               </text>
             )}
+            <Tooltip content={<CustomTooltip />} />
           </PieChart>
 
           <BarChart width={600} height={300} data={barChartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="plateNumber" />
             <YAxis />
-            <Tooltip />
-            <Bar dataKey="amount" fill="#8884d8" />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar dataKey="approvedAmount" fill="#8884d8" />
           </BarChart>
 
           <Table bordered>
@@ -111,8 +129,8 @@ const FuelReport = () => {
               </tr>
             </thead>
             <tbody>
-              {reportData.map((data) => (
-                <tr key={data.user}>
+              {reportData.map((data, index) => (
+                <tr key={index}>
                   <td>{data.plateNumber}</td>
                   <td>{data.typeOfFuel}</td>
                   <td>{data.approvedAmount}</td>
