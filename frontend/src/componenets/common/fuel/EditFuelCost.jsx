@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import FuelCost from "./RegisterFuelCost";
+import Loading from "../../common/Provider/LoadingProvider";
 import api from "../../../api/api";
 
 const EditFuelCost = () => {
@@ -25,7 +26,9 @@ const EditFuelCost = () => {
           <FuelCost title={"Edit Fuel"} data={data[0]} />
         </>
       ) : (
-        <p>Loading...</p>
+        <p>
+          <Loading />
+        </p>
       )}
     </div>
   );

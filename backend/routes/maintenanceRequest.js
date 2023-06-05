@@ -8,6 +8,7 @@ const {
   updateMaitenacneRequest,
   deleteMaintenanceRequest,
   getPendingRequest,
+  updateMaintenanceRequestStatusByPlateNumber,
 } = require("../controllers/maintenanceRequest");
 const backupDeletedDocument = require("../middleware/backupdeleted");
 const MaintenanceRequest = require("../models/maintenanceRequest");
@@ -53,6 +54,6 @@ router.patch(
   "/maintenance/backup/:id",
   backupDeletedDocument(MaintenanceRequest)
 );
-
+router.put('/maintenances/:plateNumber', Authorize("ROLE_MECHANIC"), updateMaintenanceRequestStatusByPlateNumber);
 module.exports = router;
 

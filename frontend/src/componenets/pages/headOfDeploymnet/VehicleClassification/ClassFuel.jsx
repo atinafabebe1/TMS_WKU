@@ -1,31 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Row, Col, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-
 import api from "../../../../api/api";
 
-const FuelTypeList = () => {
+const FuelTypeList = (property) => {
   const [vehicles, setVehicles] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [startIndex, setStartIndex] = useState(0);
   const navigate = useNavigate();
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleNext = () => {
-    setStartIndex((prevIndex) => prevIndex + 7);
-  };
-
-  const handlePrevious = () => {
-    setStartIndex((prevIndex) => Math.max(prevIndex - 7, 0));
-  };
-
   useEffect(() => {
-    const fetchVehicles = async () => {
-      try {
-        const response = await api.get("/VehicleRecord?isDeleted=false");
+    api
+      .get("/VehicleRecord?isDeleted=false")
+      .then((response) => {
         const data = response.data.data;
         const groups = data.reduce((groups, vehicle) => {
           const typeOfFuel = vehicle.typeOfFuel;
@@ -36,44 +22,43 @@ const FuelTypeList = () => {
           return groups;
         }, {});
         setVehicles(groups);
-      } catch (error) {
-        console.error("Error fetching Vehicles:", error);
-      }
-    };
-
-    fetchVehicles();
+      })
+      .catch((error) => console.error("Error fetching Vehicles:", error));
   }, []);
 
-  const filteredVehicles = Object.entries(vehicles)
-    .slice(startIndex, startIndex + 7)
-    .map(([typeOfFuel, vehicleList]) => {
-      const filteredList = vehicleList.filter((vehicle) =>
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredVehicles = Object.keys(vehicles).reduce(
+    (filteredGroups, typeOfFuel) => {
+      const filteredVehicles = vehicles[typeOfFuel].filter((vehicle) =>
         vehicle.plateNumber.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      return [typeOfFuel, filteredList];
-    });
+      if (filteredVehicles.length > 0) {
+        filteredGroups[typeOfFuel] = filteredVehicles;
+      }
+      return filteredGroups;
+    },
+    {}
+  );
 
   return (
     <div className="p-4">
       <h2 className="form-control-custom" style={{ textAlign: "center" }}>
-        Vehicle Classified by Its Fuel Type
+        Vehicle Classified Fuel It Used
       </h2>
-      {filteredVehicles.map(([typeOfFuel, vehicleList]) => (
+      <Form className="mb-3">
+        <Form.Control
+          type="text"
+          placeholder="Search by Plate Number"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </Form>
+      {Object.keys(filteredVehicles).map((typeOfFuel) => (
         <React.Fragment key={typeOfFuel}>
           <h4 className="form-control-custom">{typeOfFuel}</h4>
-          <hr />
-          <Form>
-            <Row className="mb-3">
-              <Col>
-                <Form.Control
-                  type="text"
-                  placeholder="Search by Plate Number"
-                  value={searchTerm}
-                  onChange={handleSearch}
-                />
-              </Col>
-            </Row>
-          </Form>
           <Table striped bordered hover responsive className="table-sm">
             <thead className="form-control-custom">
               <tr>
@@ -81,56 +66,52 @@ const FuelTypeList = () => {
                 <th>Type</th>
                 <th>Proprietary Id Number</th>
                 <th>Model Number</th>
-                <th>Fuel Type</th>
+                <th>Property Type</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {vehicleList.map((vehicle) => (
+              {filteredVehicles[typeOfFuel].map((vehicle) => (
                 <tr key={vehicle._id}>
                   <td>{vehicle.plateNumber}</td>
                   <td>{vehicle.type}</td>
                   <td>{vehicle.proprietaryIdNumber}</td>
                   <td>{vehicle.modelNo}</td>
-                  <td>{vehicle.typeOfFuel}</td>
+                  <td>{vehicle.propertyType}</td>
                   <td>
-                    {vehicle.isDeleted === false &&
-                      vehicle.assignedTo === null &&
-                      vehicle.onMaintenance === false && (
-                        <>
-                          <Button
-                            className="btn btn-sm"
-                            variant="info"
-                            onClick={() =>
-                              navigate(`/hd/vehicles/detail/${vehicle._id}`)
-                            }
-                          >
-                            See Detail
-                          </Button>{" "}
-                          <Button
-                            className="btn btn-sm"
-                            variant="warning"
-                            onClick={() =>
-                              navigate(
-                                `/hd/vehicles/edit-vehicle/${vehicle._id}`
-                              )
-                            }
-                          >
-                            Edit
-                          </Button>{" "}
-                          <Button
-                            className="btn btn-sm"
-                            variant="success"
-                            onClick={() =>
-                              navigate(
-                                `/hd/vehicles/assign-vehicle/${vehicle._id}`
-                              )
-                            }
-                          >
-                            Assign
-                          </Button>{" "}
-                        </>
-                      )}
+                    {vehicle.isDeleted === false && (
+                      <>
+                        <Button
+                          className="btn btn-sm"
+                          variant="info"
+                          onClick={() =>
+                            navigate(`/hd/vehicles/detail/${vehicle._id}`)
+                          }
+                        >
+                          See Detail
+                        </Button>{" "}
+                        <Button
+                          className="btn btn-sm"
+                          variant="warning"
+                          onClick={() =>
+                            navigate(`/hd/vehicles/edit-vehicle/${vehicle._id}`)
+                          }
+                        >
+                          Edit
+                        </Button>{" "}
+                        <Button
+                          className="btn btn-sm"
+                          variant="success"
+                          onClick={() =>
+                            navigate(
+                              `/hd/vehicles/assign-vehicle/${vehicle._id}`
+                            )
+                          }
+                        >
+                          Assign
+                        </Button>{" "}
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

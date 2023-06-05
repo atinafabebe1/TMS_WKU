@@ -123,13 +123,17 @@ const SparePartPurchasingRequest = ({ link }) => {
   };
 
   return (
-    <>
+    <div className="p-4">
+      <div>
+        <h5 className="form-control-custom">Approve And Complete Fuel Request</h5>
+      </div>
+      <hr></hr>
       <div className="p-4">
         <Tabs
           activeKey={activeTab}
           onSelect={handleTabSelect}
           id="vehicle-request-tabs"
-          className="my-2"
+          className="form-control-custom"
         >
           <Tab eventKey="inProgress" title="Requests">
             <SparePartPurchasingRequestTable
@@ -192,7 +196,7 @@ const SparePartPurchasingRequest = ({ link }) => {
           </Modal>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

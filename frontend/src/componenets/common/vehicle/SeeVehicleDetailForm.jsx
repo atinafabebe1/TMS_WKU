@@ -171,9 +171,10 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
 
   return (
     <Container>
-      <h2 className="form-control-custom" style={{ textAlign: "center" }}>
-        {title}
-      </h2>
+      <h4 className="form-control-custom" style={{ textAlign: "center" }}>
+        Vehicle With Plate Number <strong>{vehicleData.plateNumber}</strong>{" "}
+        Detail Information
+      </h4>
       <hr></hr>
       <br />
       <Form
@@ -327,11 +328,7 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
               Please provide a valid Fuel Type.
             </Form.Control.Feedback>
           </Form.Group>
-        </Row>
-        <br></br>
-        <h5 className="form-control-custom">Purchasing Information</h5>
-        <hr></hr>
-        <Row className="mb-3">
+
           <Form.Group as={Col} controlId="purchaseprice">
             <span> </span>
             <Form.Label className="form-control-custom">
@@ -349,23 +346,6 @@ const SingleVehicleDetailInfo = ({ title, data, onSubmit }) => {
             />
             <Form.Control.Feedback type="invalid">
               Please provide a valid Price.
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group as={Col} controlId="date">
-            <span> </span>
-            <Form.Label className="form-control-custom">
-              Purchased Date
-            </Form.Label>
-
-            <Form.Control
-              type="date"
-              name="purchaseDate"
-              disabled
-              value={vehicleData.purchaseDate}
-              onChange={handleInputChange}
-            />
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid Date.
             </Form.Control.Feedback>
           </Form.Group>
         </Row>

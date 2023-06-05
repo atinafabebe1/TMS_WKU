@@ -138,6 +138,8 @@ const MaintenanceOrderSchema = new Schema(
         "pending",
         "in-progress",
         "UnderMaintenance",
+        'Need-Higher-Maintenance',
+        'Maintained',
         "Waiting-Mech-To-Approve",
         "Waiting-GD-To-Approve",
         "completed",

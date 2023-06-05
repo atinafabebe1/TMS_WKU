@@ -26,8 +26,6 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
   const handlePlateNumberChange = (event) => {
     const value = event.target.value;
     setPlateNumber(value);
-
-    // Validate plate number against the schema
     const pattern = /^(4-[0-9]{5}|UN [0-9]{3})$/i;
     const isValid = pattern.test(value);
     setIsValidPlateNumber(isValid);
@@ -75,51 +73,55 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true);
-    const result = {
-      plateNumber,
-      sparePartName,
-      quantity,
-      unitPrice,
-      totalPrice,
-      status,
-      rejectedReason,
-    };
-    if (request) {
-      api
-        .put(`/Request/sparePart/${request._id}?isDeleted=false`, result)
-        .then((response) => {
-          setIsLoading(false);
-          setSuccess("Successfully Updated");
-          setError(null);
+    if (validated) {
+      setIsLoading(true);
+      const result = {
+        plateNumber,
+        sparePartName,
+        quantity,
+        unitPrice,
+        totalPrice,
+        status,
+        rejectedReason,
+      };
+      if (request) {
+        api
+          .put(`/Request/sparePart/${request._id}?isDeleted=false`, result)
+          .then((response) => {
+            setIsLoading(false);
+            setSuccess("Successfully Updated");
+            setError(null);
 
-          setTimeout(() => {
-            navigate("/mechanic/request/accessory"); // Navigate to the desired page after 6 seconds
-          }, 6000);
-        })
-        .catch((err) => {
-          console.log(err.response.data);
-          setIsLoading(false);
-          setError("Please Provide Valid Data and Try Again");
-          setSuccess(null);
-        });
+            setTimeout(() => {
+              navigate("/mechanic/request/accessory"); // Navigate to the desired page after 6 seconds
+            }, 6000);
+          })
+          .catch((err) => {
+            console.log(err.response.data);
+            setIsLoading(false);
+            setError("Please Provide Valid Data and Try Again");
+            setSuccess(null);
+          });
+      } else {
+        api
+          .post(`/Request/sparePart`, result)
+          .then((response) => {
+            setIsLoading(false);
+            setSuccess("Successfully Sent");
+            setError(null);
+            setTimeout(() => {
+              navigate("/mechanic/request/accessory"); // Navigate to the desired page after 6 seconds
+            }, 6000); // Navigate to the desired page
+          })
+          .catch((err) => {
+            console.log(err.response.data);
+            setIsLoading(false);
+            setError("Please Provide Valid Data and Try Again");
+            setSuccess(null);
+          });
+      }
     } else {
-      api
-        .post(`/Request/sparePart`, result)
-        .then((response) => {
-          setIsLoading(false);
-          setSuccess("Successfully Sent");
-          setError(null);
-          setTimeout(() => {
-            navigate("/mechanic/request/accessory"); // Navigate to the desired page after 6 seconds
-          }, 6000); // Navigate to the desired page
-        })
-        .catch((err) => {
-          console.log(err.response.data);
-          setIsLoading(false);
-          setError("Please Provide Valid Data and Try Again");
-          setSuccess(null);
-        });
+      setError("Please Provide Valid Data and Try Again");
     }
   };
 
@@ -170,11 +172,11 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                         type="text"
                         minLength={3}
                         maxLength={50}
+                        required
                         value={sparePartName}
                         onChange={(event) =>
                           setSparePartName(event.target.value)
                         }
-                        required
                         className="mb-3"
                       />{" "}
                       <Form.Control.Feedback type="invalid">
@@ -188,6 +190,7 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                       <Form.Control
                         name="plateNumber"
                         value={plateNumber}
+                        pattern="^(\d{1}-\d{5}|UN \d{3})$"
                         onChange={handlePlateNumberChange}
                         required
                         className="mb-3"
@@ -207,6 +210,8 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                       </Form.Label>
                       <Form.Control
                         type="number"
+                        min={1}
+                        max={100}
                         value={quantity}
                         onChange={handleQuantityChange}
                         required
@@ -223,6 +228,8 @@ const SparePartRequestingForm = ({ title, request, onSubmit }) => {
                       </Form.Label>
                       <Form.Control
                         type="number"
+                        min={1}
+                        max={1000000}
                         value={unitPrice}
                         onChange={handleUnitPriceChange}
                         required

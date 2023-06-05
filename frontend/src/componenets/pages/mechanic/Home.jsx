@@ -22,12 +22,13 @@ const MechanicHome = () => {
             alignItems: "center",
           }}
         >
-          <h4 style={{ textAlign: "center", color: "#4682B4" }}>
+          <h5 style={{ textAlign: "center", color: "#4682B4" }}>
             Get And Track Request up on Update
-          </h4>
+          </h5>
           <h5 style={{ textAlign: "center", color: "#4682B4" }}>
             To Track Changes in Your Request
           </h5>
+          <hr></hr>
           <br />
           <div className="d-flex justify-content-center align-items-center">
             <div className="p-4">

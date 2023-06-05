@@ -5,17 +5,6 @@ const ResourceSchema = new Schema(
   {
     type: {
       type: String,
-      enum: [
-        "Fuel",
-        "Benzene",
-        "Petrol",
-        "Kerosene",
-        "Biodiesel",
-        "Diesel",
-        "Fren Oil",
-        "Gear oil",
-        "Grease",
-      ],
     },
     amount: {
       type: Number,

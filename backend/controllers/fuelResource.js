@@ -17,7 +17,7 @@ const updateResources = asyncHandler(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
-  res.status(200).json(fuelRequest);
+  res.status(200).json(fuelResource);
 });
 
 // const updateFuelRequest = asyncHandler(async (req, res, next) => {

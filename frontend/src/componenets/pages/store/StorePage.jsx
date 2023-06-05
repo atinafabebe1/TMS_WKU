@@ -1,39 +1,29 @@
-import React from 'react';
-import Navbar from '../../common/header/Navbar';
-import SparePartsHomeReport from './GenerateAndStoreReports';
-import SparePartPurchasingRequest from './ApproveSparePartPurchasing';
-import SparePartReports from './SparePartReport';
-import StoreHome from './Home';
-import { Routes, Route } from 'react-router-dom';
-import UserProfile from '../../common/profile/profile';
+import React from "react";
+import Navbar from "../../common/header/Navbar";
+import SparePartsHomeReport from "./GenerateAndStoreReports";
+import SparePartPurchasingRequest from "./ApproveSparePartPurchasing";
+import SparePartReports from "./SparePartReport";
+import StoreHome from "./Home";
+import { Routes, Route } from "react-router-dom";
+import UserProfile from "../../common/profile/profile";
 
 const links = [
   {
-    name: 'Home',
-    url: '/store'
+    name: "Home",
+    url: "/store",
   },
   {
-    name: 'Approve',
-    url: '/store/approve',
+    name: "Approve",
+    url: "/store/approve",
     children: [
       {
-        name: 'Spare Part Purchasing',
-        url: '/store/approve/sparePart-purchasing-request'
-      }
-    ]
+        name: "Spare Part Purchasing",
+        url: "/store/approve/sparePart-purchasing-request",
+      },
+    ],
   },
-  {
-    name: 'Report',
-    url: '/store/Report',
-    children: [
-      {
-        name: 'Generate Report',
-        url: '/store/Report'
-      }
-    ]
-  }
 ];
-const profileUrl = '/store/profile';
+const profileUrl = "/store/profile";
 
 const StorePage = () => {
   return (
@@ -44,9 +34,15 @@ const StorePage = () => {
       <Routes>
         <Route path="/" element={<StoreHome />} />
         <Route path="profile" element={<UserProfile />} />
-        <Route path="approve/sparePart-purchasing-request" element={<SparePartPurchasingRequest />} />
+        <Route
+          path="approve/sparePart-purchasing-request"
+          element={<SparePartPurchasingRequest />}
+        />
         <Route path="Report" element={<SparePartsHomeReport />} />
-        <Route path="Report/generate-report/:fromDate/:toDate/:season" element={<SparePartReports />} />
+        <Route
+          path="Report/generate-report/:fromDate/:toDate/:season"
+          element={<SparePartReports />}
+        />
       </Routes>
     </div>
   );

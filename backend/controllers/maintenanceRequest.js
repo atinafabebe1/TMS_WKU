@@ -28,6 +28,7 @@ const createMaintenanceRequest = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`vehicle not found with ${req.body.plateNumber}`, 404));
   }
   req.body.user = req.user.id;
+  vehicle.onMaintenance=true;
   await MaintenanceRequest.create(req.body);
   res.status(200).json({ message: "Your Request is successfully sent" });
 });
@@ -92,7 +93,26 @@ const updateMaitenacneRequest = asyncHandler(async (req, res, next) => {
   );
   res.status(200).json({ message: "updated successfully" });
 });
+const updateMaintenanceRequestStatusByPlateNumber = asyncHandler(async (req, res, next) => {
+  const { plateNumber } = req.params;
 
+  let maintenanceRequest = await MaintenanceRequest.findOneAndUpdate(
+    { plateNumber, status: "UnderMaintenance" },
+    { status: "completed" },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  if (!maintenanceRequest) {
+    return next(
+      new ErrorResponse(`Maintenance request not found for plate number ${plateNumber}`, 404)
+    );
+  }
+
+  res.status(200).json({ message: "Status updated successfully" });
+});
 // @desc      Approve a Maintenance Request
 // @route     Patch /Request/Vehicle/:id
 // @access    Private/HeadofDeployemnt/Director
@@ -191,4 +211,5 @@ module.exports = {
   updateMaintenanaceStatus,
   deleteMaintenanceRequest,
   getPendingRequest,
+  updateMaintenanceRequestStatusByPlateNumber,
 };

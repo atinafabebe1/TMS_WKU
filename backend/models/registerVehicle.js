@@ -32,14 +32,10 @@ const VehicleRecordSchema = new Schema(
       type: Number,
       required: true,
       unique: true,
-      min: 1000,
-      max: 9999,
     },
     chassisNo: {
       type: Number,
       unique: true,
-      min: 100000,
-      max: 999999,
     },
     motorNo: {
       type: Number,
@@ -47,7 +43,6 @@ const VehicleRecordSchema = new Schema(
     },
     type: {
       type: String,
-      enum: ["Bus", "Truck", "Pick Up", "Ambulace", "Automobile"],
       required: true,
     },
     cC: {
@@ -71,12 +66,6 @@ const VehicleRecordSchema = new Schema(
     },
     typeOfFuel: {
       type: String,
-      enum: ["diesel", "benzene", "motorOil", "frenOil", "otherOil", "grease"],
-      required: true,
-    },
-
-    purchaseDate: {
-      type: Date,
       required: true,
     },
 

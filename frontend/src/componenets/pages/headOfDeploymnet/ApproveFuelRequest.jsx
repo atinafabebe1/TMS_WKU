@@ -75,44 +75,43 @@ const ApproveFuelRequest = () => {
       event.stopPropagation();
       return;
     }
-
-    setShowModal(false);
     handleApprove();
   };
 
   const handleApprove = async () => {
-    const updatedRequest = {
-      ...selectedRequest,
-      approvedAmount: parseInt(approvedAmount),
-      price: parseInt(price),
-      status: "Approved",
-    };
-    const data = {
-      ...selectedRequest,
-      type: matchingResource.type,
-      amount: parseInt(approvedAmount),
-      unitPrice: parseInt(matchingResource.unitPrice),
-      totalPrice:
-        parseFloat(approvedAmount) * parseFloat(matchingResource.unitPrice),
-    };
-    await api
-      .put(`/Request/fuel/${selectedRequest._id}`, updatedRequest)
-      .then((response) => {
-        setSelectedRequest(updatedRequest);
-        setShowModal(false);
-        setShowSuccessModal(true);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    try {
-      await api.post("/Resources", data);
-      setSuccess("Resource registered successfully!");
-      console.log("Success");
-    } catch (err) {
-      setError(err.message);
-      console.error(err.message);
-    }
+  
+      const updatedRequest = {
+        ...selectedRequest,
+        approvedAmount: parseInt(approvedAmount),
+        price: parseInt(price),
+        status: "Approved",
+      };
+      const data = {
+        ...selectedRequest,
+        type: matchingResource.type,
+        amount: parseInt(approvedAmount),
+        unitPrice: parseInt(matchingResource.unitPrice),
+        totalPrice:
+          parseFloat(approvedAmount) * parseFloat(matchingResource.unitPrice),
+      };
+      await api
+        .put(`/Request/fuel/${selectedRequest._id}`, updatedRequest)
+        .then((response) => {
+          setSelectedRequest(updatedRequest);
+          setShowModal(false);
+          setShowSuccessModal(true);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      try {
+        await api.post("/Resources", data);
+        setSuccess("Resource registered successfully!");
+        console.log("Success");
+      } catch (err) {
+        setError(err.message);
+        console.error(err.message);
+      }
   };
 
   const handleSearch = (event) => {
@@ -310,6 +309,7 @@ const ApproveFuelRequest = () => {
               <Form.Control
                 type="number"
                 min={1}
+                max={selectedRequest?.requestAmount}
                 value={approvedAmount}
                 onChange={(event) => {
                   const value = event.target.value;

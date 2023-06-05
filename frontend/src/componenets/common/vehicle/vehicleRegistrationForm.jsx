@@ -119,28 +119,34 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
   };
 
   const handleSubmit = async () => {
-    try {
+    if (validated) {
       if (data) {
-        await api.put(`/VehicleRecord/${data._id}`, vehicleData);
-        setSuccess("Vehicle details updated successfully.");
-        setTimeout(() => {
-          navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
-        }, 6000);
+        try {
+          await api.put(`/VehicleRecord/${data._id}`, vehicleData);
+          setSuccess("Vehicle details updated successfully.");
+          setError("");
+          setTimeout(() => {
+            navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
+          }, 6000);
+        } catch (error) {
+          setError("Please Provide Valid Data and Try Again");
+        }
       } else {
-        await api.post("/VehicleRecord", vehicleData);
-        setSuccess("Vehicle registered successfully.");
-        setTimeout(() => {
-          navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
-        }, 6000);
+        try {
+          await api.post("/VehicleRecord", vehicleData);
+          setSuccess("One Vehicle Successfuly Added");
+          setError("");
+          setTimeout(() => {
+            navigate("/hd/vehicles"); // Navigate to the desired page after 6 seconds
+          }, 6000);
+        } catch (error) {
+          setError("Please Provide Valid Data and Try Again");
+        }
       }
-      onSubmit();
-      setError("");
-    } catch (error) {
+    } else {
       setError("Please Provide Valid Data and Try Again");
-      setSuccess("");
     }
   };
-
   console.log(vehicleData);
   const renderItemFields = () => {
     return vehicleData.itemsWithVehicle.map((item, index) => (
@@ -152,6 +158,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
 
             <Form.Control
               type="text"
+              minLength={3}
+              maxLength={35}
               name="itemDetail"
               value={item.itemDetail}
               onChange={(e) => handleItemChange(e, index)}
@@ -164,6 +172,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             <Form.Control
               type="number"
               name="quantity"
+              min={1}
+              max={1000}
               value={item.quantity}
               onChange={(e) => handleItemChange(e, index)}
               required
@@ -253,6 +263,12 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
                 <option value="Pick Up">Pick Up</option>
                 <option value="Ambulace">Ambulace</option>
                 <option value="Automobile">Automobile</option>
+                <option value="Single Cup">Single Cup</option>
+                <option value="Pajero">Pajero</option>
+                <option value="Nissan Patrol">Nissan Patrol</option>
+                <option value="Hard Top">Hard Top</option>
+                <option value="Mini Bus">Mini Bus</option>
+                <option value="Trackter">Trackter</option>
               </Form.Control>
               <Form.Control.Feedback type="invalid">
                 Please provide the vehicle type.
@@ -266,10 +282,11 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               Motor Number
             </Form.Label>
             <Form.Control
-              min={0}
+              min={10}
+              max={999999999}
               type="number"
               required
-              minLength={3}
+              minLength={4}
               maxLength={25}
               name="motorNo"
               value={vehicleData.motorNo}
@@ -288,6 +305,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             <Form.Control
               type="number"
               required
+              min={100}
+              max={9999999}
               minLength={3}
               maxLength={25}
               name="cC"
@@ -307,6 +326,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               type="string"
               required
               minLength={3}
+              pattern="^(\d{1}-\d{5}|UN \d{3})$"
               maxLength={25}
               name="plateNumber"
               value={vehicleData.plateNumber}
@@ -331,22 +351,16 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               onChange={handleInputChange}
             >
               <option value="">Choose</option>
-              <option value="diesel">Diesel</option>
-              <option value="benzene">Benzene</option>
-              <option value="motorOil">Motor Oil</option>
-              <option value="frenOil">Fren Oil</option>
-              <option value="grease">Grease</option>
-              <option value="otherOil">Other Oil</option>
+              <option value="Diesel">Diesel</option>
+              <option value="Benzene">Benzene</option>
+              <option value="Petrol">Petrol</option>
+              <option value="Biodiesel">Fren Oil</option>
             </Form.Control>
             <Form.Control.Feedback type="invalid">
               Please provide a valid Fuel Type.
             </Form.Control.Feedback>
           </Form.Group>
-        </Row>
-        <br></br>
-        <h5 className="form-control-custom">Purchasing Information</h5>
-        <hr></hr>
-        <Row className="mb-3">
+
           <Form.Group as={Col} controlId="purchaseprice">
             <span> </span>
             <Form.Label className="form-control-custom">
@@ -357,6 +371,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               type="number"
               required
               min={10000}
+              max={9999999999}
               maxLength={10}
               name="purchasePrice"
               value={vehicleData.purchasePrice}
@@ -364,23 +379,6 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             />
             <Form.Control.Feedback type="invalid">
               Please provide a valid Price.
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group as={Col} controlId="date">
-            <span> </span>
-            <Form.Label className="form-control-custom">
-              Purchased Date
-            </Form.Label>
-
-            <Form.Control
-              type="date"
-              name="purchaseDate"
-              required
-              value={vehicleData.purchaseDate}
-              onChange={handleInputChange}
-            />
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid Date.
             </Form.Control.Feedback>
           </Form.Group>
         </Row>
@@ -395,7 +393,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             <Form.Control
               type="number"
               required
-              min={0}
+              min={2}
               max={80}
               name="maxPerson"
               value={vehicleData.maxPerson}
@@ -454,6 +452,8 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             <Form.Control
               type="number"
               name="proprietaryIdNumber"
+              maxLength={3}
+              minLength={10}
               required
               value={vehicleData.proprietaryIdNumber}
               onChange={handleInputChange}
@@ -463,7 +463,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
             </Form.Control.Feedback>
           </Form.Group>
 
-          <Form.Group as={Col} controlId="vehicleimage">
+          {/* <Form.Group as={Col} controlId="vehicleimage">
             <span> </span>
             <Form.Label className="form-control-custom">
               Vehicle Image
@@ -475,7 +475,7 @@ const VehicleRegistrationForm = ({ title, data, onSubmit }) => {
               value={vehicleData.vehicleImage}
               onChange={handleInputChange}
             />
-          </Form.Group>
+          </Form.Group> */}
           <Form.Group as={Col} controlId="role">
             <Form.Label className="form-control-custom">
               Property Type

@@ -27,12 +27,12 @@ const MaintenanceRequest = require("./routes/maintenanceRequest");
 const EmergencyReport = require("./routes/emergencyReport");
 const SparePartRequest = require("./routes/sparePartRequest");
 const MaintenanceOrder = require("./routes/maintenanceOrder");
-const MaintenanceReport = require("./routes/maintenanceReport");
 const monthlyReport = require("./routes/monthlyReport");
 const Complain = require("./routes/complains");
 const DailyFuelCost = require("./routes/dailyFuelCost");
 const WorkdayScehdule = require("./routes/serviceSchedule");
 const FuelResource = require("./routes/fuelResource");
+const maintenanceReportRoutes = require("./routes/maintenanceReport");
 const { generateMonthlyReport } = require("./controllers/monthlyReport");
 
 const mongoose = require("mongoose");
@@ -61,7 +61,7 @@ app.use(xss_clean());
 
 //Rate limit
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, //10 mintues
+  windowMs: 10 * 60 * 1000, //10 minutes
   max: 500,
   standardHeaders: true,
   legacyHeaders: false,
@@ -90,11 +90,11 @@ app.use(
 );
 app.use("/EmergencyReport", EmergencyReport);
 app.use("/MaintenanceOrder", MaintenanceOrder);
-app.use("/MaintenanceReport", MaintenanceReport);
 app.use("/Report", monthlyReport, DailyFuelCost);
 app.use("/Complain", Complain);
 app.use("/Schedule", WorkdayScehdule);
 app.use("/Resources", FuelResource);
+app.use("/maintenanceReports", maintenanceReportRoutes);
 
 app.use(errorHandler);
 

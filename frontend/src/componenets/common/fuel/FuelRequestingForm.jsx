@@ -91,7 +91,7 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
         .catch((err) => {
           console.log(err.response.data);
           setIsLoading(false);
-          setError(err.response.data);
+          setError("Please Provide Valid Data And Try Again");
           setSuccess("");
         });
     } else {
@@ -108,7 +108,7 @@ const FuelRequestingForm = ({ title, request, onSubmit }) => {
         .catch((err) => {
           console.log(err.response.data);
           setIsLoading(false);
-          setError("Failed to Send This Request");
+          setError("Please Provide Valid Data And Try Again");
           setSuccess("");
         });
     }

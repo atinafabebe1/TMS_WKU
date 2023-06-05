@@ -13,9 +13,8 @@ import api from "../../../api/api";
 import "../../common/css/formStyles.css";
 import { useAuth } from "../../../context/AuthContext";
 import Loading from "../Provider/LoadingProvider";
-import { useNavigate } from "react-router-dom";
 
-const MaintenanceApprovalTable = ({ filter, data }) => {
+const GDMaintenanceApprovalTable = ({ filter, data }) => {
   const [reports, setReports] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -23,24 +22,18 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const [action, setAction] = useState("");
-  const navigate = useNavigate();
-
 
   useEffect(() => {
-    const fetchMaintenanceReports = async () => {
-      try {
-        const response = await api.get(
-          `/maintenanceReports?expertExamined=${user.id}`
-        );
+    api
+      .get(`/maintenanceReports`)
+      .then((response) => {
         console.log(response.data.data);
         setReports(response.data.data);
         setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching maintenance reports:", error);
-      }
-    };
-
-    fetchMaintenanceReports();
+      })
+      .catch((error) =>
+        console.error("Error fetching maintenance reports:", error)
+      );
   }, []);
 
   const handleMore = (report) => {
@@ -75,7 +68,7 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
         const response = await api.put(
           `/maintenanceReports/${selectedReportId._id}`,
           {
-            status: "Waiting-GD-To-Approve",
+            status: "completed",
           }
         );
 
@@ -83,12 +76,6 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
           "Maintenance report submitted successfully:",
           response.data
         );
-        setShowConfirmation(false);
-        setTimeout(() => {
-        navigate("/mechanic/maintenance/approve-maintenance"); 
-      }, 4000);
-      setShowModal(false);
-
       } catch (error) {
         console.error("Failed to submit maintenance report:", error);
       }
@@ -106,26 +93,40 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
         console.log(
           "Maintenance report submitted successfully:",
           response.data
-          
         );
-        setShowConfirmation(false);
-        setTimeout(() => {
-        navigate("/mechanic/maintenance/approve-maintenance"); 
-      }, 4000);
-      setShowModal(false);
       } catch (error) {
         console.error("Failed to submit maintenance report:", error);
       }
       console.log("Rejected report:", selectedReportId);
     }
-  
     setShowConfirmation(false);
-            setTimeout(() => {
-            navigate("/mechanic/maintenance/approve-maintenance"); 
-          }, 4000);
-        
   };
+  // const handleApprove = async (selectedReportId) => {
+  //   try {
+  //     const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
+  //       status: "completed",
+  //     });
 
+  //     console.log("Maintenance report submitted successfully:", response.data);
+  //     // Handle success, e.g., show a success message or redirect to another page
+  //   } catch (error) {
+  //     console.error("Failed to submit maintenance report:", error);
+  //     // Handle error, e.g., show an error message
+  //   }
+  // };
+  // const handleReject = async (selectedReportId) => {
+  //   try {
+  //     const response = await api.put(`/maintenanceReports/${selectedReportId._id}`, {
+  //       status: "canceled",
+  //     });
+
+  //     console.log("Maintenance report submitted successfully:", response.data);
+  //     // Handle success, e.g., show a success message or redirect to another page
+  //   } catch (error) {
+  //     console.error("Failed to submit maintenance report:", error);
+  //     // Handle error, e.g., show an error message
+  //   }
+  // };
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -134,7 +135,10 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
   const filteredReports = reports
     .filter((report) => {
       if (filter === "all") {
-        return report.status.toLowerCase() !== "pending";
+        return (
+          report.status.toLowerCase() !== "pending" &&
+          report.status.toLowerCase() !== "waiting-mech-to-approve"
+        );
       } else {
         return report.status.toLowerCase() === filter;
       }
@@ -161,7 +165,7 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
       </Form>
       {isLoading && <Loading />}
       <Table striped bordered hover responsive className="table-sm">
-        <thead className="form-control-custom">
+        <thead>
           <tr className="form-control-custom">
             <th>Plate Number</th>
             <th>Date</th>
@@ -176,7 +180,7 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
               <td>{new Date(report.createdAt).toLocaleString()}</td>
               <td>{report.status}</td>
               <td>
-                {report.status === "Waiting-Mech-To-Approve" && (
+                {report.status === "Waiting-GD-To-Approve" && (
                   <>
                     <Button
                       variant="success"
@@ -257,6 +261,7 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
                     />
                   </Col>
                 </Form.Group>
+
                 <Form.Group as={Row}>
                   <Form.Label column sm="3" className="form-control-custom">
                     Examination:
@@ -326,11 +331,7 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
                             </Col>
                           </Form.Group>
                           <Form.Group as={Row}>
-                            <Form.Label
-                              column
-                              sm="3"
-                              className="form-control-custom"
-                            >
+                            <Form.Label column sm="3">
                               Quantity:
                             </Form.Label>
                             <Col sm="9">
@@ -345,25 +346,27 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
                       </Card>
                     ))}
                   </Col>
-                </Form.Group>
-                <Form.Group as={Row}>
-                  <Form.Label column sm="3" className="form-control-custom">
-                    Overall Total Price:
-                  </Form.Label>
-                  <Col sm="9">
-                    <Form.Control
-                      plaintext
-                      readOnly
-                      value={selectedReport?.exchangedMaintenanceTotalPrice}
-                    />
-                  </Col>
+                  <Form.Group as={Row}>
+                    <Form.Label column sm="3">
+                      Overall Total Price:
+                    </Form.Label>
+                    <Col sm="9">
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        plaintext
+                        readOnly
+                        value={selectedReport?.exchangedMaintenanceTotalPrice}
+                      />
+                    </Col>
+                  </Form.Group>
                 </Form.Group>
               </Form>
             </Card.Body>
           </Card>
         </Modal.Body>
         <Modal.Footer>
-          {selectedReport?.status === "Waiting-Mech-To-Approve" && (
+          {selectedReport?.status === "Waiting-GD-To-Approve" && (
             <>
               <Button
                 variant="success"
@@ -381,7 +384,11 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
               </Button>
             </>
           )}
-          <Button variant="secondary" onClick={handleModalClose}>
+          <Button
+            variant="secondary"
+            className="btn btn-sm"
+            onClick={handleModalClose}
+          >
             Close
           </Button>
           {showConfirmation && (
@@ -393,7 +400,7 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
               <Modal.Body>
                 <Alert variant="warning">
                   Are you sure you want to{" "}
-                  {selectedReport?.status === "Waiting-Mech-To-Approve"
+                  {selectedReport?.status === "Waiting-GD-To-Approve"
                     ? action
                     : "cancel"}{" "}
                   the report?
@@ -423,4 +430,4 @@ const MaintenanceApprovalTable = ({ filter, data }) => {
   );
 };
 
-export default MaintenanceApprovalTable;
+export default GDMaintenanceApprovalTable;
