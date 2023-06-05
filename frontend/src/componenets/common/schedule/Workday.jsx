@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Modal, Button } from 'react-bootstrap';
+import { Table, Modal, Button, Alert } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../api/api';
@@ -9,6 +9,7 @@ const ScheduleTable = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editedRowData, setEditedRowData] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const navigate = useNavigate();
   let count = 1;
@@ -47,8 +48,15 @@ const ScheduleTable = () => {
   const handleSave = async (editedRowData) => {
     setIsEditing(false);
     console.log(editedRowData);
-    //get edited row and update on database
-    await api.put('/schedule/work-day', editedRowData);
+    try {
+      // Send the edited row data to the server and update the database
+      await api.put('/schedule/work-day', editedRowData);
+    } catch (error) {
+      // Handle the error if the server responds with an error message
+      console.log(error.response.data.error);
+      // Show the Alert component with the error message
+      setErrorMessage(error.response.data.error);
+    }
   };
 
   const handleChange = (e, rowIndex, key) => {
@@ -82,6 +90,11 @@ const ScheduleTable = () => {
       <p style={{ color: 'red', fontWeight: 'bold', marginTop: '20px' }}>
         WARNING: Editing the schedule may break certain constraints. Please be careful when making changes.
       </p>
+      {errorMessage && (
+        <Alert variant="danger" onClose={() => setErrorMessage(null)} dismissible>
+          {errorMessage}
+        </Alert>
+      )}
 
       <Table striped bordered hover responsive style={{ width: '100%', marginTop: '20px' }}>
         <thead>
@@ -135,8 +148,9 @@ const ScheduleTable = () => {
                     onChange={(e) => handleChange(e, rowIndex, 'vehicles')}
                   />
                 ) : (
-                  row.vehicles.map((vehicle) => {
-                    return `${vehicle.plateNumber}, `;
+                  row.vehicles.map((vehicle, index) => {
+                    const comma = index !== row.vehicles.length - 1 ? ', ' : '';
+                    return `${vehicle.plateNumber}${comma}`;
                   })
                 )}
               </td>

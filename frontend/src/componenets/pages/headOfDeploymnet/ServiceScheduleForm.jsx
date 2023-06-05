@@ -27,6 +27,7 @@ function Servicescheduleform() {
   const [showVehicleModal, setShowVehicleModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editRowIndex, setEditRowIndex] = useState(null);
+  const [scheduleCreated, setScheduleCreated] = useState(false); // New state variable
 
   useEffect(() => {
     api.get('/VehicleRecord/?type=Bus').then((response) => {
@@ -193,8 +194,11 @@ function Servicescheduleform() {
       .post('/schedule/work-day', requestData)
       .then((response) => {
         console.log('Schedule saved successfully', response.data);
+        setScheduleCreated(true);
         setLoading(false);
-        navigate('/hd/schedule/workday');
+        setTimeout(() => {
+          navigate('/hd/schedule/workday');
+        }, 5000);
         // Handle success response from the API
         // Add your desired logic here
       })
@@ -268,7 +272,7 @@ function Servicescheduleform() {
                       <th>Departing Time</th>
                       <th>Destination Address</th>
                       <th>Destination Time</th>
-                      <th>Number of Vehicles Required</th>
+                      <th>No. of Vehicles</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -394,6 +398,11 @@ function Servicescheduleform() {
       {scheduleerror && (
         <div className="my-3">
           <p className="text-danger">{scheduleerror.response.data.error}</p>
+        </div>
+      )}
+      {scheduleCreated && ( // Show the success message if scheduleCreated is true
+        <div className="alert alert-success my-3" role="alert">
+          Schedule created successfully!
         </div>
       )}
       <Button className="my-3" variant="success" onClick={handleSaveSchedule}>
