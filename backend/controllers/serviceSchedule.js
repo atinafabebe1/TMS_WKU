@@ -10,18 +10,66 @@ const dateString = '1997-03-25';
 const getServiceSchedule = async (req, res, next) => {
   res.status(200).json(res.advancedResults);
 };
+
 //update service schedules
 const updateServiceSchedule = async (req, res, next) => {
-  const schedule = await Trip.findById(req.body._id);
-  console.log(req.body);
+  try {
+    const { _id, vehicles, departing, destination } = req.body;
+
+    // Validate the incoming data
+    if (!_id || !vehicles || !departing || !destination) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Find the schedule by ID
+    const schedule = await Trip.findById(_id);
+
+    if (!schedule) {
+      return res.status(404).json({ error: 'Schedule not found' });
+    }
+
+    // Update the vehicles in the schedule
+    for (const vehicle of vehicles) {
+      // Find the vehicle by plate number
+      const existingVehicle = await Vehicle.findOne({ plateNumber: vehicle.plateNumber });
+
+      if (existingVehicle) {
+        // Update the vehicle's plate number
+        vehicle._id = existingVehicle._id;
+      } else {
+        return res.status(404).json({ error: `Vehicle with plate number ${vehicle.plateNumber} not found` });
+      }
+    }
+
+    // Extract vehicle IDs from the updated vehicles array
+    const vehicleIds = vehicles.map((vehicle) => vehicle._id);
+
+    // Update the schedule
+    schedule.vehicles = vehicleIds;
+    schedule.departing = departing;
+    schedule.destination = destination;
+    schedule.numVehiclesRequired = vehicleIds.length;
+
+    // Save the updated schedule
+    const updatedSchedule = await schedule.save();
+
+    console.log(updatedSchedule);
+    res.status(200).json({ message: 'Schedule updated successfully', schedule: updatedSchedule });
+  } catch (error) {
+    next(error);
+  }
 };
+
 //delete service schedules
 const deleteServiceSchedule = async (req, res, next) => {};
 
 //create a service schedule
 
 const createServiceSchedule = asyncHandler(async (req, res, next) => {
+  console.log(req.body);
+  await deleteExistingTrips();
   const { vehicles, trips } = req.body;
+  // const trips = schedule;
   validateVehicles(vehicles);
   validateTrips(trips);
 
@@ -34,6 +82,25 @@ const createServiceSchedule = asyncHandler(async (req, res, next) => {
 });
 
 let session;
+
+//  Function to delete existing trips and update vehicle fields
+const deleteExistingTrips = async () => {
+  try {
+    await Trip.deleteMany({});
+    await Vehicle.updateMany(
+      {},
+      {
+        $unset: {
+          assignedTrips: 1,
+          duration: 1,
+          location: 1
+        }
+      }
+    );
+  } catch (error) {
+    throw new ErrorResponse('Error deleting trips and updating vehicle fields', 500);
+  }
+};
 // One vehicle will be assigned for a trip at most once at a time.
 const assignVehiclesToTrips = asyncHandler(async (vehicles, trips) => {
   const createdTrips = [];

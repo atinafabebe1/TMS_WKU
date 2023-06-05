@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Container, Row, Col, Card, Modal, Table, ListGroup, FormControl } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Card, Modal, Table, ListGroup, FormControl, Spinner } from 'react-bootstrap';
 import api from '../../../api/api';
+import { useNavigate } from 'react-router-dom';
 
 function Servicescheduleform() {
   const [vehicles, setVehicles] = useState([]);
   const [selectedPlateNumber, setSelectedPlateNumber] = useState('');
   const [error, setError] = useState('');
+  const [scheduleerror, setScheduleError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const [trips, setTrips] = useState({
     departing: {
@@ -46,6 +50,7 @@ function Servicescheduleform() {
       setSelectedVehicles(selectedVehicles.filter((vehicle) => vehicle._id !== vehicleId));
     }
   };
+
   const handleSelectedPlateNumberChange = (event, vehicleId) => {
     const updatedPlateNumber = event.target.value;
     const updatedSelectedVehicles = selectedVehicles.map((vehicle) => {
@@ -56,6 +61,7 @@ function Servicescheduleform() {
     });
     setSelectedVehicles(updatedSelectedVehicles);
   };
+
   const handleDeleteSelectedVehicle = (vehicleId) => {
     const updatedSelectedVehicles = selectedVehicles.filter((vehicle) => vehicle._id !== vehicleId);
     setSelectedVehicles(updatedSelectedVehicles);
@@ -111,36 +117,48 @@ function Servicescheduleform() {
   };
 
   const handleEditTrip = (index) => {
-    setEditRowIndex(index);
-    const trip = schedule[index];
+    const { departing, destination, numVehiclesRequired } = schedule[index];
     setTrips({
       departing: {
-        address: trip.departing?.address,
-        time: trip.departing?.time
+        address: departing.address,
+        time: departing.time
       },
       destination: {
-        address: trip.destination?.address,
-        time: trip.destination?.time
+        address: destination.address,
+        time: destination.time
       },
-      numVehiclesRequired: trip.numVehiclesRequired
+      numVehiclesRequired
     });
+    setEditRowIndex(index);
     setShowModal(true);
   };
 
-  const handleSaveEdit = () => {
+  const handleUpdateTrip = () => {
+    const { departing, destination, numVehiclesRequired } = trips;
     const updatedSchedule = [...schedule];
     updatedSchedule[editRowIndex] = {
       departing: {
-        address: trips.departing?.address,
-        time: trips.departing?.time
+        address: departing.address,
+        time: departing.time
       },
       destination: {
-        address: trips.destination?.address,
-        time: trips.destination?.time
+        address: destination.address,
+        time: destination.time
       },
-      numVehiclesRequired: trips.numVehiclesRequired
+      numVehiclesRequired
     };
     setSchedule(updatedSchedule);
+    setTrips({
+      departing: {
+        address: '',
+        time: ''
+      },
+      destination: {
+        address: '',
+        time: ''
+      },
+      numVehiclesRequired: 1
+    });
     setEditRowIndex(null);
     setShowModal(false);
   };
@@ -151,290 +169,242 @@ function Servicescheduleform() {
     setSchedule(updatedSchedule);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    console.log(selectedVehicles);
-    const response = await api
-      .post('/Schedule/work-day', {
-        vehicles: selectedVehicles,
-        trips: schedule
-      })
+  const handleSaveSchedule = () => {
+    setLoading(true);
+    // Prepare the data for the API request
+    const requestData = {
+      vehicles: selectedVehicles.map((vehicle) => ({ _id: vehicle._id, plateNumber: vehicle.plateNumber })),
+      trips: schedule.map((trip) => ({
+        departing: {
+          address: trip.departing.address,
+          time: trip.departing.time
+        },
+        destination: {
+          address: trip.destination.address,
+          time: trip.destination.time
+        },
+        numVehiclesRequired: trip.numVehiclesRequired.toString() // Convert to string
+      }))
+    };
+
+    // Send the requestData to the API endpoint
+    // Replace the 'apiEndpoint' with your actual API endpoint
+    api
+      .post('/schedule/work-day', requestData)
       .then((response) => {
-        console.log(response.data.createdTrips);
-        setSchedule(response.data?.createdTrips || []);
+        console.log('Schedule saved successfully', response.data);
+        setLoading(false);
+        navigate('/hd/schedule/workday');
+        // Handle success response from the API
+        // Add your desired logic here
+      })
+      .catch((error) => {
+        console.error('Error saving schedule', error);
+        setScheduleError(error);
+        // Handle error response from the API
+        // Add your desired logic here
+      })
+      .finally(() => {
+        setLoading(false); // Stop loading spinner
       });
   };
 
   return (
-    <Container className="my-3">
+    <Container>
+      <h2 className="text-center my-3">Service Schedule Form</h2>
       <Row>
+        <Col className="col-3">
+          <Card>
+            <Card.Header>Selected Vehicles</Card.Header>
+            <Card.Body>
+              {selectedVehicles.length === 0 ? (
+                <p>No vehicles selected.</p>
+              ) : (
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th>Plate Number</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedVehicles.map((vehicle) => (
+                      <tr key={vehicle._id}>
+                        <td>
+                          <FormControl
+                            type="text"
+                            name={vehicle._id}
+                            value={vehicle.plateNumber}
+                            onChange={(event) => handleSelectedPlateNumberChange(event, vehicle._id)}
+                          />
+                        </td>
+                        <td>
+                          <Button variant="danger" size="sm" onClick={() => handleDeleteSelectedVehicle(vehicle._id)}>
+                            Delete
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              )}
+              <Button variant="primary btn btn-sm" onClick={() => setShowVehicleModal(true)}>
+                Add Vehicle
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
         <Col>
           <Card>
-            <Card.Header className="bg-primary text-light">Service Schedule Form</Card.Header>
+            <Card.Header>Schedule Trips</Card.Header>
             <Card.Body>
-              <Form onSubmit={handleSubmit}>
-                <Form.Group>
-                  <Form.Label>Select Vehicles:</Form.Label>
-                  <Button variant="info" className="mx-2" onClick={() => setShowVehicleModal(true)}>
-                    Choose Vehicles
-                  </Button>
-                  <Modal show={showVehicleModal} onHide={() => setShowVehicleModal(false)}>
-                    <Modal.Header closeButton>
-                      <Modal.Title>Select Vehicles</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      {vehicles.map((vehicle) => {
-                        const isChecked = selectedVehicles.some((selectedVehicle) => selectedVehicle.plateNumber === vehicle.plateNumber);
-
-                        return (
-                          <Form.Check
-                            key={vehicle.id}
-                            type="checkbox"
-                            id={`vehicle-${vehicle.id}`}
-                            label={vehicle.plateNumber}
-                            name={vehicle.id}
-                            checked={isChecked}
-                            onChange={handleCheckboxChange}
-                          />
-                        );
-                      })}
-                    </Modal.Body>
-                    <Modal.Footer>
-                      <Button variant="secondary" onClick={() => setShowVehicleModal(false)}>
-                        Close
-                      </Button>
-                      <Button variant="primary" onClick={() => setShowVehicleModal(false)}>
-                        Save Changes
-                      </Button>
-                    </Modal.Footer>
-                  </Modal>
-                  {selectedVehicles.length == 0 && (
-                    <div className="mt-3">
-                      <h6 className="text-center mb-3">Selected Vehicles:</h6>
-                      <p className="text-center text-muted">No vehicles selected</p>
-                    </div>
-                  )}
-                  {selectedVehicles.length > 0 && (
-                    <div className="mt-3">
-                      <h6 className="text-center mb-3">Selected Vehicles:</h6>
-                      <div>
-                        <ListGroup>
-                          <Row>
-                            {selectedVehicles.map((vehicle, index) => (
-                              <Col key={vehicle._id} xs={12} sm={6} md={4}>
-                                <ListGroup.Item>
-                                  <Row>
-                                    <Col xs={9}>
-                                      <FormControl
-                                        size="sm"
-                                        type="text"
-                                        disabled
-                                        value={vehicle.plateNumber}
-                                        onChange={(event) => handleSelectedPlateNumberChange(event, vehicle._id)}
-                                        placeholder="Enter Plate Number"
-                                      />
-                                    </Col>
-                                    <Col xs={3} className="text-right">
-                                      <Button size="sm" variant="danger" onClick={() => handleDeleteSelectedVehicle(vehicle._id)}>
-                                        Delete
-                                      </Button>
-                                    </Col>
-                                  </Row>
-                                </ListGroup.Item>
-                              </Col>
-                            ))}
-                          </Row>
-                        </ListGroup>
-                      </div>
-                    </div>
-                  )}
-                </Form.Group>
-
-                <Form.Group>
-                  <Form.Label>Add Trips:</Form.Label>
-                  <Button variant="info" className="mx-2" onClick={() => setShowModal(true)}>
-                    Add Trip
-                  </Button>
-                  <Modal show={showModal} onHide={() => setShowModal(false)}>
-                    <Modal.Header closeButton>
-                      <Modal.Title>{editRowIndex !== null ? 'Edit Trip' : 'Add Trip'}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      {error && <div className="text-danger">{error}</div>} {/* Display error message in red */}
-                      <Form.Group>
-                        <Form.Label>Departing Address:</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter departing address"
-                          name="address"
-                          value={trips.departing?.address}
-                          onChange={(event) => handleTripChange(event, 'departing')}
-                        />
-                      </Form.Group>
-                      <Form.Group>
-                        <Form.Label>Departing Time:</Form.Label>
-                        <Form.Control
-                          type="time"
-                          placeholder="Enter departing time"
-                          name="time"
-                          value={trips.departing?.time}
-                          onChange={(event) => handleTripChange(event, 'departing')}
-                        />
-                      </Form.Group>
-                      <Form.Group>
-                        <Form.Label>Destination Address:</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter destination address"
-                          name="address"
-                          value={trips.destination?.address}
-                          onChange={(event) => handleTripChange(event, 'destination')}
-                        />
-                      </Form.Group>
-                      <Form.Group>
-                        <Form.Label>Destination Time:</Form.Label>
-                        <Form.Control
-                          type="time"
-                          placeholder="Enter destination time"
-                          name="time"
-                          value={trips.destination?.time}
-                          onChange={(event) => handleTripChange(event, 'destination')}
-                        />
-                      </Form.Group>
-                      <Form.Group>
-                        <Form.Label>Number of Vehicles:</Form.Label>
-                        <Form.Control
-                          type="number"
-                          placeholder="Enter number of vehicles"
-                          value={trips.numVehiclesRequired}
-                          min="1"
-                          onChange={(event) => handleTripChange(event, 'numVehiclesRequired')}
-                        />
-                      </Form.Group>
-                    </Modal.Body>
-                    <Modal.Footer>
-                      <Button variant="secondary" onClick={() => setShowModal(false)}>
-                        Close
-                      </Button>
-                      {editRowIndex !== null ? (
-                        <Button variant="primary" onClick={handleSaveEdit}>
-                          Save
-                        </Button>
-                      ) : (
-                        <Button variant="primary" onClick={handleAddTrip}>
-                          Add
-                        </Button>
-                      )}
-                    </Modal.Footer>
-                  </Modal>
-                  <Table striped bordered hover>
-                    <thead>
-                      <tr>
-                        <th>Departing Address</th>
-                        <th>Departing Time</th>
-                        <th>Destination Address</th>
-                        <th>Destination Time</th>
-                        <th>Number of Vehicles</th>
-                        <th>Actions</th>
+              {schedule.length === 0 ? (
+                <p>No trips scheduled.</p>
+              ) : (
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th>Departing Address</th>
+                      <th>Departing Time</th>
+                      <th>Destination Address</th>
+                      <th>Destination Time</th>
+                      <th>Number of Vehicles Required</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {schedule.map((trip, index) => (
+                      <tr key={index}>
+                        <td>{trip.departing.address}</td>
+                        <td>
+                          {trip.departing.time} {trip.departing.time >= 12 ? 'PM' : 'AM'}
+                        </td>
+                        <td>{trip.destination.address}</td>
+                        <td>
+                          {trip.destination.time} {trip.destination.time >= 12 ? 'PM' : 'AM'}
+                        </td>
+                        <td>{trip.numVehiclesRequired}</td>
+                        <td>
+                          <Button variant="warning" size="sm" onClick={() => handleEditTrip(index)}>
+                            Edit
+                          </Button>{' '}
+                          <Button variant="danger" size="sm" onClick={() => handleDeleteTrip(index)}>
+                            Delete
+                          </Button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {schedule.map((trip, index) => (
-                        <tr key={index}>
-                          <td>
-                            {editRowIndex === index ? (
-                              <Form.Control
-                                type="text"
-                                value={trips.departing?.address}
-                                name="address"
-                                onChange={(event) => handleTripChange(event, 'departing')}
-                              />
-                            ) : (
-                              trip.departing?.address
-                            )}
-                          </td>
-                          <td>
-                            {editRowIndex === index ? (
-                              <Form.Control
-                                type="time"
-                                value={trips.departing?.time}
-                                name="time"
-                                onChange={(event) => handleTripChange(event, 'departing')}
-                              />
-                            ) : (
-                              trip.departing?.time
-                            )}
-                          </td>
-                          <td>
-                            {editRowIndex === index ? (
-                              <Form.Control
-                                type="text"
-                                value={trips.destination?.address}
-                                name="address"
-                                onChange={(event) => handleTripChange(event, 'destination')}
-                              />
-                            ) : (
-                              trip.destination?.address
-                            )}
-                          </td>
-                          <td>
-                            {editRowIndex === index ? (
-                              <Form.Control
-                                type="time"
-                                value={trips.destination?.time}
-                                name="time"
-                                onChange={(event) => handleTripChange(event, 'destination')}
-                              />
-                            ) : (
-                              trip.destination?.time
-                            )}
-                          </td>
-                          <td>
-                            {editRowIndex === index ? (
-                              <Form.Control
-                                type="number"
-                                value={trips.numVehiclesRequired}
-                                min="1"
-                                onChange={(event) => handleTripChange(event, 'numVehiclesRequired')}
-                              />
-                            ) : (
-                              trip.numVehiclesRequired
-                            )}
-                          </td>
-                          <td>
-                            {editRowIndex === index ? (
-                              <>
-                                <Button variant="success" className="mr-2" onClick={handleSaveEdit}>
-                                  Save
-                                </Button>
-                                <Button variant="secondary" onClick={() => setEditRowIndex(null)}>
-                                  Cancel
-                                </Button>
-                              </>
-                            ) : (
-                              <>
-                                <Button variant="primary" className="mr-2" onClick={() => handleEditTrip(index)}>
-                                  Edit
-                                </Button>
-                                <Button variant="danger" onClick={() => handleDeleteTrip(index)}>
-                                  Delete
-                                </Button>
-                              </>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                  Submit
-                </Button>
-              </Form>
+                    ))}
+                  </tbody>
+                </Table>
+              )}
+              <Button variant="primary btn btn-sm" onClick={() => setShowModal(true)}>
+                Add Trip
+              </Button>
             </Card.Body>
           </Card>
         </Col>
       </Row>
+
+      {/* Vehicle Modal */}
+      <Modal show={showVehicleModal} onHide={() => setShowVehicleModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Vehicle</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ListGroup>
+            {vehicles.map((vehicle) => (
+              <ListGroup.Item key={vehicle._id}>
+                <Form.Check
+                  type="checkbox"
+                  label={vehicle.plateNumber}
+                  name={vehicle._id}
+                  checked={selectedVehicles.some((selectedVehicle) => selectedVehicle._id === vehicle._id)}
+                  onChange={handleCheckboxChange}
+                />
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowVehicleModal(false)}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={() => setShowVehicleModal(false)}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Trip Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>{editRowIndex !== null ? 'Edit Trip' : 'Add Trip'}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="departingAddress">
+              <Form.Label>Departing Address</Form.Label>
+              <Form.Control type="text" name="address" value={trips.departing.address} onChange={(event) => handleTripChange(event, 'departing')} />
+            </Form.Group>
+            <Form.Group controlId="departingTime">
+              <Form.Label>Departing Time</Form.Label>
+              <Form.Control type="time" name="time" value={trips.departing.time} onChange={(event) => handleTripChange(event, 'departing')} />
+            </Form.Group>
+            <Form.Group controlId="destinationAddress">
+              <Form.Label>Destination Address</Form.Label>
+              <Form.Control
+                type="text"
+                name="address"
+                value={trips.destination.address}
+                onChange={(event) => handleTripChange(event, 'destination')}
+              />
+            </Form.Group>
+            <Form.Group controlId="destinationTime">
+              <Form.Label>Destination Time</Form.Label>
+              <Form.Control type="time" name="time" value={trips.destination.time} onChange={(event) => handleTripChange(event, 'destination')} />
+            </Form.Group>
+            <Form.Group controlId="numVehiclesRequired">
+              <Form.Label>Number of Vehicles Required</Form.Label>
+              <Form.Control
+                type="number"
+                min="1"
+                value={trips.numVehiclesRequired}
+                onChange={(event) => handleTripChange(event, 'numVehiclesRequired')}
+              />
+            </Form.Group>
+          </Form>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          {editRowIndex !== null ? (
+            <Button variant="primary" onClick={handleUpdateTrip}>
+              Update Trip
+            </Button>
+          ) : (
+            <Button variant="primary" onClick={handleAddTrip}>
+              Add Trip
+            </Button>
+          )}
+        </Modal.Footer>
+      </Modal>
+
+      {scheduleerror && (
+        <div className="my-3">
+          <p className="text-danger">{scheduleerror.response.data.error}</p>
+        </div>
+      )}
+      <Button className="my-3" variant="success" onClick={handleSaveSchedule}>
+        {loading ? (
+          <>
+            <Spinner animation="border" size="sm" /> Generating Schedule...
+          </>
+        ) : (
+          'Generate Schedule'
+        )}
+      </Button>
     </Container>
   );
 }

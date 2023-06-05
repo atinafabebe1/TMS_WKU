@@ -15,12 +15,12 @@ const ScheduleTable = () => {
 
   useEffect(() => {
     // Fetch schedules from the server and update state
-    const fetch = async () => {
+    const fetchSchedules = async () => {
       const response = await api.get('/schedule/work-day').then((res) => {
         setSchedules(res.data?.data);
       });
     };
-    fetch();
+    fetchSchedules();
   }, []);
 
   const handleCreateNewSchedule = () => {
@@ -35,6 +35,7 @@ const ScheduleTable = () => {
     navigate('/hd/schedule/workday-new');
     handleCloseModal();
   };
+
   const handleEdit = (rowIndex) => {
     setIsEditing(rowIndex);
   };
@@ -77,6 +78,7 @@ const ScheduleTable = () => {
         <FaPlus style={{ marginRight: '5px', fontSize: '1.1rem' }} />
         Create New Schedule
       </button>
+
       <p style={{ color: 'red', fontWeight: 'bold', marginTop: '20px' }}>
         WARNING: Editing the schedule may break certain constraints. Please be careful when making changes.
       </p>
@@ -133,7 +135,9 @@ const ScheduleTable = () => {
                     onChange={(e) => handleChange(e, rowIndex, 'vehicles')}
                   />
                 ) : (
-                  row.vehicles.map((vehicle) => vehicle.plateNumber)
+                  row.vehicles.map((vehicle) => {
+                    return `${vehicle.plateNumber}, `;
+                  })
                 )}
               </td>
 
