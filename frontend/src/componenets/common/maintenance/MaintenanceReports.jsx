@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Tabs, Tab, Button, Table } from 'react-bootstrap';
+import { PieChart, Pie, Cell, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import api from '../../../api/api';
 
 const GDMaintenanceReportPage = () => {
   const [duration, setDuration] = useState('Daily');
   const [maintenanceReports, setMaintenanceReports] = useState([]);
+  const [pieChartData, setPieChartData] = useState([]);
+  const [barChartData, setBarChartData] = useState([]);
 
   useEffect(() => {
     fetchMaintenanceReports();
@@ -16,6 +19,20 @@ const GDMaintenanceReportPage = () => {
       // Filter reports with status "completed"
       const completedReports = response.data.filter((report) => report.status === 'completed');
       setMaintenanceReports(completedReports);
+
+      // Prepare data for pie chart
+      const pieData = completedReports.map((report) => ({
+        name: report.plateNumber,
+        value: report.exchangedMaintenanceTotalPrice,
+      }));
+      setPieChartData(pieData);
+
+      // Prepare data for bar chart
+      const barData = completedReports.map((report) => ({
+        plateNumber: report.plateNumber,
+        exchangedMaintenanceTotalPrice: report.exchangedMaintenanceTotalPrice,
+      }));
+      setBarChartData(barData);
     } catch (error) {
       console.error('Failed to fetch maintenance reports:', error);
     }
@@ -33,6 +50,29 @@ const GDMaintenanceReportPage = () => {
 
       <div>
         <h2>{duration} Reports</h2>
+
+        {/* Pie Chart */}
+        <h3>Pie Chart</h3>
+        <PieChart width={400} height={300}>
+          <Pie data={pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8">
+            {pieChartData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={`#${((Math.random() * 0xffffff) << 0).toString(16).padStart(6, '0')}`} />
+            ))}
+          </Pie>
+          <Legend />
+        </PieChart>
+
+        {/* Bar Chart */}
+        <h3>Bar Chart</h3>
+        <BarChart width={600} height={300} data={barChartData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="plateNumber" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="exchangedMaintenanceTotalPrice" fill="#8884d8" />
+        </BarChart>
+
         {maintenanceReports.length === 0 ? (
           <p>No completed maintenance reports found.</p>
         ) : (
