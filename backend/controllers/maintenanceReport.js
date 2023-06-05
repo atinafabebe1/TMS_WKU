@@ -118,6 +118,26 @@ const getMaintenanceReports = asyncHandler(async (req, res) => {
     .populate('garageDirector', 'username') // Populate the referenced 'User' fields
     .exec();
 
+  // Create a map to store the combined exchangedMaintenanceTotalPrice for each plate number
+  const plateNumberMap = {};
+
+  maintenanceReports.forEach((report) => {
+    const { plateNumber, exchangedMaintenanceTotalPrice } = report;
+    if (plateNumberMap[plateNumber]) {
+      plateNumberMap[plateNumber] += exchangedMaintenanceTotalPrice;
+    } else {
+      plateNumberMap[plateNumber] = exchangedMaintenanceTotalPrice;
+    }
+  });
+
+  // Update the exchangedMaintenanceTotalPrice for reports with the same plate number
+  maintenanceReports.forEach((report) => {
+    const { plateNumber } = report;
+    if (plateNumberMap[plateNumber]) {
+      report.exchangedMaintenanceTotalPrice = plateNumberMap[plateNumber];
+    }
+  });
+
   res.status(200).json(maintenanceReports);
 });
 

@@ -20,17 +20,26 @@ const GDMaintenanceReportPage = () => {
       const completedReports = response.data.filter((report) => report.status === 'completed');
       setMaintenanceReports(completedReports);
 
+      // Create a map to store the combined exchangedMaintenanceTotalPrice for each plate number
+      const plateNumberMap = {};
+
+      completedReports.forEach((report) => {
+        const { plateNumber, exchangedMaintenanceTotalPrice } = report;
+          plateNumberMap[plateNumber] = exchangedMaintenanceTotalPrice;
+        
+      });
+
       // Prepare data for pie chart
-      const pieData = completedReports.map((report) => ({
-        name: report.plateNumber,
-        value: report.exchangedMaintenanceTotalPrice,
+      const pieData = Object.keys(plateNumberMap).map((plateNumber) => ({
+        name: plateNumber,
+        value: plateNumberMap[plateNumber],
       }));
       setPieChartData(pieData);
 
       // Prepare data for bar chart
-      const barData = completedReports.map((report) => ({
-        plateNumber: report.plateNumber,
-        exchangedMaintenanceTotalPrice: report.exchangedMaintenanceTotalPrice,
+      const barData = Object.keys(plateNumberMap).map((plateNumber) => ({
+        plateNumber: plateNumber,
+        exchangedMaintenanceTotalPrice: plateNumberMap[plateNumber],
       }));
       setBarChartData(barData);
     } catch (error) {
