@@ -3,7 +3,8 @@ WKU-TMS is a Transport Management System for the College that is built with Mong
 ## Features
 - Scheduling of trips, 
 - Monitoring of driver performance and vehicles, 
-- Generating reports on usage and expenses, 
+- Generating reports on usage and expenses,
+- Fuel Usage 
 - And more. 
 
 ## Installation
