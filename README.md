@@ -1,5 +1,5 @@
 # TMS_WKU
-WKU-TMS is a Transport Management System for College that is built with MongoDB, Express, React and Node.js. It is designed to provide an efficient and reliable way of managing transportation services for students and staff at a college.
+WKU-TMS is a Transport Management System for the College that is built with MongoDB, Express, React, and Node.js. It is designed to provide an efficient and reliable way of managing transportation services for students and staff at a college.
 ## Features
 - Scheduling of trips, 
 - Monitoring of driver performance and vehicles, 
@@ -38,7 +38,7 @@ This app requires some environment variables to run properly. These variables ar
 If you don’t have a .env file, please contact me at https://t.me/Oliyadm and I will send you one.
 
 ## Demo Credentials
-To test the app with different roles, you can use the following credentials to log in: A password for all demo account is asdASD123!@#
+To test the app with different roles, you can use the following credentials to log in: A password for all demo accounts is asdASD123!@#
 
 Administrator: atinafabebe1@gmail.com
 HeadofDeployment: abrehamhod@gmail.com
